@@ -1,0 +1,3 @@
+numpy
+csc-utils
+-e svn+https://pysparse.svn.sourceforge.net/svnroot/pysparse/new-setup-py#egg=pysparse

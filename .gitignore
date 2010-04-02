@@ -1,0 +1,9 @@
+*.pyc
+build
+Divisi2.egg-info/
+dist
+pip-log.txt
+.achievements
+.coverage
+.bzr
+.bzrignore

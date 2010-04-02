@@ -1,0 +1,13 @@
+On a Debian system, the following commands should suffice to install Divisi:
+
+    sudo aptitude install python-dev python-numpy
+    ./setup.py build
+    sudo ./setup.py install
+
+Older Debian systems may require the 'python-numpy-dev' package also.
+
+We support Python 2.5 and 2.6.
+
+For a local installation (i.e., not system-wide), do instead:
+
+    ./setup.py develop

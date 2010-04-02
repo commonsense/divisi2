@@ -1,0 +1,1 @@
+apparently normalize_rows is buggy

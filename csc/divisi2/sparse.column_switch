@@ -1,0 +1,1485 @@
+import numpy as np
+from csc.divisi2.dense import DenseVector, DenseMatrix
+from csc.divisi2.ordered_set import OrderedSet, indexable_set, apply_indices
+from csc.divisi2.exceptions import LabelError, DimensionMismatch
+from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin
+from pysparse import spmatrix, precon, itsolvers, jdsym
+from pysparse.pysparseMatrix import PysparseMatrix
+from copy import copy
+import warnings
+
+SLICE_ALL = slice(None, None, None)
+
+def _dense_row(psmatrix):
+    """
+    Convert a 1xN PysparseMatrix into a NumPy vector.
+    """
+    vec = np.zeros((psmatrix.shape[1],))
+    vec.put(psmatrix.matrix.keys()[1], psmatrix.matrix.values())
+    return vec
+
+def _dense_col(psmatrix):
+    """
+    Convert a Nx1 PysparseMatrix into a NumPy vector.
+    """
+    vec = np.zeros((psmatrix.shape[0],))
+    vec.put(psmatrix.matrix.keys()[0], psmatrix.matrix.values())
+    return vec
+
+def _inv_norm(vec):
+    """
+    Return the inverse of the Euclidean norm of a vector. Useful in
+    normalizing.
+    """
+    return 1.0/np.linalg.norm(vec)
+
+def _inv_root_norm(vec):
+    """
+    Return the inverse square root of the Euclidean norm of a vector.
+    Useful in normalizing.
+    """
+    return 1.0/np.sqrt(np.linalg.norm(vec))
+
+def _ndarray_to_sparse(ndarray):
+    """
+    Convert a dense numpy.ndarray to a PysparseMatrix.
+    """
+    if ndarray.ndim == 1:
+        ndarray = ndarray[:, np.newaxis]
+    assert ndarray.ndim == 2
+    psmatrix = PysparseMatrix(nrow=ndarray.shape[0], ncol=ndarray.shape[1])
+    xcoords, ycoords = np.indices(ndarray.shape)
+    psmatrix.put(ndarray.flatten(), xcoords.flatten(), ycoords.flatten())
+    return psmatrix
+
+class AbstractSparseArray(object):
+    """
+    An abstract base class for operations that are common to both sparse
+    representations -- mostly operators.
+    """
+    is_sparse = True
+
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError("AbstractSparseArray is an abstract class")
+
+    def __add__(self, other):
+        return self._add_sparse(other)
+
+    def __iadd__(self, other):
+        return self._iadd_sparse(other)
+
+    def __sub__(self, other):
+        return self + (-other)
+
+    def __isub__(self, other):
+        self += (-other)
+        return self
+
+    def __neg__(self):
+        return self * -1
+
+    def __mul__(self, other):
+        """
+        Scalar multiplication.
+
+        If `other` is not a scalar, it's ambiguous whether you want matrix
+        or elementwise multiplication, so it raises an error.
+        """
+        if np.isscalar(other):
+            return self.cmul(other)
+        else:
+            raise ValueError(
+              "The * operator is ambiguous. "
+              "Please use divisi2.multiply for elementwise multiplication, or "
+              "divisi2.dot for matrix multiplication."
+            )
+
+    def __rmul__(self, other):
+        """
+        Handle the case where we're on the right side of a scalar
+        multiplication, through divisi2.operators.
+        """
+        from csc.divisi2 import operators
+        return operators.multiply(other, self)
+
+    def __div__(self, other):
+        """
+        Divide by something (probably a constant). Delegate to divisi2.operators
+        to figure it out.
+        """
+        from csc.divisi2 import operators
+        return operators.divide(self, other)
+    
+    def __rdiv__(self, other):
+        """
+        Divide something else by self. On the off chance that this is possible,
+        divisi2.operators should do the right thing.
+        """
+        from csc.divisi2 import operators
+        return operators.divide(other, self)
+
+    def __imul__(self, scalefactor):
+        """
+        Multiply in-place by a scalar.
+        """
+        if not np.isscalar(scalefactor):
+            raise TypeError('In-place multiplication requires a scalar.')
+        self.psmatrix *= scalefactor
+        return self
+
+    def __idiv__(self, scalefactor):
+        """
+        Divide in-place by a scalar.
+        """
+        if not np.isscalar(scalefactor):
+            raise TypeError('In-place division requires a scalar.')
+        self.psmatrix *= 1.0/scalefactor
+        return self
+
+    def multiply(self, other):
+        """
+        Elementwise multiplication. Ask divisi2.operators how to do it.
+        """
+        from csc.divisi2 import operators
+        return operators.multiply(self, other)
+
+    def dot(self, other):
+        """
+        Matrix or scalar multiplication. Delegate to divisi2.operators to
+        sort it out.
+        """
+        from csc.divisi2 import operators
+        return operators.dot(self, other)
+
+    matrixmultiply = dot
+
+    def transpose_dot(self, other):
+        """
+        Multiply this matrix *transposed* by another matrix. This can save
+        a lot of computation when multiplying two sparse matrices.
+        """
+        from csc.divisi2 import operators
+        return operators.transpose_dot(self, other)
+
+    def cmul(self, scalefactor):
+        """
+        Multiplication by a scalar.
+        """
+        return self.replacedata(self.psmatrix * scalefactor)
+    
+    def __eq__(self, other):
+        return (type(other) == type(self) and
+                other.keys() == self.keys() and
+                np.allclose(other.value_array(), self.value_array()) and
+                self.same_labels_as(other))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
+    """
+    Class overview
+    --------------
+
+    A SparseMatrix is a sparse matrix whose rows and columns can
+    optionally have *labels*. When they do, they are referred to as *named*
+    rows and columns.
+    
+    The underlying implementation represents each row as a linked list in C,
+    using the `pysparse` library. The linked list representation makes some
+    sparse matrix operations particularly fast, at the expense of making it
+    inefficient to update cells one at a time. So we suggest that you build a
+    SparseMatrix all at once, from an existing list of data.
+
+    This is easy to do with the :meth:`from_named_entries` factory method,
+    which we also give the name `divisi2.make_sparse` because we think it's the
+    best way to create a sparse matrix.  It takes in a list of tuples, each of
+    which contains a value, a row name, and a column name.
+    
+    >>> from csc import divisi2
+    >>> mat1 = divisi2.make_sparse([
+    ...     (2, "apple", "red"),
+    ...     (2, "orange", "orange"),
+    ...     (1, "apple", "green"),
+    ...     (1, "celery", "green"),
+    ... ])
+    >>> print mat1
+    SparseMatrix (3 by 3)
+             red        orange     green   
+    apple    2.000000      ---     1.000000  
+    orange      ---     2.000000      ---    
+    celery      ---        ---     1.000000  
+
+    Let's make one more matrix to work with:
+    
+    >>> mat2 = divisi2.make_sparse([
+    ...     (1, "apple", "fruit"),
+    ...     (1, "orange", "fruit"),
+    ...     (1, "orange", "orange"),
+    ...     (2, "celery", "vegetable"),
+    ... ])
+    >>> print mat2
+    SparseMatrix (3 by 3)
+             fruit      orange     vegetabl
+    apple    1.000000      ---        ---    
+    orange   1.000000   1.000000      ---    
+    celery      ---        ---     2.000000  
+
+    Arithmetic operations
+    ---------------------
+
+    One simple thing to do with a SparseMatrix is to multiply or divide
+    it by a scalar.
+    
+    >>> print mat1/2
+    SparseMatrix (3 by 3)
+             red        orange     green   
+    apple    1.000000      ---     0.500000  
+    orange      ---     1.000000      ---    
+    celery      ---        ---     0.500000  
+    
+    >>> print mat1*0.1
+    SparseMatrix (3 by 3)
+             red        orange     green   
+    apple    0.200000      ---     0.100000  
+    orange      ---     0.200000      ---    
+    celery      ---        ---     0.100000  
+
+    More interesting are operations on multiple matrices. For example, we can
+    add two sparse matrices, and the label sets will be combined appropriately.
+    
+    >>> print mat1+mat2
+    SparseMatrix (3 by 5)
+             red        orange     green      fruit      vegetabl
+    apple    2.000000      ---     1.000000   1.000000      ---    
+    orange      ---     3.000000      ---     1.000000      ---    
+    celery      ---        ---     1.000000      ---     2.000000  
+
+    >>> print mat1-2*mat2
+    SparseMatrix (3 by 5)
+             red        orange     green      fruit      vegetabl
+    apple    2.000000      ---     1.000000  -2.000000      ---    
+    orange      ---        ---        ---    -2.000000      ---    
+    celery      ---        ---     1.000000      ---    -4.000000  
+
+    Fancy indexing
+    --------------
+
+    Matrices can be sliced and indexed with "fancy indexing", as if they
+    were NumPy matrices. Each index can be a single number, a slice
+    (such as `2:5` to get rows 2, 3, and 4), the slice `:` (selecting
+    everything), or a list of particular indices.
+
+    >>> print mat1[:2]
+    SparseMatrix (2 by 3)
+             red        orange     green   
+    apple    2.000000      ---     1.000000  
+    orange      ---     2.000000      ---    
+    
+    >>> print mat1[[1,2], ::-1]
+    SparseMatrix (2 by 3)
+             green      orange     red     
+    orange      ---     2.000000      ---    
+    celery   1.000000      ---        ---    
+
+    If the result of indexing has a single dimension, the result will be a
+    :class:`SparseVector`.
+
+    >>> print mat1[0]
+    SparseVector (2 of 3 entries): [red=2, green=1]
+    >>> print mat1[:,0]
+    SparseVector (1 of 3 entries): [apple=2]
+
+    Sparse multiplication
+    ---------------------
+
+    To do matrix multiplication, we need to make sure the inner labels match.
+    We can accomplish this by transposing `mat1`.
+    
+    >>> print mat1.T
+    SparseMatrix (3 by 3)
+             apple      orange     celery  
+    red      2.000000      ---        ---    
+    orange      ---     2.000000      ---    
+    green    1.000000      ---     1.000000  
+
+    >>> mat1.T.col_labels == mat2.row_labels
+    True
+
+    Now we can take the sparse matrix product of `mat1.T` and `mat2`, giving
+    us a matrix that relates the set `[red, orange, green]` to the set
+    `[fruit, orange, vegetable]` through the set `[apple, orange, celery]`.
+
+    >>> print divisi2.dot(mat1.T, mat2)
+    SparseMatrix (3 by 3)
+             fruit      orange     vegetabl
+    red      2.000000      ---        ---    
+    orange   2.000000   2.000000      ---    
+    green    1.000000      ---     2.000000  
+    
+    It turns out to be much more efficient to transpose as part
+    of the product operation, instead of transposing as a separate step.
+    Divisi supports this:
+
+    >>> print divisi2.transpose_dot(mat1, mat2)
+    SparseMatrix (3 by 3)
+             fruit      orange     vegetabl
+    red      2.000000      ---        ---    
+    orange   2.000000   2.000000      ---    
+    green    1.000000      ---     2.000000  
+    
+    Be sure to distinguish *matrix multiplication* from *elementwise
+    multiplication*, which takes in two matrices of the same shape.
+    We can also do sparse elementwise multiplication, which of course
+    has non-zero values only where the two matrices overlap:
+
+    >>> print divisi2.multiply(mat1, mat2)
+    SparseMatrix (3 by 5)
+             red        orange     green      fruit      vegetabl
+    apple       ---        ---        ---        ---        ---    
+    orange      ---     2.000000      ---        ---        ---    
+    celery      ---        ---        ---        ---        ---    
+    
+    The `*` operator is used *very* inconsistently in Python matrix classes.
+    To avoid confusion, sparse matrices do not support `*` -- you need to
+    explicitly ask for :meth:`multiply` or :meth:`dot`.
+
+    Normalization
+    -------------
+
+    Normalization makes sure that rows or columns have the same Euclidean
+    magnitude. 
+    
+    >>> print mat1.normalize_rows()
+    SparseMatrix (3 by 3)
+             red        orange     green   
+    apple    0.894427      ---     0.447214  
+    orange      ---     1.000000      ---    
+    celery      ---        ---     1.000000  
+
+    >>> print mat1.normalize_cols()
+    SparseMatrix (3 by 3)
+             red        orange     green   
+    apple    1.000000      ---     0.707107  
+    orange      ---     1.000000      ---    
+    celery      ---        ---     0.707107  
+
+    It's impossible to make such a guarantee for both directions at once,
+    except by throwing out most of the information and diagonalizing the
+    matrix. So `normalize_all` goes halfway to normalization in both
+    directions, instead, dividing each by the square root of the norm.
+    
+    >>> print mat1.normalize_all()
+    SparseMatrix (3 by 3)
+             red        orange     green   
+    apple    0.945742      ---     0.562341  
+    orange      ---     1.000000      ---    
+    celery      ---        ---     0.840896  
+    """
+
+    def __init__(self, arg1, row_labels=None, col_labels=None):
+        """
+        Create a SparseMatrix given appropriate arguments.
+
+        arg1 can be a PysparseMatrix object, something that can be turned
+        into a PysparseMatrix object (such as an ndarray), or a tuple
+        of (rows, columns) for creating a zero matrix.
+
+        Creating a zero matrix:
+        
+        >>> z = SparseMatrix((2, 4))
+        >>> print z
+        SparseMatrix (2 by 4)
+            ---        ---        ---        ---    
+            ---        ---        ---        ---    
+
+
+        Creating a sparse matrix from dense list data (not advisable):
+        
+        >>> print SparseMatrix([[1,2], [3, 0]])
+        SparseMatrix (2 by 2)
+         1.000000   2.000000  
+         3.000000      ---    
+        >>> foobar = SparseMatrix([[1,2], [3, 0]], ['foo', 'bar'], None)
+        >>> print foobar
+        SparseMatrix (2 by 2)
+        foo      1.000000   2.000000  
+        bar      3.000000      ---    
+        >>> foobar.nnz
+        3
+
+        Passing an existing SparseMatrix copies its values (but not
+        its labels, unless you ask):
+
+        >>> foobar2 = SparseMatrix(foobar)
+        >>> foobar2 == foobar
+        False
+        >>> foobar2 == foobar.unlabeled()
+        True
+        
+        This is a copy, so the original matrix remains unchanged:
+
+        >>> foobar2[0,0] = 5
+        >>> foobar[0,0]
+        1.0
+
+        If you ask for a matrix, you'll get a matrix, even if the underlying
+        data is a vector.
+
+        >>> SparseMatrix(np.arange(10))
+        <SparseMatrix (1 by 10)>
+        """
+        if isinstance(arg1, PysparseMatrix):
+            psmatrix = arg1
+        elif isinstance(arg1, tuple):
+            assert len(arg1) == 2
+            nrow, ncol = arg1
+            psmatrix = PysparseMatrix(nrow=nrow, ncol=ncol)
+        elif isinstance(arg1, (list, tuple)):
+            # First turn a sequence into a NumPy array, which we know how
+            # to handle (in the next step).
+            psmatrix = _ndarray_to_sparse(np.array(arg1))
+        elif isinstance(arg1, np.ndarray):
+            # Given a NumPy array, turn it into sparse data.
+            psmatrix = _ndarray_to_sparse(arg1)
+        elif isinstance(arg1, AbstractSparseArray):
+            psmatrix = arg1.psmatrix.copy()
+        else:
+            raise TypeError("I don't know how to construct a SparseMatrix from a %s" % type(arg1))
+        # Now, assuming we were given anything reasonable, we should have
+        # a PysparseMatrix as the input data.
+        assert isinstance(psmatrix, PysparseMatrix)
+        self.psmatrix = psmatrix
+        self.row_labels = OrderedSet(row_labels)
+        self.col_labels = OrderedSet(col_labels)
+        self._setup_wrapped_methods()
+    
+    ### numpy-like properties
+
+    @property
+    def shape(self):
+        return self.psmatrix.shape
+
+    @property
+    def nnz(self):
+        return self.psmatrix.nnz
+
+    ndim = 2
+
+    ### factory methods
+
+    @staticmethod
+    def from_lists(values, rows, cols, nrows=None, ncols=None):
+        """
+        Create a new SparseMatrix from sparse data.  The data should be
+        expressed as three parallel lists, containing the values and the
+        corresponding rows and columns that they go into.
+
+        Optional arguments `nrows` and `ncols` specify the shape the resulting
+        matrix should have, in case it is larger than the largest index.
+        """
+        if nrows is None: nrows = np.max(rows)+1
+        if ncols is None: ncols = np.max(cols)+1
+        sparse = PysparseMatrix(nrow=nrows, ncol=ncols)
+        if isinstance(values, tuple): values = list(values)
+        if isinstance(rows, tuple): rows = list(rows)
+        if isinstance(cols, tuple): cols = list(cols)
+        sparse.put(values, rows, cols)
+
+        return SparseMatrix(sparse)
+    
+    @staticmethod
+    def from_entries(tuples):
+        """
+        Create a new SparseMatrix from a list of tuples. Each tuple is
+        of the form (value, row, col), expressing a value and where it goes
+        in the matrix.
+
+        If possible, use ``from_lists`` since it's faster.
+        """
+        return SparseMatrix.from_lists(*zip(*tuples))
+
+    @staticmethod
+    def from_named_lists(values, rownames, colnames, row_labels=None, col_labels=None):
+        """
+        Constructs a SparseMatrix similarly to :meth:`from_lists`,
+        but you specify the *labels* of rows and columns, not their
+        indices.
+
+        Optionally, you can provide existing label lists or
+        OrderedSets to use for the row and column label lists.
+        """
+        if row_labels is None: row_labels = OrderedSet()
+        if col_labels is None: col_labels = OrderedSet()
+        # Ensure that the labels are indeed OrderedSets.
+        row_labels = indexable_set(row_labels)
+        col_labels = indexable_set(col_labels)
+        # Ensure all labels are present.
+        row_labels.extend(rownames)
+        col_labels.extend(colnames)
+        # Look up indices.
+        rows = [row_labels.index(name) for name in rownames]
+        cols = [col_labels.index(name) for name in colnames]
+        # Construct matrix.
+        result = SparseMatrix.from_lists(values, rows, cols)
+        result.row_labels = row_labels
+        result.col_labels = col_labels
+        return result
+
+    @staticmethod
+    def from_named_entries(tuples):
+        """
+        Create a new SparseMatrix from a list of tuples. Each tuple is
+        of the form (value, rowname, colname), expressing a value and the
+        labels for where it goes in the matrix.
+
+        If possible, use ``from_named_lists`` since it's faster.
+        """
+        return SparseMatrix.from_named_lists(*zip(*tuples))
+    
+    ### basic operations
+
+    def data(self):
+        """
+        Get the underlying data of this matrix, as a PysparseMatrix object.
+        """
+        return self.psmatrix
+
+    def copy(self):
+        """
+        Return a copy of this matrix.
+        """
+        # labels are automatically copied in the constructor
+        return SparseMatrix(self.psmatrix.copy(), self.row_labels,
+                                  self.col_labels)
+    
+    def replacedata(self, newsparse):
+        """
+        Make a sparse matrix with the same labels, but different data. Useful
+        for applying an operation to the underlying PysparseMatrix.
+        """
+        assert isinstance(newsparse, PysparseMatrix)
+        return SparseMatrix(newsparse, self.row_labels, self.col_labels)
+
+    def transpose(self):
+        vals, rows, cols = self.psmatrix.find()
+        result = SparseMatrix.from_lists(vals, cols, rows, self.shape[1], self.shape[0])
+        result.col_labels = copy(self.row_labels)
+        result.row_labels = copy(self.col_labels)
+        return result
+    
+    @property
+    def T(self):
+        return self.transpose()
+
+    def sym(self):
+        """
+        Get the symmetric self-similarity matrix, A*A^T, of this matrix,
+        as a ReconstructedMatrix.
+
+        If this matrix (A) has shape m by n, the result will have shape
+        m by m.
+        """
+        from csc.divisi2.reconstruct import ReconstructedMatrix
+        return ReconstructedMatrix(self, self.T)
+
+    def density(self):
+        """
+        Calculate how dense the matrix is.
+
+        Returns (num specified elements)/(num possible elements).
+        """
+        return float(self.nnz) / self.shape[0] / self.shape[1]
+    
+    ### operations that export the data in another format
+
+    def entries(self):
+        """
+        Get a list of (value, row, col) tuples that describe the content of
+        this matrix. `row` and `col` will be indices, not labels.
+
+        This format can be used to construct a new matrix using
+        :meth:`SparseMatrix.from_entries`.
+        """
+        return zip(*self.lists())
+
+    def named_entries(self):
+        """
+        Get a list of (value, row_name, col_name) tuples that describe the
+        content of this matrix.
+
+        This format can be used to construct a new matrix using
+        :meth:`SparseMatrix.from_named_entries`.
+        """
+        return [(val, self.row_label(i), self.col_label(j))
+                for (val, i, j) in self.entries()]
+
+    def lists(self):
+        """
+        Get the content of this matrix as three lists: a list of values,
+        a list of row indices, and a list of column indices, so that the
+        matrix could be reconstructed using
+        :meth:`SparseMatrix.from_lists`.
+        """
+        values, rows, cols = self.find()
+        return (list(float(v) for v in values),
+                list(int(r) for r in rows),
+                list(int(c) for c in cols))
+
+    def named_lists(self):
+        """
+        Get the content of this matrix as three lists: a list of values,
+        a list of row labels, and a list of column labels, so that the matrix
+        could be reconstructed using
+        :meth:`SparseMatrix.from_named_lists`.
+        """
+        values, rows, cols = self.find()
+        named_rows = [self.row_label(row) for row in rows]
+        named_cols = [self.col_label(col) for col in cols]
+        return values, named_rows, named_cols
+
+    def to_dense(self):
+        """
+        Convert this to a :class:`DenseMatrix`.
+        """
+        data = self.psmatrix.getNumpyArray()
+        return DenseMatrix(data, self.row_labels, self.col_labels)
+    
+    ### indexing
+    
+    def __getitem__(self, indices):
+        # workaround for psmatrix index glitch
+        if not isinstance(indices, tuple):
+            indices = (indices,)
+        if len(indices) < 2:
+            indices += (SLICE_ALL,) * (2 - len(indices))
+
+        labels = apply_indices(indices, self.all_labels())
+        data = self.psmatrix[indices]
+        if len(labels) == 1:
+            if data.shape[0] == 1:
+                return SparseVector(data, labels[0])
+            elif data.shape[1] == 1:
+                return SparseVector(data.getNumpyArray()[:,0], labels[0])
+            else:
+                assert False
+        elif len(labels) == 2:
+            return SparseMatrix(data, labels[0], labels[1])
+        else:
+            return data
+
+    def __setitem__(self, indices, targetdata):
+        if not isinstance(indices, (list, tuple)):
+            indices = (indices, SLICE_ALL)
+        if isinstance(indices, (list, tuple)) and len(indices) == 1:
+            indices = (indices[0], SLICE_ALL)
+
+        if len(indices) != 2:
+            raise IndexError("Need 1 or 2 indices, got %d" % len(indices))
+
+        if isinstance(targetdata, SparseMatrix):
+            if targetdata.row_labels is not None and targetdata.col_labels is not None:
+                warnings.warn('Not yet checking that the labels make sense!')
+            sparsedata = targetdata.psmatrix
+        if isinstance(targetdata, SparseVector):
+            if targetdata.labels is not None:
+                warnings.warn('Not yet checking that the labels make sense!')
+            sparsedata = targetdata.psmatrix
+        elif isinstance(targetdata, np.ndarray):
+            sparsedata = _ndarray_to_sparse(targetdata)
+        elif isinstance(targetdata, PysparseMatrix):
+            sparsedata = targetdata
+        elif isinstance(targetdata, (list, tuple)):
+            nd = np.array(targetdata)
+            sparsedata = _ndarray_to_sparse(nd)
+        elif isinstance(targetdata, (int, long, float)):
+            sparsedata = targetdata
+        else:
+            raise TypeError("Don't know how to assign from %s" % type(targetdata))
+        self.psmatrix[indices] = sparsedata
+    
+    def match_labels(self, other):
+        """
+        Returns two new SparseMatrices, containing all the labels of
+        self and other.
+        """
+        # Align rows.
+        if self.row_labels is None and other.row_labels is None:
+            merged_rows = None
+            row_indices = xrange(other.shape[0])
+            nrows = max(self.shape[0], other.shape[0])
+        elif self.row_labels is None or other.row_labels is None:
+            raise LabelError("I don't know how to merge labeled and unlabeled rows")
+        else:
+            merged_rows, row_indices = self.row_labels.merge(other.row_labels)
+            nrows = len(merged_rows)
+
+        # Align columns.
+        if self.col_labels is None and other.col_labels is None:
+            merged_cols = None
+            col_indices = xrange(other.shape[1])
+            ncols = max(self.shape[1], other.shape[1])
+        elif self.col_labels is None or other.col_labels is None:
+            raise LabelError("I don't know how to merge labeled and unlabeled columns")
+        else:
+            merged_cols, col_indices = self.col_labels.merge(other.col_labels)
+            ncols = len(merged_cols)
+
+        # Make aligned sparse matrices.
+        mat1 = PysparseMatrix(nrow=nrows, ncol=ncols)
+        mat1[:self.shape[0], :self.shape[1]] = self.psmatrix
+        mat2 = PysparseMatrix(nrow=nrows, ncol=ncols)
+        for mat2row, newrow in enumerate(row_indices):
+            mat2[newrow, col_indices] = other.psmatrix[mat2row, :]
+        return (SparseMatrix(mat1, merged_rows, merged_cols),
+                SparseMatrix(mat2, merged_rows, merged_cols))
+    
+    ### vectorwise operations
+
+    def row_scale(self, v):
+        """
+        Scale the rows of this matrix in place, multiplying each row by a
+        value given in the vector *v*.
+        """
+        if isinstance(v, SparseVector):
+            v = v.to_dense()
+        if isinstance(v, DenseVector):
+            if (v.labels != self.row_labels):
+                raise LabelError("Row labels do not match")
+            if len(v) != self.shape[0]:
+                raise LabelError("Number of rows does not match")
+            innervec = v
+        else:
+            innervec = v
+        self.psmatrix.row_scale(innervec)
+                
+    def col_scale(self, v):
+        """
+        Scale the columns of this matrix in place, multiplying each column by a
+        value given in the vector *v*.
+        """
+        if isinstance(v, SparseVector):
+            v = v.to_dense()
+        if isinstance(v, DenseVector):
+            if (v.labels != self.col_labels):
+                raise LabelError("Column labels do not match")
+            if len(v) != self.shape[1]:
+                raise LabelError("Number of columns does not match")
+            innervec = v
+        else:
+            innervec = v
+        self.psmatrix.col_scale(innervec)
+    
+    def row_op(self, op):
+        """
+        Perform a NumPy operation on every row, and return a
+        DenseVector of the results.
+
+        The operation will receive a NumPy vector of *only* the non-zero values.
+        """
+        vec = np.zeros((self.shape[0],))
+        for row in xrange(self.shape[0]):
+            sparserow = self.psmatrix[row,:]
+            vec[row] = op(sparserow.find()[0])
+        return DenseVector(vec, self.row_labels)
+
+    def col_op(self, op):
+        """
+        Perform a NumPy operation on every column, and return a
+        DenseVector of the results.
+        
+        The operation will receive a NumPy vector of *only* the non-zero values.
+        """
+        return self.T.row_op(op)
+    
+    def check_zero_rows(self):
+        epsilon = 1e-16
+        min_magnitude = np.min(self.row_op(np.linalg.norm))
+        if min_magnitude < epsilon:
+            min_index = np.argmin(self.row_op(np.linalg.norm))
+            raise ValueError("Row %d of this matrix is all zeros" % min_index)
+
+    def normalize_rows(self):
+        self.check_zero_rows()
+        newmat = self.copy()
+        newmat.row_scale(self.row_op(_inv_norm))
+        return newmat
+
+    def normalize_cols(self):
+        newmat = self.copy()
+        newmat.col_scale(self.col_op(_inv_norm))
+        return newmat
+
+    def normalize_all(self):
+        newmat = self.copy()
+        newmat.row_scale(self.row_op(_inv_root_norm))
+        newmat.col_scale(self.col_op(_inv_root_norm))
+        return newmat
+    
+    ### specific implementations of arithmetic operators
+
+    def _add_sparse(self, other):
+        """
+        Add another SparseMatrix to this one.
+
+        In the interest of avoiding black magic, this does not coerce
+        other types of objects.
+        """
+        assert isinstance(other, SparseMatrix)
+        if self.same_labels_as(other):
+            # the easy way
+            newps = self.psmatrix.copy()
+            newps.matrix.shift(1.0, other.psmatrix.matrix)
+            return self.replacedata(newps)
+        else:
+            newself, newother = self.match_labels(other)
+            newself += newother
+            return newself
+
+    def _iadd_sparse(self, other):
+        assert isinstance(other, SparseMatrix)
+        if not self.same_labels_as(other):
+            raise LabelError("In-place operations require matching labels.")
+        self.psmatrix.matrix.shift(1.0, other.psmatrix.matrix)
+        return self
+    
+    def _multiply_sparse(self, other):
+        """
+        Elementwise multiplication by a sparse matrix.
+        """
+        assert isinstance(other, SparseMatrix)
+        if self.same_labels_as(other):
+            result = self.replacedata(PysparseMatrix(nrow=self.shape[0], ncol=self.shape[1]))
+            for key, value in other.items():
+                result[key] = value * self[key]
+            return result
+        else:
+            newself, newother = self.match_labels(other)
+            return newself._multiply_sparse(newother)
+    
+    def _dot_sparse(self, other, transpose=False):
+        """
+        Matrix multiplication with another sparse matrix.
+        """
+        assert isinstance(other, SparseMatrix)
+        if self.shape[1] != other.shape[0]:
+            raise DimensionMismatch("Inner dimensions do not match.")
+        # Inner labels must match (or be unlabeled):
+        if self.col_labels != other.row_labels:
+            if self.col_labels is None:
+                raise LabelError("Can't multiply labeled with unlabeled data.")
+            else:
+                raise LabelError("Inner labels do not match.")
+        newmat = self.psmatrix * other.psmatrix
+        return SparseMatrix(newmat, self.row_labels, other.col_labels)
+    
+    def _transpose_dot_sparse(self, other, transpose=False):
+        """
+        Matrix multiplication of the transpose of this matrix with another
+        sparse matrix.
+        """
+        assert isinstance(other, SparseMatrix)
+        if self.shape[0] != other.shape[0]:
+            raise DimensionMismatch("Row dimensions do not match.")
+        # Inner labels must match (or be unlabeled):
+        if self.row_labels != other.row_labels:
+            if other.row_labels is None:
+                raise LabelError("Can't multiply labeled with unlabeled data.")
+            else:
+                raise LabelError("Row labels do not match.")
+        
+        # The low-level 'dot' function actually multiplies rows.
+        new_inner = spmatrix.dot(self.psmatrix.matrix, other.psmatrix.matrix)
+        newmat = PysparseMatrix(matrix=new_inner)
+        return SparseMatrix(newmat, self.col_labels, other.col_labels)
+    
+    ### dictionary-like operations
+
+    def keys(self):
+        """
+        Returns a list of tuples, giving the indices of non-zero entries.
+        """
+        # psmatrix.matrix.keys() doesn't do what you expect
+        return zip(*self.psmatrix.matrix.keys())
+    
+    def keylists(self):
+        """
+        Returns the indices of non-zero entries as a list of rows and a list
+        of columns.
+        """
+        return tuple(self.psmatrix.matrix.keys())
+
+    def value_array(self):
+        """
+        Get the values in this matrix, in key order, as a NumPy array.
+        """
+        return self.find()[0]
+    
+    ### eigenproblems
+
+    def svd(self, k=50):
+        """
+        Calculate the singular value decomposition A = U * Sigma * V^T.
+        Returns a triple of:
+        
+        - U as a dense labeled matrix
+        - S, a dense vector representing the diagonal of Sigma
+        - V as a dense labeled matrix
+        """
+        # Pysparse will hang if it encounters a zero row. Prevent this.
+        self.check_zero_rows()
+        
+        from csc.divisi2 import operators
+        from csc.divisi2.reconstruct import ReconstructedMatrix
+        transp = self.T
+        sym = ReconstructedMatrix(self, transp)
+        U, S = sym.spectral(k)
+        realk = U.shape[1]
+        V = np.zeros((self.shape[1], realk))
+        for i in xrange(realk):
+            # calculate V = A^T * U * Sigma^(-1), one eigenvector at a time
+            V[:,i] = transp.matvec(U[:,i]) / S[i]
+        V = DenseMatrix(V, self.col_labels, None)
+        return (U, S, V)
+
+    def spectral(self, k=50, verbosity=0):
+        """
+        Calculate the spectral decomposition A = Q * Lambda * Q^T.
+        This matrix, A, *must be symmetric* for the result to make any sense.
+
+        Returns a pair of:
+        
+        - Q as a dense labeled matrix
+        - L, a dense vector representing the diagonal of Lambda
+        """
+        # Pysparse will hang if it encounters a zero row. Prevent this.
+        self.check_zero_rows()
+
+        # Pysparse will also hang if asked for singular values that don't
+        # exist. This can be prevented in many cases by making sure that
+        # k is no larger than the matrix size.
+        if k > self.shape[0]: k = self.shape[0]
+
+        # Represent this in Pysparse's low-level symmetric format called `sss`
+        sss = self.psmatrix.matrix.to_sss()
+        preconditioner = precon.ssor(sss)
+        result = jdsym.jdsym(
+            A=sss,            # the matrix whose eigenvalues to find
+            M=None,           # no generalized eigenproblem
+            K=preconditioner, # the preconditioner
+            kmax=k,           # how many eigenpairs to find
+            tau=1e10,         # where to look for the eigenvalues
+                              # (big number so we get the largest)
+            jdtol=1e-10,      # tolerance
+            itmax=150,        # maximum number of iterations
+            linsolver=itsolvers.qmrs, # solver for linear system of equations
+            clvl=verbosity    # be a bit chatty for now
+        )
+        kconv, L, Q, it, it_inner = result
+        return DenseMatrix(Q, self.row_labels, None), L
+
+
+    ### methods that fall through directly to PySparse
+
+    def _setup_wrapped_methods(self):
+        """
+        Get simple methods from the psmatrix, or its internal ll_mat,
+        and pass them through.
+        """
+        self.compress = self.psmatrix.matrix.compress
+        self.norm = self.psmatrix.matrix.norm
+        self.values = self.psmatrix.matrix.values
+        self.items = self.psmatrix.matrix.items
+        self.take = self.psmatrix.take
+        self.put = self.psmatrix.put
+        self.find = self.psmatrix.find
+        self.addAt = self.psmatrix.addAt
+        self.addAtDiagonal = self.psmatrix.addAtDiagonal
+        self.matvec = self.psmatrix.matvec
+    
+    ### string representations
+
+    def __repr__(self):
+        # TODO: show something about labels
+        return "<SparseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
+    
+    def __str__(self):
+        r"""
+        Write out a representative picture of this matrix.
+
+        The upper left corner of the matrix will be shown, with up to 20x5
+        entries, and the rows and columns will be labeled with up to 8
+        characters.
+        
+        >>> print SparseMatrix((2,2))
+        SparseMatrix (2 by 2)
+            ---        ---    
+            ---        ---    
+        >>> print SparseMatrix((1, 8))
+        SparseMatrix (1 by 8)
+            ---        ---        ---        ---        ---     ...
+        >>> print SparseMatrix((1, 8), row_labels=['rowname'])
+        SparseMatrix (1 by 8)
+        rowname     ---        ---        ---        ---        ---     ...
+        >>> str(SparseMatrix((0, 0)))
+        'SparseMatrix (0 by 0)\n'
+        >>> str(SparseMatrix((80, 1)))[-3:]
+        '...'
+        """
+        inner_str = str(self.psmatrix[:20, :5])
+        lines = inner_str.split('\n')
+        headers = [repr(self)[1:-1]]
+        if self.col_labels:
+            col_headers = [('%-8s' % item)[:8] for item in self.col_labels[:5]]
+            headers.append(' '+('   '.join(col_headers)))
+        if self.row_labels:
+            for (i, line) in enumerate(lines):
+                lines[i] = ('%-8s' % self.row_labels[i])[:8] + line
+            for (i, line) in enumerate(headers):
+                if i > 0:
+                    headers[i] = ' '*8+line
+        lines = headers+lines
+        if self.shape[1] > 5 and self.shape[0] > 0:
+            lines[1] += ' ...'
+        if self.shape[0] > 20:
+            lines.append('...')
+        return '\n'.join(lines)
+
+class SparseVector(AbstractSparseArray, LabeledVectorMixin):
+    """
+    TODO: docs
+    """
+    def __init__(self, arg1, labels=None):
+        if isinstance(arg1, PysparseMatrix):
+            psmatrix = arg1
+        elif np.isscalar(arg1):
+            psmatrix = PysparseMatrix(nrow=arg1, ncol=1)
+        elif isinstance(arg1, (list, tuple)):
+            # First turn a sequence into a NumPy array, which we know how
+            # to handle (in the next step).
+            psmatrix = _ndarray_to_sparse(np.array(arg1))
+        elif isinstance(arg1, np.ndarray):
+            # Given a NumPy array, turn it into sparse data.
+            psmatrix = _ndarray_to_sparse(arg1)
+        elif isinstance(arg1, AbstractSparseArray):
+            psmatrix = arg1.psmatrix
+        else:
+            raise TypeError("I don't know how to construct a SparseVector from a %s" % type(arg1))
+        
+        assert isinstance(psmatrix, PysparseMatrix)
+        assert psmatrix.shape[1] == 1
+        self.psmatrix = psmatrix
+        self.labels = OrderedSet(labels)
+        self._setup_wrapped_methods()
+    
+    ### numpy-like properties
+
+    def __len__(self):
+        return self.psmatrix.shape[0]
+
+    @property
+    def shape(self):
+        return (len(self),)
+
+    @property
+    def nnz(self):
+        return self.psmatrix.nnz
+
+    ndim = 1
+
+    ### factory methods
+
+    @staticmethod
+    def from_lists(values, rows, n=None):
+        """
+        Create a new SparseVector from sparse data.  The data should be
+        expressed as two parallel lists, containing the values and the
+        corresponding entries that they go into.
+
+        The optional argument `n` specifies how many entries the vector
+        should have, so that it is possible to construct vectors with
+        zeros at the end this way.
+        """
+        if n is None: nrows = np.max(rows)+1
+        else: nrows = n
+        sparse = PysparseMatrix(nrow=nrows, ncol=1)
+        if isinstance(values, tuple): values = list(values)
+        if isinstance(rows, tuple): rows = list(rows)
+        sparse.put(values, rows, [0]*len(rows))
+
+        return SparseVector(sparse)
+    
+    @staticmethod
+    def from_entries(tuples):
+        """
+        Create a new SparseVector from a list of tuples. Each tuple is
+        of the form (value, index), expressing a value and where it goes
+        in the vector.
+
+        The reason the value comes first is that it is consistent with the
+        typical sparse representation of matrices. You may want `from_items`
+        for something that looks more Pythonic.
+        """
+        return SparseVector.from_lists(*zip(*tuples))
+    
+    @staticmethod
+    def from_items(items):
+        """
+        Create a new SparseVector from a list of tuples. Each tuple is
+        of the form (index, value), expressing a value and where it goes
+        in the vector.
+        """
+        return SparseVector.from_entries([(value, key) for (key, value) in items])
+
+    @staticmethod
+    def from_named_lists(values, keys, labels=None):
+        """
+        Constructs a SparseVector similarly to :meth:`from_lists`,
+        but you specify the *labels* of rows and columns, not their
+        indices.
+
+        Optionally, you can provide an existing label list or
+        OrderedSet to use for the labels.
+        """
+        if labels is None: labels = OrderedSet()
+        # Ensure that the labels are indeed OrderedSets.
+        labels = indexable_set(labels)
+        # Ensure all labels are present.
+        labels.extend(keys)
+        # Look up indices.
+        rows = [labels.index(name) for name in keys]
+        # Construct matrix.
+        result = SparseVector.from_lists(values, rows)
+        result.labels = labels
+        return result
+
+    @staticmethod
+    def from_named_entries(tuples):
+        """
+        Create a new SparseVector from a list of tuples. Each tuple is
+        of the form (value, key), expressing a value and the
+        label for where it goes in the vector.
+
+        You may want from_named_items, which takes input in the more
+        Pythonic (key, value) order.
+        """
+        return SparseVector.from_named_lists(*zip(*tuples))
+    
+    @staticmethod
+    def from_named_items(items):
+        """
+        Create a new SparseVector from a list of tuples. Each tuple is
+        of the form (key, value), expressing a value and where it goes
+        in the vector.
+        """
+        return SparseVector.from_named_entries([(value, key) for (key, value) in items])
+
+    ### basic operations
+
+    def copy(self):
+        """
+        Return a copy of this vector.
+        """
+        # labels are automatically copied
+        return SparseVector(self.psmatrix.copy(), self.labels)
+    
+    def replacedata(self, newsparse):
+        """
+        Make a sparse vector with the same labels, but different data. Useful
+        for applying an operation to the underlying PysparseMatrix.
+        """
+        assert isinstance(newsparse, PysparseMatrix)
+        return SparseVector(newsparse, self.labels)
+
+    def transpose(self):
+        """
+        A true vector has no "row" or "column" directionality, so it is its
+        own transpose.
+        """
+        return self
+    
+    @property
+    def T(self):
+        return self.transpose()
+
+    def density(self):
+        """
+        Calculate how dense the vector is.
+
+        Returns (num specified elements)/(num possible elements).
+        """
+        return float(self.nnz) / len(self)
+    
+    ### operations that export the data in another format
+
+    def entries(self):
+        """
+        Get a list of (value, index) tuples that describe the content of
+        this vector.
+
+        This format can be used to construct a new vector using
+        :meth:`SparseVector.from_entries`.
+        """
+        return zip(*self.lists())
+
+    def named_entries(self):
+        """
+        Get a list of (value, label) tuples that describe the
+        content of this vector.
+
+        This format can be used to construct a new vector using
+        :meth:`SparseVector.from_named_entries`.
+        """
+        return [(val, self.label(i))
+                for (val, i) in self.entries()]
+
+    def lists(self):
+        """
+        Get the content of this vector as two lists: a list of values,
+        and a list of indices, so that the vector could be reconstructed using
+        :meth:`SparseVector.from_lists`.
+        """
+        values, rows, cols = self.find()
+        return (list(float(v) for v in values),
+                list(int(r) for r in rows))
+
+    def named_lists(self):
+        """
+        Get the content of this vector as two lists: a list of values,
+        and a list of labels, so that the vector
+        could be reconstructed using
+        :meth:`SparseVector.from_named_lists`.
+        """
+        values, rows, cols = self.find()
+        named_rows = [self.label(row) for row in rows]
+        return values, named_rows
+
+    def items(self):
+        """
+        Get the content as this vector as a list of (index, value) items.
+        """
+        return [(key, value) for (value, key) in self.entries()]
+    
+    def named_items(self):
+        """
+        Get the content as this vector as a list of (label, value) items.
+        """
+        return [(key, value) for (value, key) in self.named_entries()]
+    
+    def to_dict(self):
+        """
+        Represent this vector as a dictionary from labels to values.
+        """
+        d = {}
+        for value, key in self.named_entries():
+            d[key] = value
+        return d
+    
+    def to_dense(self):
+        """
+        Convert this to a :class:`DenseVector`.
+        """
+        data = self.psmatrix.getNumpyArray()[:,0]
+        return DenseVector(data, self.labels)
+    
+    ### indexing
+    
+    def __getitem__(self, indices):
+        # workaround for psmatrix index glitch
+        if not isinstance(indices, tuple):
+            indices = (indices,)
+        if len(indices) == 0:
+            indices += (SLICE_ALL,)
+
+        labels = apply_indices(indices, self.all_labels())
+        ps_indices = indices+(0,)
+        data = self.psmatrix[ps_indices]
+        if len(labels) == 1:
+            return SparseVector(data, labels[0])
+        elif len(labels) == 2:
+            return SparseMatrix(data, labels[0], labels[1])
+        else:
+            return data
+    
+    def __setitem__(self, index, targetdata):
+        if isinstance(index, tuple):
+            assert len(index) == 1
+            index = index[0]
+
+        if isinstance(targetdata, SparseMatrix):
+            if targetdata.labels is not None:
+                warnings.warn('Not yet checking that the labels make sense!')
+            sparsedata = targetdata.psmatrix
+        elif isinstance(targetdata, SparseVector):
+            if targetdata.labels is not None:
+                warnings.warn('Not yet checking that the labels make sense!')
+            sparsedata = targetdata.psmatrix
+        elif isinstance(targetdata, np.ndarray):
+            sparsedata = _ndarray_to_sparse(targetdata)
+        elif isinstance(targetdata, PysparseMatrix):
+            sparsedata = targetdata
+        elif isinstance(targetdata, (list, tuple)):
+            nd = np.array(targetdata)
+            sparsedata = _ndarray_to_sparse(nd)
+        elif isinstance(targetdata, (int, long, float)):
+            sparsedata = targetdata
+        else:
+            raise TypeError("Don't know how to assign from %s" % type(targetdata))
+        self.psmatrix[index, 0] = sparsedata
+    
+    def match_labels(self, other):
+        """
+        Returns two new SparseVectors, containing all the labels of
+        self and other.
+        """
+        if self.labels is None and other.labels is None:
+            merged = None
+            indices = xrange(other.shape[0])
+            nentries = max(self.shape[0], other.shape[0])
+        elif self.labels is None or other.labels is None:
+            raise LabelError("I don't know how to merge labeled and unlabeled indices")
+        else:
+            merged, indices = self.labels.merge(other.labels)
+            nentries = len(merged)
+        
+        # Make aligned sparse matrices.
+        mat1 = PysparseMatrix(nrow=nentries, ncol=1)
+        mat1[:self.shape[0], 0] = self.psmatrix
+        mat2 = PysparseMatrix(nrow=nentries, ncol=1)
+        mat2[indices, 0] = other.psmatrix
+        return (SparseVector(mat1, merged),
+                SparseVector(mat2, merged))
+    
+    def to_row(self):
+        """
+        Represent this vector as a one-row SparseMatrix.
+        """
+        return self.to_row().T
+        return SparseMatrix(self.psmatrix, None, self.labels)
+
+    def to_column(self):
+        """
+        Represent this vector as a one-column SparseMatrix.
+        """
+        return SparseMatrix(self.psmatrix, None, self.labels)
+    to_col = to_column
+
+    ### vector operations
+
+    def vec_op(self, op):
+        """
+        Perform a NumPy operation on the non-zero values of the vector.
+        """
+        return op(self.value_array())
+
+    def normalize(self):
+        return self.cmul(self.vec_op(_inv_norm))
+    
+    ### specific implementations of arithmetic operators
+
+    def _add_sparse(self, other):
+        """
+        Add another SparseVector to this one.
+
+        In the interest of avoiding black magic, this does not coerce
+        other types of objects.
+        """
+        assert isinstance(other, SparseVector)
+        if self.same_labels_as(other):
+            # the easy way
+            newps = self.psmatrix.copy()
+            newps.matrix.shift(1.0, other.psmatrix.matrix)
+            return self.replacedata(newps)
+        else:
+            newself, newother = self.match_labels(other)
+            newself += newother
+            return newself
+
+    def _iadd_sparse(self, other):
+        assert isinstance(other, SparseVector)
+        assert self.same_labels_as(other)
+        self.psmatrix.matrix.shift(1.0, other.psmatrix.matrix)
+        return self
+    
+    def _multiply_sparse(self, other):
+        """
+        Elementwise multiplication by a sparse vector.
+        """
+        assert isinstance(other, SparseVector)
+        if self.same_labels_as(other):
+            result = self.replacedata(PysparseMatrix(nrow=1, ncol=self.shape[0]))
+            for key, value in other.items():
+                result[key] = value * self[key]
+            return result
+        else:
+            newself, newother = self.match_labels(other)
+            return newself._multiply_sparse(newother)
+    
+    def _dot_sparse(self, other, transpose=False):
+        """
+        Matrix multiplication with another sparse vector.
+        """
+        assert isinstance(other, SparseVector)
+        if self.shape != other.shape:
+            raise DimensionMismatch("Dimensions do not match.")
+        # Labels must match (or be unlabeled):
+        if self.labels != other.labels:
+            if self.labels is None:
+                raise LabelError("Can't multiply labeled with unlabeled data.")
+            else:
+                raise LabelError("Labels do not match.")
+        newmat = spmatrix.dot(self.psmatrix.matrix, other.psmatrix.matrix)
+        return newmat[0,0]
+    _transpose_dot_sparse = _dot_sparse
+
+    ### dictionary-like operations
+
+    def keys(self):
+        """
+        Returns a list of tuples, giving the indices of non-zero entries.
+        """
+        # psmatrix.matrix.keys() doesn't do what you expect
+        return zip(*self.psmatrix.matrix.keys())
+    
+    def keylists(self):
+        """
+        Returns the indices of non-zero entries as a list of rows and a list
+        of columns.
+        """
+        return tuple(self.psmatrix.matrix.keys())
+
+    def value_array(self):
+        """
+        Get the values in this matrix, in key order, as a NumPy array.
+        """
+        return self.find()[0]
+
+    ### methods that fall through directly to PySparse
+
+    def _setup_wrapped_methods(self):
+        """
+        Get simple methods from the psmatrix, or its internal ll_mat,
+        and pass them through.
+        
+        This includes fewer methods than SparseMatrix: some of the
+        methods would be weirdified by the different indices, but there's
+        probably a simpler way to do them anyway.
+        """
+        self.compress = self.psmatrix.matrix.compress
+        self.norm = self.psmatrix.matrix.norm
+        self.values = self.psmatrix.matrix.values
+        self.find = self.psmatrix.find
+        self.matvec = self.psmatrix.matvec
+    
+    ### string representations
+
+    def __repr__(self):
+        # TODO: show something about labels
+        return "<SparseVector (%d of %d entries)>" % (self.nnz, len(self))
+
+    def __str__(self):
+        pairs = ["%s=%0.6g" % (key, value) for key, value in self.named_items()]
+        if len(pairs) > 20: pairs[20:] = ['...']
+        therepr = "%s: [%s]" % (repr(self)[1:-1], ', '.join(pairs))
+        return therepr
+

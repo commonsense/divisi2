@@ -1,0 +1,112 @@
+Here's a pruned version of the history; the full history, including all
+of our false starts and oops fixes, can be viewed through Bazaar or on
+Launchpad.
+	
+295: Kenneth Arnold 2009-06-01 Normalized copy.
+294: Kenneth Arnold 2009-06-01 FIX tensor .magnitude function. It previously returned the square of the magnitude.
+293: Kenneth Arnold 2009-06-01 Skip the failing tensordot test; this needs an overhaul anyway.
+292: Kenneth Arnold 2009-06-01 Eventually tensors should be constructable from nested lists, not just in the test harness. This is one step in that direction.
+291: Kenneth Arnold 2009-06-01 Some test cleanups and improvements in documentation.
+290: Kenneth Arnold 2009-06-01 Document and fix a corner case (empty DenseTensors).
+289: Kenneth Arnold 2009-06-01 Use numpy's reliable scalar checks.
+288: Kenneth Arnold 2009-06-01 Fix key parameter to top_items.
+286: Kenneth Arnold 2009-05-30 Improve summarization display.
+283: Jayant Krishnamurthy 2009-05-28 renamed Graph to SemanticNetwork
+280: Jayant Krishnamurthy 2009-05-27 moved the method to build a graph out of conceptnet into CrossBridge 
+279: Jayant Krishnamurthy 2009-05-27 fixed k_edge_subgraphs
+278: Jayant Krishnamurthy 2009-05-27 changed some comments
+277: Jayant Krishnamurthy 2009-05-27 created the CrossBridge class for analogies
+276: Jayant Krishnamurthy 2009-05-05 better docstrings
+275: Jayant Krishnamurthy 2009-05-05 analogy code
+272: Jayant Krishnamurthy 2009-04-12 some changes from long ago that make a view with a zero mean
+270: Kenneth Arnold 2009-04-12 Utility function to determine sparsity.
+266: Kenneth Arnold 2009-04-10 Push in some of Andrew's changes to setup.py. Still not perfect.
+265: Andrew Farrell 2009-04-01 added pyPI-compatable setup.py
+263: Ken Arnold 2009-03-19 Fix broken __contains__ across the board. Phew...
+262: Ken Arnold 2009-03-18 Clarify the last change.
+261: Ken Arnold 2009-03-18 Fix __contains__ for labeled views.
+260: Ken Arnold 2009-03-18 Test __contains__, somewhat.
+259: Kenneth Arnold 2009-03-18 Fail sensibly if the tensor is empty
+258: Kenneth Arnold 2009-03-18 Fix repr() of empty orderedset
+251: Kenneth Arnold 2009-03-17 Add selfblend example.
+249: Kenneth Arnold 2009-03-17 Fix blending factors (weight by _inverse_ variance).
+248: Kenneth Arnold 2009-03-11 Add a packed-binary file format for svdview.
+247: Kenneth Arnold 2009-03-11 Make the export_svdview method work.
+246: Kenneth Arnold 2009-03-11 New Blend class.
+241: Kenneth Arnold 2009-03-10 Make tensor repr and example_key not fail on an empty tensor
+236: Ken Arnold 2009-03-04 Add API docs (apydia on new-caledonia = hacked to work).
+235: Andrew Farrell 2009-02-27 make easy_install understand that numpy is a dependency
+234: Ken Arnold 2009-02-27 new-caledonia set up us the apidoc
+231: Kenneth Arnold 2009-02-27 Add release info.
+230: Kenneth Arnold 2009-02-27 Making Sphinx work (part 1)
+226: Kenneth Arnold 2009-02-26 You should now be able to run './setup.py apydia'. Should.
+225: Kenneth Arnold 2009-02-26 Make test_tensor_dl importable
+221: Kenneth Arnold 2009-02-26 Unify examples (temporarily out of the docs)
+218: Kenneth Arnold 2009-02-26 Clue setuptools in on the new layout, and bump the version number (we'll actually do numbered releases now).
+217: Kenneth Arnold 2009-02-26 BREAKAGE: Move the divisi package into its own subdir.
+216: Robert Speer 2009-02-26 re-ran Apydia
+213: rspeer 2009-02-24 autoblend
+212: rspeer 2009-02-10 add sampling
+
+	
+Old SVN revision numbers:
+r603 | kcarnold | A hopefully robust __setstate__ for DictTensors.
+r598 | kcarnold | Move divisi.cnet to conceptnet.analogyspace. *REQUIRES NEW CSAMOA*. 
+r591 | jayant | Incremental SVD
+r587 | kcarnold | Rewrite layering logic so it's less brittle.
+r567 | kcarnold | Add cmul for dense tensors, finally.
+r566 | rspeer | added export_svdview
+r545 | kcarnold | Improve adding tensors. Scalar addition now works.
+r538 | kcarnold | tf-idf view.
+r533 | kcarnold | Comprehensive Cython build and distribution fix.
+r517 | jayant | Correction to the (u,v)_angles_to methods on the SVD object
+r515 | rspeer | loads of documentation
+r509 | kcarnold | Switch from epydoc to apydia. Thanks, Rob.
+r504 | kcarnold | A reconstructed tensor that re-multiplies by the norms.
+r472 | kcarnold | Reconstructed 2D tensor.
+r469 | kcarnold | Deprecate the old SparseLabeledTensor classes in favor of constructor methods. This kills some functionality that should have been ported to the real tensor stack long ago.
+r468 | kcarnold | An iterated version of outer_tuples; should be better for memory.
+r447 | kcarnold | Common exceptions for Divisi.
+r431 | kcarnold | Don't include zero entries in the sum.
+r430 | kcarnold | Support adding tensors
+r429 | kcarnold | Remove the unnecessary indexable_set
+r422 | jayant | DictTensor slice optimization for slicing an entire row 
+r421 | jayant | Modified DictTensor to store its items in nested dictionaries instead of one big dictionary with tuple keys. The change causes inserts to be 8% slower, but DictTensors use 40% less memory. 
+r420 | kcarnold | Fix SVD results when we got fewer singular values than asked for.
+r412 | jayant | Fixed a bug with DictTensor's tensordot function where it would not return a scalar
+r411 | kcarnold | Make the Tensor getattr fallback more robust.
+r410 | kcarnold | Low-hanging fruit for optimization.
+r409 | kcarnold | Kill an ill-advised Abstract layer that is only slowing things down.
+r408 | kcarnold | Separate Wikipedia stuff.
+r407 | kcarnold | Update docs
+r406 | kcarnold | Remove some legacy stuff
+r404 | kcarnold | Remove unused PerspectiveSpace code.
+r403 | kcarnold | _svdlib -> divisi._svdlib.
+r399 | jayant | Made DictTensor slicing preserve the shape of the parent
+r396 | jayant | added the combine_by_element method that allows you to combine two tensors element by element
+r394 | kcarnold | Fix a serious long-standing normalization bug.
+r392 | kcarnold | Default the identities to sqrt(5) for the ConceptNet tensor, so that the norms come out as expected.
+r370 | jalonso | Repackage svdlibc using setuptools instead of autoconf.
+r356 | kcarnold | Improve test framework.
+r353 | kcarnold | Fix naming in ConceptNet: s/stem/concept/g
+r352 | jayant | Added a method for iterating over the keys along one dimension of a tensor
+r351 | jayant | Added a method to find the concepts near a specified feature
+r350 | jmoeller | Changed slicing to be the exceptional case in DictTensor
+r343 | kcarnold | rename ut to u in the SVD wrapper code.
+r339 | rspeer | major fix: made normalized SVD actually work
+r338 | rspeer | added demos
+r337 | rspeer | Make getting an unknown element of a sparse tensor not fail.
+r334 | kcarnold | Add methods for computing angles.
+r333 | kcarnold | Provide a rudimentary division support in the base Tensor class. Subclasses can do better.
+r332 | kcarnold | cnet: Handle polarity, and switch cutoff from a >= to a >
+r321 | kcarnold | Take advantage of new queryset_refactor features to let Django make the query for us.
+r317 | kcarnold | Support negating tensors.
+r314 | kcarnold | Naming fixes in cnet
+r301 | kcarnold | Make 2D explicit in the load functions.
+r300 | kcarnold | Remove obsolete load/store functions. Use pickle/cPickle instead.
+r299 | kcarnold | Remove ConceptNet2DTensor; everything is a bare function now. This incidentally removes load_cross_validation; maybe we'll restore that later.
+r298 | kcarnold | Make normalization methods use separate classes
+r297 | kcarnold | Generalize layering.
+r296 | kcarnold | Add an "averaging" normalization
+r295 | kcarnold | Make one csamoa dep optional.
+r285 | | Inital public release

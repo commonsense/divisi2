@@ -1,0 +1,5 @@
+This is Doug Rohde's SVDLIBC library.
+
+URL: http://tedlab.mit.edu/~dr/svdlibc/
+
+We have removed file i/o functionality.

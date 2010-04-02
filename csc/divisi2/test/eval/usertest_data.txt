@@ -1,0 +1,4497 @@
+chore	Causes	earn money	1
+piece	UsedFor	butler	-1
+stitch	HasProperty	medical	2
+bass	AtLocation	subway pass	-1
+transportation device	AtLocation	small breadbox	-1
+statement own restaurant	IsA	source income many person help answer question source income	2
+agreement	HasProperty	important	2
+tube	AtLocation	room	1
+person	UsedFor	sex	1
+move	HasA	flee	1
+gas station	AtLocation	district	1
+birthday	ConceptuallyRelatedTo	anniversary	1
+australia	IsA	rural	2
+marker	AtLocation	flat	2
+sun	UsedFor	live	-1
+create art	HasPrerequisite	inspire	2
+cold tap	UsedFor	quench thirst	2
+cocktail cabinet	UsedFor	contain alcoholic beverage	2
+program language	AtLocation	breed	-1
+sour	CapableOf	answer question	-1
+tow	IsA	boast	-2
+take bath	HasFirstSubevent	pain	-1
+test	AtLocation	yes	-1
+fox	Causes	grief	-1
+hide-a-bed sofa	AtLocation	store	1
+ferry	Desires	die	-1
+surf web	UsedFor	learn entertainment	2
+yourself	CapableOf	need money	-2
+wash dish	HasProperty	elastic	-1
+person	AtLocation	once	-1
+punch	HasProperty	telephone box	-1
+unhealthy	HasProperty	wrong	0
+anatomy	HasProperty	body part	2
+playstation	IsA	game machine	2
+pet	IsA	small breadbox	-1
+sauce	ConceptuallyRelatedTo	cardinal	-1
+splash	HasProperty	action	-2
+ambulance	AtLocation	car show	-1
+watch musician perform	HasPrerequisite	attentive	2
+head examine	ConceptuallyRelatedTo	eat food	-1
+companion	MotivatedByGoal	fun	-1
+hour	IsA	noun	2
+quantity	ConceptuallyRelatedTo	item	2
+fish	HasA	entertainer	-1
+flaw	HasPrerequisite	weapon	-2
+toddler	CapableOf	awesome	1
+holiday shop	Causes	desert	-1
+write term paper	UsedFor	learn new information	1
+geta	IsA	jog park	-1
+deodorant	MotivatedByGoal	dirty	1
+close door	AtLocation	pound	1
+rice	ConceptuallyRelatedTo	gesture	-1
+lord	HasProperty	generic	1
+cocktail cabinet	AtLocation	build	2
+armchair	AtLocation	build	2
+emerald	UsedFor	decoration	2
+wait	HasSubevent	joke	1
+thing	IsA	cheeper during sale	2
+member	CapableOf	wonder	1
+catch trout	Causes	clean	2
+child	ConceptuallyRelatedTo	grandfather	1
+plate	HasProperty	china piece	1
+motorcycle	UsedFor	personal satisfaction	2
+nose	UsedFor	manipulate	-1
+write	HasPrerequisite	lot write	2
+exercise	HasProperty	strand	-2
+board	UsedFor	find office	2
+onion	AtLocation	institution	-1
+leadership	CapableOf	milk cow	-1
+new experience	Causes	competition	1
+employ	IsA	alp	-2
+oak	IsA	blue yellow	-1
+listen radio	Causes	use finger	-1
+reach advantage	Causes	fun	1
+ring	HasProperty	wed token	2
+tell truth	HasProperty	fun	1
+market	IsA	bazaar	1
+ruler	AtLocation	paperwork	1
+pass course	HasPrerequisite	homework	2
+mary	IsA	build new house	-2
+clean clothe	MotivatedByGoal	stain	2
+shop	HasPrerequisite	ir	1
+cat	AtLocation	stock market	-1
+go drive	HasPrerequisite	telephone kiosk	-1
+academy	Desires	die	-1
+happiness	CausesDesire	toothbrush head	-1
+print printer	HasPrerequisite	web browser	-1
+that	HasA	work	-1
+tip	IsA	money	2
+eyeglass	AtLocation	driveway	-1
+conquer opponent	HasProperty	fun	1
+lord	CapableOf	father child	2
+award	IsA	mind	-2
+travel	HasLastSubevent	loose ticket	-1
+foyer	AtLocation	real	-2
+accord	CapableOf	slow down	1
+cost	HasProperty	item price	2
+leisure	HasProperty	fun	2
+encyclopedia	HasProperty	aluminum	-1
+paragraph	PartOf	card case	-1
+butler	CapableOf	shine silverware	2
+eternal	HasProperty	look	-2
+score home run	MotivatedByGoal	team win	2
+salad spinner	AtLocation	restaurant	1
+member	HasProperty	partner	1
+shop	HasPrerequisite	barter	1
+write program	UsedFor	fun	1
+fact	IsA	popularity	-1
+marmot	AtLocation	great britain	0
+program language	AtLocation	employer	-1
+exertion	IsA	human language	-1
+commit murder	MotivatedByGoal	normal	-1
+file box	UsedFor	take note	-1
+chop	IsA	montana	-1
+singular	AtLocation	survive	-2
+hockey	HasProperty	enjoyable	1
+mink	AtLocation	wild	2
+bridge	IsA	water spin	2
+person	Desires	money power love	2
+cliff note	AtLocation	bookstore	1
+stick up chimney	AtLocation	cost money	-2
+communicate	HasSubevent	suspicion	1
+go mall	MotivatedByGoal	stuff	2
+minnow	ConceptuallyRelatedTo	water	2
+entranceway	AtLocation	office	2
+philippine	AtLocation	slime	-1
+arm	HasProperty	prepare	1
+medical doctor	IsA	human	2
+team sport	ConceptuallyRelatedTo	few	-2
+metal	HasProperty	consider valuable rare	2
+pay check	UsedFor	acquire	2
+paper pencil	HasFirstSubevent	idea	-1
+transportation device	AtLocation	bridge arch	-2
+play lacrosse	UsedFor	play team sport	2
+go drive	HasPrerequisite	nag	-2
+technician	AtLocation	space station	2
+imprisonment	HasProperty	bad	1
+adventurer	HasPrerequisite	tire	-1
+move	ConceptuallyRelatedTo	change place	2
+handle	ConceptuallyRelatedTo	closure	0
+grate	IsA	grill	1
+ready	HasProperty	endless	-2
+lucid dream	HasPrerequisite	lucid mind	0
+slice	HasProperty	necessary	0
+kill	HasSubevent	spend much money	-1
+transportation device	AtLocation	beach	-1
+start family	MotivatedByGoal	activist	-1
+advertise panel	AtLocation	pool	-1
+clog	AtLocation	pool	1
+bird	UsedFor	reach tentative agreement	-1
+paragraph	MotivatedByGoal	change	-1
+kiss	IsA	wear clothe	-1
+run marathon	HasPrerequisite	practice run	2
+go mall	HasPrerequisite	no life	1
+singular	AtLocation	fir	-2
+eatery	Causes	nightmare	-1
+examine	HasSubevent	adopt	-1
+go laundromat	HasFirstSubevent	carry clothe inside	2
+advance battle	Causes	brain damage	1
+father	CapableOf	frustration	1
+seaweed	AtLocation	coil	1
+fidelity	AtLocation	generation	1
+motor	AtLocation	street	2
+clothe	IsA	block	0
+checkbook cover	AtLocation	store	1
+this	IsA	auditorium	-1
+stove	IsA	satchel	-1
+pulpit	UsedFor	ozone	-1
+see idea become reality	Causes	fulfillment	2
+buy food	UsedFor	wash hand	-1
+kosher delicatessen	AtLocation	town	2
+window	AtLocation	see outside	-1
+see band	UsedFor	watch parade	2
+eraser	AtLocation	any color	2
+several person	CapableOf	walk dog	2
+stick up chimney	AtLocation	existence	-1
+watt	IsA	cloud	-2
+eagle	IsA	taste good	0
+hand movement	IsA	body part	-1
+business	HasProperty	flower	-2
+hour	ConceptuallyRelatedTo	ever	-2
+meet interest person	HasSubevent	response	2
+examination	HasPrerequisite	test	2
+paul	IsA	take out garbage	-1
+shade	IsA	grey place	2
+grid object	AtLocation	map	2
+kennel	Causes	feel tire	-1
+poison	UsedFor	feel pain	2
+precious	IsA	adjective	2
+sulphur	HasA	cloud	-1
+projector	UsedFor	sit	-1
+holiday shop	HasSubevent	pay	2
+bat	UsedFor	flat	-2
+fire	CapableOf	buffet	-2
+sphere	IsA	three-dimensional surface point equidistant fix point	2
+contemplate	HasPrerequisite	able think	2
+fidelity	AtLocation	better understand	2
+play game friend	HasSubevent	learn	2
+off	AtLocation	clinic	-1
+away	HasProperty	distance	2
+give clue	HasSubevent	explain	2
+mouse	AtLocation	big house	1
+habit	AtLocation	aeroplane	-1
+tire person	HasA	two arm	2
+something	AtLocation	go	1
+water	AtLocation	bathub	2
+simple	AtLocation	vehicle	-2
+concussion	UsedFor	exploration	-1
+boredom	CausesDesire	lion	-1
+julius caesar	CapableOf	play tennis	2
+help person	IsA	verb	2
+rod	HasProperty	hard	2
+go performance	Causes	hear music	2
+climb mountain	HasSubevent	sleigh ride	1
+cardboard box	AtLocation	storage area	2
+expense	HasA	money	2
+ally	AtLocation	pound	-1
+package	AtLocation	discovery	-2
+handle toothbrush	ReceivesAction	use weapon	0
+music shop	IsA	sing	-1
+mistress	IsA	face other	-1
+familiar	ConceptuallyRelatedTo	parent	2
+milan	Desires	new computer	-1
+radio studio	AtLocation	sanctuary	-1
+chief	HasA	big headdress	1
+glue	AtLocation	belly whale	-1
+print	UsedFor	read material	2
+hand	HasProperty	digit	2
+tornado	HasProperty	doctor examination room	-1
+staff	AtLocation	store	2
+young human	ConceptuallyRelatedTo	paint	2
+soda pop	IsA	supersaturate carbon dioxide	2
+corner shop	AtLocation	delaware	2
+tennis game	UsedFor	take chance	2
+road	ConceptuallyRelatedTo	gate	2
+cross	IsA	place	-1
+apple tree	AtLocation	romeo michigan	2
+throw party	HasPrerequisite	plan	2
+soda	IsA	burp	2
+bungee jump high bridge	Desires	new computer	-1
+tapestry	AtLocation	home	1
+music stand	ConceptuallyRelatedTo	hear	2
+plutonium	IsA	live organism	-1
+test	AtLocation	college class	2
+basin	HasPrerequisite	turn water	-1
+district	AtLocation	resort	0
+back courtyard	UsedFor	yeast	-1
+door	LocatedNear	daily	-2
+find lose item	HasPrerequisite	dagger	-1
+venice	AtLocation	military	-1
+marsh	AtLocation	countryside	2
+analyse	HasSubevent	start think hard	2
+commuter	CapableOf	study	2
+act play	HasPrerequisite	attend audition	2
+crab	AtLocation	red lobster	2
+person	PartOf	live house	2
+cloud	HasProperty	natural	2
+read magazine	Causes	pass exam	1
+example	ReceivesAction	given teach concept	2
+fake	Desires	die	-1
+stay healthy	HasSubevent	lorry	-1
+recline	HasPrerequisite	tire	1
+minister	HasProperty	church leader	2
+ginger	HasProperty	fluid	-1
+buy product	HasPrerequisite	finish	-1
+eye	IsA	window	0
+impairment person	HasA	hydrocele	0
+one	IsA	ride	-1
+impairment person	HasA	appendicitis	2
+policy	Desires	die	-1
+farmer	ConceptuallyRelatedTo	grow	2
+horse	AtLocation	toronto	1
+kid	CapableOf	watch	2
+smell good	HasPrerequisite	take off clothe	0
+gene	HasProperty	fun	0
+winter	LocatedNear	dead tree	2
+evidence	IsA	body part	-1
+butter	HasProperty	cow	2
+singular	AtLocation	astronomer	-1
+spanish restaurant	AtLocation	maryland	1
+play football	HasSubevent	score goal	2
+violin	ConceptuallyRelatedTo	scare person	-1
+electronic appliance	HasA	ring	1
+turnstile	AtLocation	seashore	-1
+recognize	HasProperty	verb	-2
+play card	HasSubevent	shuffle	2
+add up number	UsedFor	accout	1
+essay	AtLocation	office	1
+remember	IsA	say yes	-1
+violin	AtLocation	spend time friend	1
+curl iron	AtLocation	pocket	0
+coast	HasProperty	along sea	2
+visit other country	HasSubevent	wear glove	1
+something	AtLocation	car dealership	2
+witch	CapableOf	gay	1
+drug dealer	CapableOf	offer drug	2
+carrie	HasProperty	well	-2
+fine	ConceptuallyRelatedTo	cement	0
+play football	HasPrerequisite	foot;ball	2
+claim	IsA	see	-1
+person	IsA	butler	-1
+shower head	IsA	watch tv	-1
+deliver	HasA	three	-1
+office	IsA	partition	2
+back yard	UsedFor	wee	1
+token turnstile	UsedFor	repeat	0
+sucker	LocatedNear	birthday	0
+metronome	IsA	musical instrument	-1
+salvation	IsA	description	-1
+buy	HasPrerequisite	find store	1
+wooden rod	IsA	clothe	-1
+stay healthy	Causes	firework	-1
+woman	CapableOf	grow plant	1
+idea	IsA	difficulty	1
+visit museum	HasSubevent	sneeze dust	1
+leave house	HasLastSubevent	close door behind	1
+squirrel	AtLocation	great outdoors	2
+hurdle	IsA	dance	-1
+alone	IsA	adjective	2
+farmer field	PartOf	unite state	1
+smash	HasProperty	torso	-2
+grind	HasProperty	ability	-2
+travel	HasFirstSubevent	cold weather	-2
+castanets	UsedFor	compact disc	-1
+steep	AtLocation	year	-2
+native	ConceptuallyRelatedTo	homeland	2
+fox	IsA	furry	1
+away crime	HasProperty	lose	-2
+sand	ConceptuallyRelatedTo	single particle	1
+'ho	DefinedAs	sound laughter	1
+exercise	HasPrerequisite	eat healthy food	1
+new orlean	IsA	finger	-1
+fire extinguisher	AtLocation	build	2
+stallion	HasA	tail	-1
+it	IsA	small cat	0
+gymnasium	UsedFor	pussy	-1
+compute sum	HasSubevent	predator	-2
+go market	HasPrerequisite	fleet	-2
+weapon	UsedFor	excruciate	1
+we	HasProperty	happy not sad	2
+human body	HasA	limit ability repair itself	2
+hang out	HasFirstSubevent	open mouth	-1
+disinfectant	AtLocation	drug store	2
+speech	AtLocation	new york	-2
+sunshine	IsA	robert	-1
+microphone	AtLocation	orchestra	1
+economy	UsedFor	produce	1
+copulate	MotivatedByGoal	save money	-2
+appointment book	UsedFor	keep busy person busy	1
+person	AtLocation	golf course	-2
+mint	UsedFor	gamble	-2
+quiet	UsedFor	fun	-2
+outbreak	UsedFor	lose weight	-1
+play	MotivatedByGoal	boar	-2
+board	AtLocation	basketball court	-2
+food	AtLocation	end life	-2
+onto web	MotivatedByGoal	learn new information	-2
+read subject	MotivatedByGoal	learn subject	1
+chris	IsA	shoveling snow	-2
+softwares	UsedFor	execute different program	2
+simile	Causes	burn calorie	-1
+open bag chip	MotivatedByGoal	wish eat content	2
+tim	IsA	lace	-1
+size	HasLastSubevent	die	-2
+buzz	IsA	action	2
+grass	HasProperty	toddler	-1
+program language	AtLocation	how	-2
+vegetable	IsA	tray	-1
+gold	ReceivesAction	polish	2
+gift bridal shower	IsA	household item	-1
+sum	IsA	measure	-2
+distance	HasProperty	unit measurement	2
+excuse	AtLocation	classroom	2
+lifeguard	AtLocation	lake	-1
+translucent	HasProperty	fluid	1
+sugar	UsedFor	stop sign	-1
+ox	AtLocation	montana	-1
+philippine	AtLocation	if	-2
+rocky	IsA	jog park	-1
+burn	IsA	fright	1
+write	IsA	process	2
+kid play	HasProperty	amount	-2
+recover	HasProperty	lose	2
+go party	Causes	pine tree	-1
+crowd	HasProperty	flee	1
+white	HasA	three	-1
+kick	IsA	select	-2
+flower other plant	UsedFor	landscape	2
+wreck	Desires	die	-2
+cent	HasProperty	small coin	2
+answer question	HasPrerequisite	imaginary	2
+colorado spring	PartOf	colorado	2
+stop marry	Causes	stew	-1
+meet friend	HasPrerequisite	arrange meet friend	2
+rabbit	HasProperty	formal name	-1
+rich	IsA	wash car	-2
+drop blood	CapableOf	walk dog	-1
+window curtain	AtLocation	chair	-1
+wage war	MotivatedByGoal	hate opposition	2
+eat ice cream	Causes	gerbil	-1
+baby	CapableOf	sleep long time	1
+human	AtLocation	pavement	1
+sofa hide bed	AtLocation	vehicle bomb	-1
+catastrophe	HasPrerequisite	weapon	1
+see band	MotivatedByGoal	answer question	-1
+lover	ConceptuallyRelatedTo	cow	-1
+servant	HasProperty	know	1
+childhood	Desires	learn	2
+human	CapableOf	get	2
+pouch	UsedFor	payment counter	1
+cut	UsedFor	split	2
+useless	HasSubevent	think	1
+book	UsedFor	gain information	2
+lettuce	IsA	salad green	2
+rifle	UsedFor	outbreak	-1
+singular	AtLocation	rescue	-1
+pave	HasA	engine	-1
+horn	IsA	instrument	2
+human	CapableOf	sit couch	2
+hit bottle	HasSubevent	call	0
+epileptic fit	HasSubevent	as	-2
+woodwind	HasProperty	male	-1
+cheater	AtLocation	desk	-1
+prepare	IsA	prefix	-1
+rubber stamp	IsA	re-ink after few use	2
+vegetable	IsA	loaf	-1
+homeowner	CapableOf	mow lawn	2
+vend stand	AtLocation	airliner	-1
+crystal	IsA	transparent solid whose atom form regular pattern	1
+bike	CapableOf	stationary	1
+plain	HasProperty	jug	-1
+sheet paper	UsedFor	division	1
+buy	HasPrerequisite	rob	-1
+high aerobic dance	IsA	extreme calorie burn activity	2
+fidelity	AtLocation	dishonesty	-1
+vinyl	UsedFor	produce	1
+order pizza	IsA	action	2
+clerk	AtLocation	grocery store	2
+well	AtLocation	nowhere	1
+city	AtLocation	big city	2
+protect	HasProperty	harm away	2
+remember	IsA	put together	1
+open	ConceptuallyRelatedTo	loud	0
+fantasy	HasSubevent	snore	-1
+person	Desires	know happen die	2
+stab death	HasPrerequisite	snake	-2
+sale	AtLocation	appliance	-2
+water plant	HasPrerequisite	leisure	2
+silo	HasPrerequisite	cook	-2
+medical instrument	HasProperty	lose	1
+eye	AtLocation	character play	2
+kitchen	UsedFor	store food	2
+use phone	HasProperty	lose	0
+place baseball	MotivatedByGoal	exercise	1
+program language	AtLocation	toilet tank	-1
+play guitar	Causes	want learn	1
+insect repellant	AtLocation	cabinet	2
+large container	HasSubevent	entertain	-2
+pass course	HasPrerequisite	pay attention class	2
+person	AtLocation	playroom	2
+many part	HasProperty	lose	-2
+prepare	IsA	air movement	0
+restaurant storage area	AtLocation	server	-2
+fidelity	AtLocation	variable	-2
+eat lunch	HasSubevent	toothbrush head	-1
+impairment person	HasA	pneumonectomy	0
+assault	IsA	physical attack	2
+salvation	HasProperty	lovely	2
+powder	AtLocation	marina	-2
+meet girl	UsedFor	lover	-1
+window curtain	AtLocation	store	-1
+block sun	UsedFor	burn wood	1
+grocery store	AtLocation	large city	2
+margaret meade	IsA	honest accurate anthropologist	0
+star	IsA	march band	0
+its	IsA	face other	-2
+invention	UsedFor	solve problem	1
+girlfriend	CapableOf	make love	-1
+person	CapableOf	make own bookcase wood	2
+road	HasProperty	rural	2
+urine	HasProperty	ally	-2
+danny	IsA	paint	-1
+cost	UsedFor	fee	-1
+musical notation	IsA	old	-2
+broadway-nassau	PartOf	lower manhattan	-1
+human	CapableOf	drink fluid	2
+philippine	AtLocation	big brother	-2
+stick up chimney	AtLocation	human eye	-2
+ago	HasProperty	endless	-2
+person	CapableOf	draw check account	2
+second violin	IsA	listen	-2
+eiffel tower	UsedFor	startle	-2
+pluto	CapableOf	deserve title planet	2
+college	AtLocation	county highway	-1
+mouse	AtLocation	wall space	2
+clog	UsedFor	sit down	-2
+either	HasProperty	partner	-2
+blind person	IsA	face other	-2
+reproduce	MotivatedByGoal	array	-2
+space	HasA	buy shirt	-2
+stick	HasProperty	pick up	-2
+manure	AtLocation	forest	1
+bazaar	UsedFor	wrap present	-1
+no sound	HasPrerequisite	take time	-1
+neck	AtLocation	bathroom	-1
+trolley	HasSubevent	compare price	-2
+advance battle	Causes	against	-1
+practice	CapableOf	sound alarm	-2
+something	AtLocation	new jersey	2
+human	CapableOf	clear throat	2
+owner	Desires	possession stolen	2
+read	UsedFor	social interaction	-1
+may	IsA	motion	-2
+effort	AtLocation	nose	-1
+wave	AtLocation	iraq	-2
+use calculator	HasPrerequisite	math problem solve	2
+wax dental floss	UsedFor	clean food between tooth	2
+seashore	HasA	fish	2
+ambition	HasProperty	important	1
+bowl alley	AtLocation	radio	-1
+first class airplane seat	CapableOf	live house	-1
+emptiness	LocatedNear	cloud	2
+paint	HasProperty	picture	2
+why	HasProperty	sky	0
+connie	ReceivesAction	tire	-1
+bind	HasFirstSubevent	open book	-1
+splurge	MotivatedByGoal	play music	1
+stick up chimney	AtLocation	very	-1
+picnic basket	AtLocation	grocery store	2
+find job	MotivatedByGoal	need money	2
+cookie	CausesDesire	wash clothe	-1
+otter	HasA	fur	2
+eye	AtLocation	how old	-1
+waste	IsA	minibar	1
+use pencil	HasPrerequisite	look	1
+pass class	HasPrerequisite	listen	2
+nose	ConceptuallyRelatedTo	snot	2
+whale	IsA	great blue	2
+ring	HasProperty	gray	1
+foot	UsedFor	lean	1
+tree	CapableOf	stapler	-1
+brake	CapableOf	slow bus	2
+child	Desires	lot money	2
+boulder	MotivatedByGoal	go home	-2
+projectile	IsA	ufo	1
+yard	AtLocation	large city	1
+hand	HasProperty	percussion instrument	2
+grain	ConceptuallyRelatedTo	vegetarian restaurant	2
+tool	HasProperty	psychedelic band	0
+calender	HasProperty	infinite	2
+program language	AtLocation	fictional character	-1
+salt	UsedFor	brush tooth	1
+play lacrosse	MotivatedByGoal	complicate	1
+program language	AtLocation	horrible	1
+bird	HasA	robin	2
+peel	IsA	permission	-1
+mechanical pencil	AtLocation	office supply store	2
+hound	HasProperty	dog	2
+book	UsedFor	excitement	1
+fiberglass	IsA	live organism	-1
+take medicine	ReceivesAction	tire	1
+container drum	ConceptuallyRelatedTo	cow	1
+philippine	AtLocation	assertiveness	-1
+watch television show	UsedFor	eye strain	2
+cogitate	HasSubevent	light bulb	2
+go doctor	AtLocation	work	1
+nice person	CapableOf	slow down	2
+thank	HasFirstSubevent	express gratitude	2
+latter	IsA	former	-1
+tea	IsA	rum	-1
+show love	Causes	result	2
+pop	IsA	music	2
+flesh	PartOf	move walkway	-1
+heifer	AtLocation	agriculture	1
+go jog	HasSubevent	stop buy coke	2
+trumpet	UsedFor	acoustic guitar	-1
+photograph	AtLocation	cabinet	2
+graphite pencil	AtLocation	class	2
+lemur	AtLocation	tree	2
+person	Desires	recreational activity	1
+go bar	MotivatedByGoal	womb	-1
+cereal bowl	AtLocation	cabinet	2
+snow	IsA	flake	2
+destroy	IsA	begin	1
+add	HasProperty	action	1
+cover water	IsA	battle	1
+sleep	MotivatedByGoal	refresh	2
+perform	Causes	alcoholic	-2
+rich	IsA	hunt	-2
+attend meet	HasPrerequisite	how old	1
+play hockey	UsedFor	show off	1
+chilly	IsA	atmosphere	1
+surrender	ConceptuallyRelatedTo	verb	2
+person	CapableOf	gather mushroom	2
+moon	IsA	brownstone	-1
+furnish	IsA	trance	-1
+play harp	Causes	create sound	2
+staircase	UsedFor	access different level	2
+air movement	IsA	face other	1
+join	IsA	process	1
+student	CapableOf	determine truth	1
+earth	Causes	lose	-1
+drought	IsA	type	-2
+apartment build	AtLocation	new york	2
+sushi	IsA	stay alive	1
+foreign	ConceptuallyRelatedTo	country	1
+bathroom	IsA	back	-2
+vain	HasProperty	adjective	-2
+chief	IsA	police fire	-2
+waste	IsA	rush	-1
+nag	HasProperty	bad	2
+home	IsA	defend	-2
+read music	AtLocation	own home	-2
+9 planet acknowledge	AtLocation	orbit sun	2
+tool instrument	ReceivesAction	use mechanic	-2
+kirstin	IsA	rake leave	-2
+history	HasProperty	ceo	-2
+meet girl	HasPrerequisite	make myself look nice	-2
+chief	Desires	sex	2
+attract attention	Desires	die	1
+become astronaut	HasPrerequisite	study engineer	1
+yourself	AtLocation	build	2
+magnesium	HasProperty	fluid	1
+clean room	HasSubevent	technology	-2
+chocolate	IsA	rye	-1
+kiss	HasPrerequisite	saliva	-1
+cheque	UsedFor	buy store	1
+store item	AtLocation	market	2
+eat dinner	HasFirstSubevent	weight machine	-2
+ali	CapableOf	gay	2
+cat	HasProperty	able	-2
+view film home	HasSubevent	eat snack	1
+get	HasSubevent	compare price	2
+tracey	IsA	jog	-2
+singular	AtLocation	simile	-1
+student	ConceptuallyRelatedTo	deal card	-2
+butter	IsA	layer	2
+human eye	IsA	work genius	-1
+alone	IsA	piece wood	-1
+buy	HasPrerequisite	owe	-2
+massachusett state	HasProperty	hard spell	-1
+cake	HasProperty	cake candle	-1
+time	CapableOf	bracelet	-2
+good	IsA	go break	-1
+begin end	HasA	text	1
+soccer field	HasPrerequisite	go pub	-1
+birthday	IsA	treat	-2
+crash cymbal	IsA	past	-2
+hour	UsedFor	stop watch	2
+save life	IsA	quantity	-2
+keep money	HasProperty	lose	-2
+nasty	Causes	death	-1
+agreement	IsA	description	-1
+gourmet shop	AtLocation	new york city	2
+landmark	AtLocation	any large city	2
+luxury	HasProperty	live richly	1
+suede	IsA	material	2
+lot water	HasA	fish	1
+calender	HasProperty	endless	-1
+map	AtLocation	make coffee	-2
+relax	MotivatedByGoal	tense	-1
+courtroom	CapableOf	record music	-1
+forgive	HasSubevent	build	2
+pizza	AtLocation	pantry	1
+sugar	ConceptuallyRelatedTo	tea	1
+nightclub	UsedFor	cult	-1
+person	HasProperty	blond	2
+blood	HasProperty	cold	-2
+go swim	IsA	teach	-2
+satin	IsA	smooth material	2
+attend school	HasSubevent	interruption	-1
+human	AtLocation	belong	-1
+attend class	HasSubevent	lear material	-1
+dragon	HasProperty	bad	1
+suds	ConceptuallyRelatedTo	water	1
+plain	AtLocation	robbery	-1
+reader	AtLocation	file	0
+youngster	CapableOf	sleep bed	1
+curve	HasProperty	veer side	-2
+site	Desires	die	-1
+eat dinner	HasSubevent	drink beer	2
+see exhibit	UsedFor	learn	0
+passport case	AtLocation	office supply store	0
+steer	HasProperty	lose	-2
+pine	IsA	rake	-1
+two eye	MotivatedByGoal	give gift	-2
+alcoholic	AtLocation	win prize	-2
+quite	HasProperty	almost	1
+bathtub	UsedFor	room	-2
+shiver	ConceptuallyRelatedTo	verb	-2
+eat apple	Causes	arc	-1
+gentleman	IsA	two line	-2
+tax	AtLocation	paycheck deduction	2
+pasture	HasProperty	wash	-2
+cross street	UsedFor	go somewhere	2
+gallery	UsedFor	show work art	2
+champagne	HasProperty	drunk wedding other celebration	2
+remember	IsA	ask	-1
+athelete	AtLocation	shore	-1
+garden	HasA	tend plant	2
+chicken	ConceptuallyRelatedTo	delicious	1
+audit	IsA	knit	-2
+robert	HasProperty	vend machine	-1
+boat	LocatedNear	tide	1
+dump	HasLastSubevent	smile	1
+firewood	AtLocation	bedroom	1
+showroom	HasProperty	lose	-2
+diversity	MotivatedByGoal	pleasure	1
+communicate	Causes	finite	2
+destroy enemy	HasSubevent	slay	1
+barber comb	UsedFor	fix hair	2
+birth stone	AtLocation	long hair	-1
+new job	AtLocation	long hair	-1
+fidelity	AtLocation	goo	-1
+woodland	HasA	leave	2
+nile silt	HasProperty	important egypt water	2
+see band	HasSubevent	appreciation	2
+harp	IsA	darkness	-1
+buy	HasPrerequisite	cash coin	1
+site	Desires	die	-1
+eat dinner	HasSubevent	drink beer	2
+see exhibit	UsedFor	learn	0
+passport case	AtLocation	office supply store	0
+steer	HasProperty	lose	-2
+pine	IsA	rake	-1
+two eye	MotivatedByGoal	give gift	-2
+alcoholic	AtLocation	win prize	-2
+quite	HasProperty	almost	1
+bathtub	UsedFor	room	-2
+shiver	ConceptuallyRelatedTo	verb	-2
+eat apple	Causes	arc	-1
+gentleman	IsA	two line	-2
+tax	AtLocation	paycheck deduction	2
+pasture	HasProperty	wash	-2
+cross street	UsedFor	go somewhere	2
+gallery	UsedFor	show work art	2
+champagne	HasProperty	drunk wedding other celebration	2
+remember	IsA	ask	-1
+athelete	AtLocation	shore	-1
+garden	HasA	tend plant	2
+chicken	ConceptuallyRelatedTo	delicious	1
+audit	IsA	knit	-2
+robert	HasProperty	vend machine	-1
+boat	LocatedNear	tide	1
+dump	HasLastSubevent	smile	1
+firewood	AtLocation	bedroom	1
+showroom	HasProperty	lose	-2
+diversity	MotivatedByGoal	pleasure	1
+communicate	Causes	finite	2
+destroy enemy	HasSubevent	slay	1
+barber comb	UsedFor	fix hair	2
+birth stone	AtLocation	long hair	-1
+new job	AtLocation	long hair	-1
+fidelity	AtLocation	goo	-1
+woodland	HasA	leave	2
+nile silt	HasProperty	important egypt water	2
+see band	HasSubevent	appreciation	2
+harp	IsA	darkness	-1
+buy	HasPrerequisite	cash coin	1
+hammer	InheritsFrom	ostrich	-1
+basement	IsA	residence	1
+lab	UsedFor	gift	1
+build	ConceptuallyRelatedTo	July	1
+past	HasProperty	disk	-2
+reserve	IsA	driver license	-2
+sell new book	MotivatedByGoal	savings	-2
+buyer	AtLocation	disco	-1
+play baseball	HasSubevent	run	2
+restaurant dine area	AtLocation	restaurant	2
+monarchy	IsA	tool	2
+it	HasProperty	fancy	0
+fidelity	AtLocation	accomplishment	0
+play chess	UsedFor	person work	1
+workplace	AtLocation	convenience store	2
+human	AtLocation	inside	1
+article newspaper	AtLocation	office supply store	1
+hill	HasProperty	altitude	2
+fidelity	AtLocation	factor	1
+asbestos	HasA	fiber	2
+know how stock market perform	UsedFor	make money	1
+fix computer	HasFirstSubevent	determine broken	2
+push	IsA	force	2
+atlas	HasProperty	floor	1
+leopard	HasProperty	lose	1
+something	CapableOf	beg	1
+compare price	HasSubevent	compare price	2
+water	AtLocation	ground	1
+control room	AtLocation	house	-1
+fidelity	AtLocation	girl name	-1
+boat	UsedFor	student	1
+stick up chimney	AtLocation	defend	1
+torture	Causes	guilt	1
+pride	HasProperty	feel	2
+organ	UsedFor	play instrument	1
+housework	MotivatedByGoal	keep house clean neat	2
+take off shoe	HasPrerequisite	go bed	-1
+teacher	IsA	person transfer knowledge child	2
+polka	HasProperty	poor	0
+furnish	IsA	look like	0
+antler	AtLocation	driveway	-1
+remember	HasPrerequisite	accommodation	0
+explain	HasProperty	learn skill	0
+stitch	HasA	despair	-2
+grasshopper	HasProperty	big insect	2
+call	ConceptuallyRelatedTo	jerk	-1
+work	ConceptuallyRelatedTo	department store	0
+mile	HasProperty	hear	-2
+field	HasProperty	harvest	-2
+read child	HasPrerequisite	let choose book	2
+flea	HasA	dog insect	-1
+snake	AtLocation	old house	2
+no light	ConceptuallyRelatedTo	generic	-2
+person	Desires	fun exercise	2
+insurance	IsA	payment	2
+cook meal	MotivatedByGoal	digestion	-2
+give plug	Causes	sale	2
+exercise dog	IsA	face other	-1
+cajun food	HasProperty	good	1
+late	HasProperty	wheel	-2
+index	HasProperty	lose	-2
+hair conditioner	AtLocation	kitchen	-1
+weak	HasProperty	endless	-1
+population	IsA	vest	-1
+compare	IsA	save	-1
+andraw	IsA	spectrum	-2
+nail	AtLocation	grocery store	1
+chemical element	IsA	helium	2
+jealousy	HasProperty	lose	-2
+eat	HasFirstSubevent	loose	-2
+colony	AtLocation	continent	2
+wolf	AtLocation	cuba	-1
+danny	IsA	host	0
+steak	IsA	good bad	-2
+move	HasA	so	-2
+triskaidephobia	DefinedAs	fear number thirteen	2
+get drunk	Causes	alcohol affect brain	2
+theater ticket	AtLocation	space station	-1
+insight	IsA	intuition	2
+disease	HasProperty	nag	2
+bicicle	HasA	two pedal	2
+best	IsA	better	-1
+fraud	IsA	noun	2
+bridge rail	IsA	safety barrier	2
+bullet	UsedFor	huh	-2
+toxic	HasProperty	fluid	-1
+take money	IsA	face other	-2
+second floor	AtLocation	tall build	2
+eye	AtLocation	horror	-1
+bullet	LocatedNear	synagogue	-1
+invest	AtLocation	long hair	-1
+shade	HasProperty	dark place	2
+legal document	HasProperty	page	2
+cat	AtLocation	yacht	-1
+sex	UsedFor	buss	-1
+clothe	HasProperty	outfit	1
+philippine	AtLocation	needlepoint	-1
+walk	HasProperty	take step	2
+watch	UsedFor	immortality	-1
+anything	AtLocation	dock	-1
+leader	CapableOf	head group	2
+egg	HasA	yolk white	2
+bartender	CapableOf	pray	1
+spoon	UsedFor	good smell	-1
+wall	AtLocation	malaria	-1
+view video	UsedFor	calmness	1
+animal	AtLocation	prefix	-1
+school bus	UsedFor	practice	-1
+join army	HasSubevent	humiliate	0
+bloody	Desires	die	-2
+smooth	HasProperty	lose	-2
+moose	HasProperty	look through	-1
+food may	ReceivesAction	serve dine room	1
+walk	UsedFor	windy	-2
+bake cake	HasSubevent	toothbrush head	-2
+time	ConceptuallyRelatedTo	monk	-2
+singular	AtLocation	climate	-2
+science	AtLocation	wind instrument	-2
+spool	ConceptuallyRelatedTo	material	1
+mink	AtLocation	utah	0
+tourist	IsA	primate	2
+go performance	Causes	eat snack	-1
+business card	ConceptuallyRelatedTo	darkness	-1
+pearl	ConceptuallyRelatedTo	shiny	2
+spoon	CapableOf	exist	2
+old paper	HasProperty	fragile	2
+store	UsedFor	bargain	1
+high point	AtLocation	long hair	-2
+debate	UsedFor	hold water	-1
+big animal	HasProperty	lose	-2
+chick	ConceptuallyRelatedTo	boy	1
+person narcolepsy	ReceivesAction	decline health insurance	0
+mountain	ReceivesAction	reflect lake	1
+chew food	UsedFor	polite person	2
+fidelity	AtLocation	medication	-2
+hide-a-bed sofa	AtLocation	room	2
+singular	AtLocation	development	-2
+time	IsA	month	-1
+see movie	HasPrerequisite	mosquito	-1
+party	UsedFor	find mate	1
+spider	IsA	type bird	-1
+person	CapableOf	buy alcohol pub	2
+traveling	UsedFor	rare	-1
+abstract	IsA	adjective	-1
+April	HasA	live	-2
+piece food	AtLocation	cupboard	2
+student	CapableOf	lose game	1
+dare	IsA	option	1
+live life	HasSubevent	happiness	2
+rub	HasA	motion	2
+commit memory	Causes	interruption	-1
+bake cake	UsedFor	herring	-1
+bring	HasProperty	index card drawer	-1
+diner	UsedFor	snack	-1
+wiener dog	AtLocation	boston	1
+till	IsA	brat	-2
+farmer	LocatedNear	corn tobacco	1
+music	UsedFor	tennis game	-1
+regular	CapableOf	milk cow	-2
+river	HasProperty	stream big	2
+silverware	AtLocation	idaho	2
+fidelity	AtLocation	hallucination	-1
+concussion	HasProperty	today	-2
+purchase cellular phone	HasPrerequisite	owe	-2
+sweet	HasA	see	-2
+yourself	HasProperty	lose	2
+include	HasProperty	on it	-2
+bear	AtLocation	zoo	2
+second	IsA	linen chest	-1
+fox	IsA	sea animal	-1
+coconut	ReceivesAction	crowd	1
+connie	IsA	chop wood	0
+something	CapableOf	mental illness	1
+listen radio	Causes	knowledge	2
+ghost	CapableOf	lose	2
+fidelity	AtLocation	yellow fruit	-2
+swear	IsA	face other	-1
+water sport	AtLocation	repair shop	-1
+gesture	IsA	verb	2
+thaw	ConceptuallyRelatedTo	verb	-2
+class	UsedFor	experience	1
+agree date time place	MotivatedByGoal	meet friend	2
+drink	HasSubevent	improperly judge attractiveness woman	2
+weak	HasProperty	now	-1
+theater ticket	AtLocation	desk	1
+prune	HasProperty	dry plum	2
+sushi	IsA	yummy	2
+hide-a-bed sofa	ConceptuallyRelatedTo	four leg	2
+bunny	UsedFor	foot	-1
+attend class	HasProperty	building	-1
+oil	UsedFor	fossil fuel	2
+person	CapableOf	turn radio off	2
+organization	HasProperty	clean	2
+bribe	IsA	unhealthy	2
+par knife	UsedFor	peel apple	2
+confetti	AtLocation	country	2
+freight	HasProperty	morning	-2
+tell story	MotivatedByGoal	want entertain companion	2
+note	HasA	fashion	-2
+go see film	UsedFor	amusement	2
+go school	UsedFor	solitude	-1
+patron	AtLocation	house	-1
+add	HasProperty	nice	-1
+eat sandwich	HasProperty	lose	-1
+dimension	HasProperty	three	-2
+independent	ConceptuallyRelatedTo	walk closet	0
+never	IsA	tear off calendar	-1
+churchyard	AtLocation	big city	1
+desk	UsedFor	hardship	-1
+competitive activity	AtLocation	inhabitant	-1
+thing	ReceivesAction	keep jar	2
+chair	IsA	single seat	2
+stacey	HasProperty	colore	-1
+problem	IsA	dilemma	2
+eat apple	Causes	gambler	-1
+membrane	IsA	furnish	-2
+second	IsA	unit time	2
+remember	HasPrerequisite	marine	-2
+deli restaurant	CapableOf	need money	2
+playground equipment	UsedFor	exercise	1
+seduction	IsA	lure woman	2
+berry	AtLocation	tree	-1
+person	AtLocation	sport goods store	2
+merit	IsA	big	-2
+exercise	HasProperty	improve health	2
+cabriolet	CapableOf	slow down	0
+student	CapableOf	eat much	2
+during reception	ReceivesAction	introduce person	2
+warehouse	HasProperty	place eat	-1
+concentration	HasFirstSubevent	pick up	-1
+stay warm	HasPrerequisite	tire	-1
+magnitude	IsA	face other	-1
+mo	HasA	body	0
+weapon	UsedFor	go hell	-1
+attend meet	Causes	take examination	-2
+pine	IsA	pine tree	-2
+dad	CapableOf	hate	2
+book office	UsedFor	plan	-2
+lure	IsA	pout	-1
+life sea	IsA	learn experience	1
+excavation	HasA	two eye	-1
+bladder	IsA	body	-1
+person	Desires	nice smell	2
+laugh	ConceptuallyRelatedTo	expression	1
+popular	IsA	crazy	2
+action	AtLocation	museum	1
+geometry	UsedFor	calculate angle	1
+also	HasProperty	poor	1
+ranch house	UsedFor	live farm	2
+release energy	UsedFor	employ	1
+just	IsA	stick	-1
+small stone	HasProperty	human	-1
+contemplate	HasPrerequisite	chair meet	1
+toy car	UsedFor	child game	2
+command	IsA	telephone kiosk	-1
+weasel	AtLocation	lair	1
+political expediency	CausesDesire	gain land	1
+ozone	IsA	molecule	2
+highlighter pen	HasProperty	male	-1
+play card	HasLastSubevent	put deck away	2
+soup	LocatedNear	nose	1
+class	IsA	apartment build	-1
+fidelity	AtLocation	shriek	-1
+pair	PartOf	human	1
+party	HasProperty	fun place	2
+graveyard	AtLocation	mit	-1
+buy fresh fruit vegetable	HasPrerequisite	buck	2
+fidelity	AtLocation	cause pain	-1
+swim	HasPrerequisite	cereal bowl	-1
+tank	IsA	speak	-2
+take stand	Causes	terror	1
+threat	Desires	die	-1
+purchase cellular phone	HasPrerequisite	careful	1
+danger	HasProperty	embarassment	1
+expression	IsA	feel	2
+smile	HasA	license	-1
+growth	HasProperty	lose	1
+doughnut	IsA	pastry	2
+irritation	IsA	annoyance	2
+jeff	HasProperty	measles	1
+jog	IsA	improve health	2
+expansion	HasA	parent	-1
+hygiene	UsedFor	clean	2
+booth	AtLocation	bookshelf	-1
+tent	IsA	advertise	-1
+achieve goal	HasProperty	verb	-2
+hail	HasA	sky	2
+miss	HasProperty	bad	1
+detail	HasProperty	lid	-1
+plan vacation	HasSubevent	fun	-2
+drive	HasPrerequisite	limousine	1
+cook dinner	HasSubevent	stir pot	2
+meal	IsA	aggravation	-1
+start fire	MotivatedByGoal	small rodent	-1
+street	HasProperty	walkway	2
+corporation	IsA	hue business	0
+read	Causes	better understand	2
+cigarette	AtLocation	cigarette pack	2
+go drive	HasPrerequisite	car part	2
+gnat	Desires	die	-1
+zigzag	IsA	inefficient move	2
+ergonomic chair	HasProperty	flat surface	-2
+mist	IsA	fine vapor	2
+chuck	IsA	hunt	-1
+take break	HasLastSubevent	back work	2
+back	AtLocation	kennel	-1
+person	CapableOf	think often	2
+jeff	HasProperty	debate	-2
+cash coin	IsA	payment	2
+hue	ConceptuallyRelatedTo	tree	-1
+alarm	UsedFor	play music	-1
+human	CapableOf	land moon	-2
+read	HasPrerequisite	learn how read	2
+cloud	IsA	employment	-2
+dummy	MotivatedByGoal	listen	-2
+vasoconstrictor	IsA	drug	2
+jim	IsA	chop wood	-1
+calendar book	AtLocation	concern	-1
+watch film	HasFirstSubevent	bay window	-2
+seat	AtLocation	palace	2
+poison	UsedFor	mortal	2
+examine	HasSubevent	attack	-1
+grain	AtLocation	canal	-1
+flush	HasProperty	toilet function	2
+poison	UsedFor	conflict	1
+hear testimony	UsedFor	stop breathe	-1
+polish	IsA	account book	-1
+fruit	AtLocation	yogurt	2
+also	IsA	flu	-2
+ceo	AtLocation	competitive activity	1
+gym	HasProperty	white fluffy	-2
+person	HasA	anymore	-2
+upholstery	AtLocation	long hair	-1
+finger	UsedFor	move position	1
+polygon	IsA	figure	2
+admire	IsA	texture	-2
+philippine	AtLocation	night time	-1
+love	HasSubevent	attorney	-1
+woman	CapableOf	hold breath	1
+see old	UsedFor	remember	1
+debate politics	HasSubevent	secure	0
+shape	MotivatedByGoal	organ	-2
+go outside even	Causes	spend money	1
+medicine chest	HasPrerequisite	turn water	-1
+human	AtLocation	his	-2
+miss	HasProperty	action	-2
+plate	UsedFor	leak	-1
+student	CapableOf	become educate	2
+tablespoon	UsedFor	cook	1
+agriculture	ConceptuallyRelatedTo	farm	2
+violation	HasProperty	decline	-1
+plant	HasA	leave flower	2
+dog	HasProperty	solo	-2
+evaluate	Causes	intelligence	1
+put money public phone	MotivatedByGoal	make phone call	1
+sailboat	HasProperty	big	1
+gene	IsA	build new house	-1
+sushi	IsA	bottle wine	-1
+land	AtLocation	north south	2
+make patchwork quilt	HasProperty	star	0
+upset	HasA	shell	-2
+conversation	HasPrerequisite	order pizza	-1
+use computer	UsedFor	thick	-1
+school	IsA	combine	-2
+conscious	CapableOf	procreate	-2
+birthday	IsA	person	-1
+date	IsA	boy girl	-1
+take phone call	HasSubevent	put speaker phone	1
+bagel	IsA	stalk	-1
+tag	IsA	purchase	1
+beverage service	AtLocation	restaurant	2
+walk around lake	HasProperty	fun	2
+tree	HasProperty	complex	1
+airline seat	ReceivesAction	born	-1
+steel	HasProperty	hard iron	2
+crack	HasProperty	verb	-2
+refill	UsedFor	man	-2
+steam	ConceptuallyRelatedTo	particle	-1
+slinky	AtLocation	office build	-1
+go internet	MotivatedByGoal	sex	1
+return	IsA	no	-2
+wrestle	UsedFor	participate sport	-2
+air condition	HasPrerequisite	take clothe off	-2
+sit desk	HasProperty	careful	-1
+miss	HasProperty	why	-2
+look better	HasSubevent	feel confident yourself	2
+vegetable	IsA	corn wheat	-1
+program language	AtLocation	saudi arabia	-1
+stand line	HasPrerequisite	cleaver	-1
+chess queen	IsA	order	-2
+dust	AtLocation	elevation	-2
+apple juice	IsA	booze	-1
+demand	HasProperty	same ask	1
+complicate	AtLocation	company	-2
+import	HasProperty	verb	-1
+shopfitter	CapableOf	fit out shop	0
+program language	CreatedBy	language designer	2
+hang out	HasProperty	lose	-2
+program language	AtLocation	blame	-2
+patio	UsedFor	cookout	1
+buy love	HasSubevent	walk along beach	-2
+fresh vegetable	HasSubevent	feel happy	-2
+cell	LocatedNear	prison	1
+go hospital	IsA	bad	1
+error	ConceptuallyRelatedTo	cup	-1
+oak	IsA	hedge	-1
+janitor	IsA	help person	2
+hear news	UsedFor	face reality	1
+large city california	IsA	lo angele	2
+keep	HasProperty	action	-2
+ceremony	AtLocation	cathedral	1
+program language	AtLocation	sport team	-1
+hop	HasProperty	become	-1
+complicate	HasProperty	adjective	-2
+submarine	AtLocation	iceberg	-1
+transportation device	AtLocation	veal	-1
+pudding	InheritsFrom	food	-1
+sleep night	HasSubevent	wake up lot	-1
+fidelity	AtLocation	bait	-1
+theory	HasProperty	inferior	-1
+move	HasA	move object	-2
+play poker	HasSubevent	avoid go tilt	-1
+mass person	AtLocation	museum	1
+wash	AtLocation	fire engine	-2
+art	ConceptuallyRelatedTo	work art	2
+violin	AtLocation	meet	-1
+stork	IsA	mammal	-1
+chart	CapableOf	draw	-2
+cider	HasA	alcohol	1
+many kind	AtLocation	burn calorie	-2
+trash receptacle	UsedFor	waste product	2
+build material	ConceptuallyRelatedTo	construction	1
+champagne	IsA	inside body	-1
+french toast	IsA	peter	-1
+think	HasSubevent	sadness	-2
+another	CapableOf	wonder	-2
+smother	IsA	action	2
+explosive	UsedFor	kill person	2
+window	AtLocation	race car	2
+spend money	HasPrerequisite	count	1
+king	ConceptuallyRelatedTo	find food	-2
+horse shoe	AtLocation	line	-2
+remember	Causes	recall	2
+cut half	Causes	burn calorie	-2
+peel	IsA	curl	-1
+disk	AtLocation	grass	1
+almost	IsA	steve	-2
+ritual	HasA	book	1
+blouse	HasA	penis	-1
+bake	HasProperty	careful sharp lid	2
+violin	Causes	jail	-1
+reproduce	MotivatedByGoal	impossible	-2
+conquer opponent	CapableOf	wonder	-2
+go haircut	UsedFor	smarten appearance	1
+disease	ConceptuallyRelatedTo	ache	1
+music	IsA	bang	-1
+finger	UsedFor	pick cittern	-2
+on	HasProperty	cloud	-2
+play	MotivatedByGoal	delusion	-2
+fidelity	AtLocation	serious	-2
+read newspaper	UsedFor	continua education	1
+jog	IsA	prove	-1
+queen	HasProperty	person	1
+roadway	UsedFor	wait besides catch ride	1
+warrior	HasA	honor	1
+fight enemy	HasSubevent	lieutenant	-2
+pain	HasProperty	go prison	-2
+best	HasProperty	even better	2
+repair umbrella	MotivatedByGoal	stay dry rain	2
+human	AtLocation	seek	-2
+tiny	HasProperty	tall	-1
+cause	HasPrerequisite	change mind	-1
+bread	HasProperty	starch food	2
+tough	CapableOf	wear hat	-2
+lighten	MadeOf	metal	-1
+tail	HasProperty	empty	-2
+make	UsedFor	church	-1
+person	Desires	attitude	-2
+pain	IsA	microsoft	-1
+eye	AtLocation	too	-2
+adventure	HasProperty	how	-2
+fast food restaurant counter	CapableOf	teach	-1
+soda	IsA	nectar	-1
+craven	HasProperty	cowardly	0
+word	IsA	text	2
+debit card	UsedFor	money	-1
+weasel	AtLocation	vineyard	-1
+buy product	HasSubevent	compare price	2
+courtyard	AtLocation	garden	-1
+design software	HasPrerequisite	smart dumb ass	-1
+recall	HasPrerequisite	use brain	1
+repair umbrella	Causes	wet	-1
+cat	AtLocation	aeroplane	-1
+oil	ConceptuallyRelatedTo	child toy	-1
+clipboard	AtLocation	elect	-2
+bobby pin	Causes	entertain others	-1
+get tax refund	CausesDesire	celebrate	1
+courtyard	AtLocation	hemoglobin	-1
+snore	Causes	missile	-2
+win prize	HasProperty	early	-2
+program language	AtLocation	every day	-2
+add	HasProperty	verb	-2
+ramp	HasProperty	handicap accessible	2
+kansa city	HasProperty	second	-2
+poetry	IsA	microwave oven	-2
+human eye	CapableOf	laugh joke	1
+see favorite show	UsedFor	emotional	-2
+apple juice	IsA	appeal	-2
+eye	AtLocation	electronic	-2
+solar system	ReceivesAction	comprise nine planet	-1
+garment bag	IsA	cloth	-1
+window	ConceptuallyRelatedTo	barrier	1
+go laundromat	HasPrerequisite	undress	-1
+large small	IsA	adjective	2
+operator	CapableOf	warm up	1
+dance	HasSubevent	twirl	2
+dwell	IsA	make phone call	-1
+scream	IsA	shout yell	2
+merchandise	AtLocation	gap	-1
+clock	UsedFor	study hard	-2
+bring verdict	HasA	sadness	1
+opposition	MotivatedByGoal	revenge	-2
+council	AtLocation	crock	-1
+bicycle storage area	HasA	engine	-1
+foot	IsA	territory	-1
+state trooper	IsA	policeman	-1
+smother	IsA	wreck	-1
+fidelity	AtLocation	brim	-2
+house	IsA	private dwell	2
+go performance	Causes	jealousy	-1
+candy	IsA	food	2
+oak	IsA	plant flower	-2
+wooden	HasSubevent	kiss	-2
+gun	UsedFor	triumph	-2
+school work	AtLocation	long hair	-1
+bagel	IsA	flavour	-1
+listen	HasPrerequisite	hear	2
+knowledge	UsedFor	cut	-1
+towel bar	AtLocation	workplace	-1
+experience	IsA	feel	-1
+make sure healthy	HasFirstSubevent	stretch	-1
+terry	IsA	hunter	-1
+card	IsA	dry off	-2
+hygene	HasProperty	important	2
+average	LocatedNear	student	-2
+nest	HasProperty	prickly	-1
+teacher	HasProperty	pupil learner	-2
+marsupial	HasA	paw	2
+general	CapableOf	lead soldier battle	2
+first class airplane seat	UsedFor	saucer	-1
+ring	HasA	wing	-1
+need money	HasSubevent	count	-1
+child	CapableOf	see doctor	2
+discipline	Desires	die	-2
+pedestal	AtLocation	build	-1
+read letter	MotivatedByGoal	fun	0
+know	IsA	learn	-2
+singular	AtLocation	episode	-2
+program language	AtLocation	syrup	-1
+flow	IsA	moment	-2
+swim	HasProperty	let go	-2
+dust	AtLocation	balcony	1
+well known exponent bebop	IsA	theolonius monk	2
+person	CapableOf	eat fast food restaurant	2
+range	IsA	mountain	0
+kiss	HasSubevent	feel soft lip	2
+sport bat	AtLocation	nice smell	-2
+god	IsA	perfect	1
+peanut butter	AtLocation	pantry	2
+blowfish	AtLocation	television program	1
+landmark	AtLocation	oklahoma	2
+include	HasProperty	action	-2
+butt	AtLocation	roof	1
+college	AtLocation	crossroad	-1
+go swim	HasSubevent	legend	-2
+program language	AtLocation	keep safe	-2
+broad	IsA	platform	-2
+always	IsA	description	2
+rain	ConceptuallyRelatedTo	under tree	-1
+measure temperature	Desires	die	-2
+apple tree	AtLocation	habitat	1
+underwear	AtLocation	pocket	-1
+hockey puck	AtLocation	companionship	-1
+motor	HasProperty	job application	-2
+coca cola	HasSubevent	go doctor	-2
+baggage trunk	AtLocation	house	2
+car key	AtLocation	contest	-1
+broom	AtLocation	cabinet	2
+fluid	IsA	liquid	2
+graphite pencil	UsedFor	draw	2
+gather energy tomorrow	HasPrerequisite	dreamer	1
+fox	AtLocation	or	-2
+boob	Desires	play toy	-2
+make live	HasPrerequisite	job	2
+read	Causes	aware	1
+local jammer	CapableOf	employ broad-band dipole	0
+answer question	HasSubevent	persuade	2
+furnish	IsA	elevation	-1
+sneer	HasProperty	nasty look	2
+father	Desires	take child baseball game	2
+fidelity	AtLocation	mob	-1
+tea hot	HasProperty	brew	2
+scholar	AtLocation	drawer	-1
+go haircut	HasPrerequisite	good movie	-1
+lot	ConceptuallyRelatedTo	play child	1
+telephone index	AtLocation	dock	-1
+out food	CausesDesire	grocery shop	2
+dirt	CausesDesire	wet clothe	1
+wet clothe	UsedFor	clean body	-1
+robbery	ConceptuallyRelatedTo	burglary	2
+space	SimilarSize	accomplishment	-2
+coal	HasA	mine	2
+silverware	AtLocation	width	-1
+ride bicycle	Causes	factor	-2
+child	CapableOf	shine shoe	1
+ship package	IsA	activity	2
+acne medication	CapableOf	type	-2
+hurdle	IsA	hunt	-1
+lava	HasProperty	lose	-1
+profit	AtLocation	deck	-1
+post	AtLocation	ground	2
+flower	LocatedNear	possess	-2
+scene	ConceptuallyRelatedTo	climb	-1
+intention	CapableOf	lie down	-1
+prepare	IsA	let go	1
+it	HasProperty	broad	0
+kiss	UsedFor	proof	-1
+deer north america antelope	AtLocation	africa	-2
+skeleton	IsA	deal	-2
+fish	Causes	swarm	-1
+mystery	HasProperty	good	0
+pedestal	AtLocation	school	2
+restaurant table	UsedFor	dine	2
+future	IsA	place dance	1
+bureau	UsedFor	hiker	-1
+hear news	HasSubevent	listen carefully	2
+knock	IsA	form exercise	1
+learn new language	HasProperty	action	-2
+record music	HasProperty	action	-2
+comfort	IsA	good feel	2
+void	HasA	sky	-2
+bard	PartOf	unite state america	-1
+wash car	IsA	horse	-2
+person	HasProperty	conscious daydream	2
+eye	AtLocation	imaginary	-2
+continent	ConceptuallyRelatedTo	asia big	2
+range	ConceptuallyRelatedTo	girl	-1
+bee	HasA	paw	-1
+able sit down	CausesDesire	exercise	-1
+clock	UsedFor	ago	-1
+airliner	IsA	place	2
+pain	HasProperty	sore muscle	1
+sprint	HasProperty	happy	-2
+student	CapableOf	make reservation	2
+view video	UsedFor	amuse	2
+it	IsA	vend machine	1
+city	ConceptuallyRelatedTo	see tea	-1
+box office	UsedFor	sit	-1
+flashlight	ReceivesAction	read	-1
+course	IsA	statistical uncertainty	-2
+bbq	AtLocation	kansa	2
+commit suicide	HasFirstSubevent	write suicide note	1
+bay window	AtLocation	apartment	2
+play tennis	Causes	become healthy	2
+filter	Desires	die	-2
+physical examination	ConceptuallyRelatedTo	grammar	-1
+drive car	HasFirstSubevent	many car	-2
+molecule	AtLocation	go outside even	2
+go play	UsedFor	watch dramatic performance actor	2
+possible	IsA	person	-2
+spivey	IsA	small town	2
+edge	UsedFor	fence	-2
+needle	UsedFor	usa	-2
+meal	IsA	make meal	-2
+move	HasA	melody	-2
+tuck	HasPrerequisite	go bed	2
+linen closet	AtLocation	doorway	1
+give gift	UsedFor	gererous	2
+flashlight	AtLocation	drawer	1
+motor	CapableOf	turn propeller	2
+illinoi	AtLocation	subway station	-2
+eat apple	UsedFor	sustinance	-2
+hairpin	UsedFor	clean	-2
+noise	LocatedNear	entertain guest	-2
+see dark	AtLocation	drawer	-2
+thick	AtLocation	bookshelf	-2
+milk	HasA	good time	-2
+money	HasPrerequisite	hard work	1
+person	Desires	three hot meal day	2
+protest	IsA	cherry	-2
+worth	HasA	number	-2
+sport	HasProperty	fragile	-2
+dance	HasProperty	bop around	1
+go play	HasSubevent	find seat	2
+walk around lake	HasSubevent	bird-watch	-2
+better vantage	CapableOf	allow better view	2
+eye	AtLocation	with	-2
+expense	IsA	hour	-2
+boar	PartOf	animal	-2
+piece	IsA	cry	-2
+sattelite	AtLocation	orbit	2
+hair salon	HasPrerequisite	turn water	-2
+religious leader	CapableOf	father child	1
+exam table	ConceptuallyRelatedTo	furniture	-2
+track	AtLocation	electric	-2
+pipe	AtLocation	every state	-2
+thong	HasA	body part	-2
+sumo wrest	HasProperty	big japan	1
+ride roller coaster	Causes	death	-1
+drive	HasProperty	car	-2
+labour	Desires	die	-2
+climb mountain	UsedFor	smooth	-2
+buy fresh fruit vegetable	HasPrerequisite	ten	-2
+fight enemy	HasSubevent	decay	1
+deliver	HasProperty	bring pizza	-2
+down	IsA	place	-2
+basketball court	UsedFor	olympic sport	-2
+program language	AtLocation	spook	-2
+vegetable	IsA	flavour	-2
+program language	AtLocation	humour	-2
+hurt else	Causes	disgust	1
+purchase cellular phone	Causes	new world opne	1
+pest	HasProperty	bothersome insect	2
+person	Desires	find solution problem	2
+restaurant storage area	UsedFor	eat	-1
+refrigerator freezer	UsedFor	keep cold	2
+arm leg	AtLocation	body	2
+dismissal	IsA	verb	-1
+young person	AtLocation	desk	-1
+butter	HasProperty	soft	1
+house	IsA	where	-1
+brian	HasProperty	drive work	-2
+smash	MotivatedByGoal	revenge	0
+race horse	AtLocation	race track	2
+cave	IsA	dark underground place	2
+fantasy	HasProperty	lose	-2
+punish	MotivatedByGoal	lie	1
+shop mall	UsedFor	gain information	-1
+wear glove	HasPrerequisite	weapon	-1
+tapestry	AtLocation	sleep	1
+toothbrush handle	HasSubevent	think	-2
+connect	IsA	terrace house	0
+write instrument	IsA	brain activity	-1
+may	HasProperty	infinite	0
+stripe	HasA	sky	-2
+belief	IsA	aid	-2
+calendar book	AtLocation	donkey	-1
+australia	IsA	politics	-1
+water	AtLocation	risk	-1
+gene	IsA	pull wee	0
+dollar	UsedFor	play soccer	-1
+attend class	HasPrerequisite	history	-1
+lord	HasA	penis	2
+leaf	LocatedNear	santum	-1
+gate	HasProperty	entrance	2
+sign	AtLocation	child game	1
+lower	HasPrerequisite	turn off light	-2
+feel	IsA	woman	-1
+fall over	IsA	border	-2
+camp	AtLocation	continent	1
+singular	AtLocation	legend	-1
+sheet paper	UsedFor	permanent	1
+person chair	AtLocation	store	1
+philippine	AtLocation	prophet	-1
+general	IsA	terrace rail	-1
+see movie	UsedFor	entertain	2
+computer	UsedFor	solution	1
+telephone	MadeOf	electronics	2
+salt	HasA	earn live	-1
+move	HasA	buzz	1
+chess piece	UsedFor	watch play	-1
+youth	CapableOf	new experience	2
+go zoo	HasPrerequisite	wear comfortable walk shoe	2
+push	IsA	echo	-1
+tribe	IsA	once	-1
+saltwater	Causes	lose money	-1
+become inebriate	HasLastSubevent	leave bar	1
+garlic	IsA	kennel	-1
+little girl	HasProperty	girl	1
+weasel	AtLocation	connecticut	0
+ventilation system	AtLocation	big build	2
+coat hanger	HasProperty	lose	1
+minister	IsA	sharp edge	-1
+man	CapableOf	lean	2
+buy love	HasSubevent	deduction	1
+part	IsA	section segment	2
+it	HasProperty	man make	-2
+charity	HasProperty	lose	-1
+edge	LocatedNear	dine room	-2
+fee	IsA	share	0
+person	CapableOf	sound angry	2
+hall	IsA	runway	1
+water spout	IsA	transaction	-1
+fidelity	AtLocation	polio	-1
+teacher	HasProperty	seaweed	-1
+nail	ConceptuallyRelatedTo	body part	2
+designer	CapableOf	build web site	2
+mammoth	AtLocation	outside	2
+playroom	UsedFor	reproduction	-1
+statement find boat oar help answer question	IsA	oar	2
+measles	HasProperty	cruel	2
+manchester	PartOf	england	2
+account book	AtLocation	hit head	-2
+hear news	IsA	course	-1
+degree	IsA	noun	2
+transportation device	AtLocation	fictional character	1
+parrot	AtLocation	montana	1
+philippine	AtLocation	emperor	-2
+buy store	HasProperty	purchase	-1
+stitch	ConceptuallyRelatedTo	singular	-1
+attack	HasProperty	action	2
+childhood	Desires	die	-1
+novel	IsA	advertise panel	-1
+monastery	HasA	monk home	2
+program language	AtLocation	cradle	-1
+rhombus	HasSubevent	type keyboard	-2
+yourself	AtLocation	surface earth	2
+divide	IsA	math term	2
+person	IsA	adam	-1
+ring binder	AtLocation	polish	-2
+alert	HasProperty	value	-2
+karaoke	Causes	child	-1
+buisness man	CapableOf	strike deal	2
+employ	IsA	requirement	1
+dress nice	MotivatedByGoal	nervous accept	2
+violin	LocatedNear	classical music	2
+singular	AtLocation	exclusion	0
+saucer	AtLocation	store	2
+tulotoma snail	DefinedAs	tulotoma magnifica	0
+squash court	UsedFor	service counter	-1
+paul	HasProperty	drive work	1
+love boat	IsA	popular tv show	0
+move	HasProperty	tow	1
+wed ceremony	ConceptuallyRelatedTo	bite	-1
+cat	AtLocation	bean bag chair	1
+ceremony	ConceptuallyRelatedTo	candle	2
+basket handle	AtLocation	feel good	-2
+three dimension	HasProperty	round	1
+invest money energy	HasA	pay	1
+play	IsA	contest	1
+bad news	IsA	illness	1
+fire hydrant	AtLocation	shore	1
+leadership	AtLocation	university	2
+crumb	HasProperty	echo	-2
+marsupial	HasProperty	animal	2
+booth	AtLocation	seashore	1
+no color	UsedFor	quench thirst	-2
+make eye contact	Desires	die	-1
+write	HasProperty	fantasy	1
+theatre	UsedFor	shake hand	-1
+oil	HasProperty	natural resource	2
+large house	ConceptuallyRelatedTo	gray	1
+computer	AtLocation	tall build	1
+tell story	HasPrerequisite	brick row house	-1
+bullet	HasA	projectile	2
+sleeper	HasSubevent	dream	2
+point	IsA	grammar sign	1
+clear	IsA	huge	-1
+candle	UsedFor	create mood	1
+cogitate	HasSubevent	optimism	1
+win lottery	CausesDesire	lead pencil	-2
+stream	AtLocation	charge project	-1
+cereal bowl	AtLocation	table	2
+reproduce	MotivatedByGoal	concern	-2
+crumb	AtLocation	doctor examination room	-1
+large dog	AtLocation	kennel	2
+swim	HasProperty	trim	-1
+camera	AtLocation	concept	-1
+train within health department	IsA	preparation biological attack	1
+go pub	Causes	drink alcohol	2
+person	IsA	species	-2
+birth stone	IsA	face other	-1
+autumn	IsA	spring	2
+ankle	HasProperty	body organ	-1
+paper page	HasProperty	part live tree	2
+send e-mail	UsedFor	communicate family	1
+may	IsA	movement	-2
+goose	ConceptuallyRelatedTo	large duck	2
+geta	HasProperty	embarrass	-2
+electric blanket	Causes	discomfort	-1
+eye	AtLocation	sharp end	-1
+find office	HasProperty	lose	2
+go store	Causes	trolley	-1
+singular	AtLocation	operator	0
+stew	HasA	thick soup	2
+percussion	AtLocation	band	2
+inch	ConceptuallyRelatedTo	achieve goal	-1
+change mind	IsA	action	2
+book	IsA	sentence	-1
+elevation	HasPrerequisite	switch	-2
+push	IsA	stake	-1
+stand line	HasPrerequisite	locate end line	2
+purchase cellular phone	HasPrerequisite	scroll	-1
+ide	UsedFor	develop software	2
+ventilation system	AtLocation	dwell	1
+wife	UsedFor	sentiment	0
+keep record	UsedFor	look good	-1
+owner	ConceptuallyRelatedTo	own	2
+test	HasA	put jail	-1
+condo	AtLocation	big city	2
+child	HasProperty	unique	1
+habitation	AtLocation	military base	2
+diner	AtLocation	thick	-2
+submarine	AtLocation	mississippi	1
+cycle	IsA	activity	2
+jeff	HasProperty	feel sick	0
+exploration	HasProperty	field	1
+portugal	Causes	wrinkle	-1
+silverware	AtLocation	refrigerator freezer	-1
+shooter	CapableOf	wear shoot glass	1
+person think horseshoe	HasProperty	lucky	1
+cracker	AtLocation	market	1
+accommodation	HasA	kitchen	1
+singular	AtLocation	equity	0
+atheist	IsA	scientist	-1
+and	HasProperty	person person	-2
+walk	ConceptuallyRelatedTo	foot travel	2
+play sport	HasSubevent	move fast	2
+go vacation	HasSubevent	buy traveler check	2
+take break	UsedFor	relax little	2
+atlas	IsA	danger	-1
+eddy	IsA	thief	0
+meet girl	Causes	meet new friend	2
+meat	HasPrerequisite	go	-2
+fr	HasProperty	laugh	-2
+increase	IsA	price rise	-1
+exercise	HasProperty	stay active	2
+person	AtLocation	graveyard	2
+furnish	IsA	reaction	-1
+open business	HasPrerequisite	performer	1
+quiet	IsA	verb	1
+watch	UsedFor	next	-2
+singular	AtLocation	nephew	-2
+buy	LocatedNear	see friend	-2
+cold storage	HasA	blade	-1
+pulpit	AtLocation	prayer	0
+grow old	HasProperty	bad	0
+post message	MotivatedByGoal	insect	-2
+platter	IsA	big plate	2
+fold door	HasProperty	write	-2
+deliver	IsA	noun	-1
+human	CapableOf	supply	2
+course	IsA	roadway	-1
+surgical operation room	AtLocation	hospital	2
+exclusion	AtLocation	competitive activity	2
+little kid	HasProperty	conscious	2
+man	CapableOf	check vital sign	2
+water bottle	AtLocation	bookcase	-1
+dougla adam	IsA	foul	-1
+conversation	HasPrerequisite	interview	-1
+remove dirt	HasFirstSubevent	study	1
+compare	IsA	movement	-2
+factory	UsedFor	employ worker	2
+figure	HasProperty	pencil	-2
+tape machine room	AtLocation	classroom	-1
+paint picture	MotivatedByGoal	cider	-2
+soprano	IsA	woman	1
+hospital	HasProperty	master control	-1
+record	IsA	plastic	-1
+ape	IsA	equestrian	-1
+playroom	AtLocation	kindergarten	2
+cover up	IsA	face other	-1
+carpet	AtLocation	dormitory	2
+currency	AtLocation	desk drawer	2
+peel	IsA	inspire	-1
+must	HasProperty	term	2
+make better world	Causes	stress	-1
+horse	AtLocation	belly whale	-1
+self adhesive label	UsedFor	colore	-1
+flea	HasProperty	fur	2
+shade	AtLocation	henry	-1
+cent	IsA	small change	2
+pass out	MotivatedByGoal	revenge	-1
+dance club	UsedFor	good mood	2
+lion	UsedFor	sex	-1
+start fire	HasSubevent	spark	2
+take car drive	HasSubevent	pick nose	-1
+pipe	HasProperty	tradesman	-1
+baggage train	AtLocation	airport	2
+egg	HasProperty	raisin	-1
+ring	HasProperty	sit desk	-1
+chinese restaurant	AtLocation	town	2
+age	IsA	comparison	2
+eye	AtLocation	boyfriend	2
+political ideology	Causes	death	1
+gravity	AtLocation	build	2
+take film	CapableOf	play music	-1
+fly kite	HasLastSubevent	go home	2
+soak hotspring	UsedFor	whole	-2
+piccolo	UsedFor	famous	-1
+beer	MotivatedByGoal	educate	-1
+read magazine	Causes	sit desk	-1
+eye	AtLocation	runner	2
+read book	UsedFor	educate one self	2
+asim	IsA	watch tv	0
+anatoly	HasProperty	drive work	-1
+person	Desires	mis-information	2
+superhero	IsA	domestic animal	-1
+man	CapableOf	make dinner	2
+move	HasA	keep	-2
+move	HasA	charity	-1
+flash	ConceptuallyRelatedTo	cloud	1
+hope	CapableOf	forgive	2
+transportation device	AtLocation	evaluation	-1
+phillip head screwdriver	AtLocation	garage	2
+read book	MotivatedByGoal	acquire knowledge	2
+cookie	IsA	tray	-1
+jar	HasA	rim	2
+carrie	IsA	knit	-1
+ventilation system	AtLocation	construction worker	-1
+clerk	Causes	happyness	1
+restaurant diner	AtLocation	big city	2
+program language	AtLocation	sacrifice	-1
+storage	CreatedBy	artist	-1
+give back	AtLocation	south america	-2
+eat lunch	Causes	gain weight	2
+side	HasA	immortality	0
+person	AtLocation	bookshop	2
+take bus	HasSubevent	tray	-1
+robot	IsA	roboter	-2
+buy product	MotivatedByGoal	fill miss	2
+snake	AtLocation	singularity	-1
+writer	AtLocation	school room	1
+person	HasSubevent	become clean	-2
+zoo	IsA	decide go	2
+kill	Causes	death penelty	2
+observation	HasPrerequisite	lie down	1
+program language	AtLocation	boy scout	-1
+anime	HasProperty	play	0
+desert	HasA	many sand dune	2
+car	MadeOf	metal	2
+soap	ConceptuallyRelatedTo	swear	-1
+singular	AtLocation	strong person	2
+honey	HasProperty	almost sugar	2
+graph	IsA	crayon	-1
+program language	AtLocation	cause pain	1
+observe	IsA	body part	-1
+checkup	MotivatedByGoal	girl name	-1
+tick	HasA	tail	0
+paper	HasA	wood pulp	2
+burner	CapableOf	teach	1
+seat belt	HasLastSubevent	lock door	-1
+dave	IsA	jail	-1
+put child bed	HasSubevent	tell sweet dream	2
+peck	AtLocation	long hair	-1
+insect	IsA	nickname	-1
+yoyo	UsedFor	gift	1
+push	IsA	the	-1
+surprise	ConceptuallyRelatedTo	machinery	1
+eyeball	HasProperty	body organ	2
+urinate	HasSubevent	sun rise	-1
+attache case	AtLocation	grave	-1
+baseball	HasProperty	popular japan ping-pong	0
+calorie	ConceptuallyRelatedTo	cake	2
+engine	HasA	car power	1
+commit murder	Causes	feel sick	2
+snake	AtLocation	urn	1
+bluebell	IsA	colorful gong	2
+breathe fresh air	HasPrerequisite	go park	2
+sofa hide bed	CapableOf	save money	-2
+hot water bottle	CapableOf	cost lot money	1
+talk	UsedFor	look eye	-1
+buy store	HasProperty	lose	-1
+serve cart	AtLocation	refrigerator	0
+enjoy	ConceptuallyRelatedTo	expression	2
+piggy bank	IsA	plant	-1
+child	CapableOf	move object	2
+serve trolley	AtLocation	park lot	-1
+cockpit	ConceptuallyRelatedTo	gold	-1
+worth	IsA	fabric	-1
+weep	Desires	die	1
+fate	HasProperty	death	2
+well	AtLocation	boundary	0
+meet interest person	HasLastSubevent	feel stimulate	0
+steel wool	CapableOf	burn	2
+breed	IsA	face other	-2
+drive car	HasSubevent	use turn signal	2
+variable	IsA	royal	-1
+air	IsA	breathable solution	2
+fox	IsA	sea creature	-1
+person	IsA	time period	-1
+face	IsA	front head	2
+horse	HasProperty	vocation	-1
+take care proposal	Causes	paperwork	2
+brass	AtLocation	music store	1
+board	HasProperty	like plywood	2
+review	Causes	knowledge	2
+remain	IsA	record	0
+chess piece	UsedFor	child toy	1
+denial	AtLocation	long hair	-1
+dive	HasProperty	mandatory	-1
+candle	UsedFor	jeff	-1
+house	HasA	insect	1
+hound	HasProperty	furry	2
+sausage	HasA	body	2
+column	HasProperty	tall thin	2
+field	AtLocation	peru	2
+fruit	IsA	green color	-1
+move sidewalk	AtLocation	store	-1
+burlap	ConceptuallyRelatedTo	type	-1
+article clothe	CapableOf	catch fire	2
+take care proposal	HasSubevent	sharpen pencil	0
+ride bicycle	HasPrerequisite	air tire	2
+likely	AtLocation	bottom ocean	-2
+clay	IsA	substance	2
+regret	IsA	sorriness	2
+release energy	UsedFor	prove	1
+wheel	IsA	paste	-2
+bee	AtLocation	the	-2
+period	AtLocation	classroom	1
+pay credit card	MotivatedByGoal	avoid go atm	2
+wait line	HasSubevent	watch even news	-1
+highlighter pen	CapableOf	ring bell	0
+execution	Desires	die	2
+slave	IsA	dread	0
+cracker	AtLocation	cabinet	1
+canoe	AtLocation	tray	-1
+use vcr	UsedFor	watch videotape	2
+program language	AtLocation	foal	-1
+sugar	MadeOf	sugarcane	2
+page	ReceivesAction	print paper	2
+win baseball game	Causes	advance playoff	2
+chuck	IsA	hunter	0
+play frisbee	UsedFor	end life	-1
+cult	UsedFor	ask	-1
+button	HasProperty	clothe fastener	2
+short circuit	UsedFor	kill	0
+procreate	UsedFor	reproduction	2
+knuckle	IsA	think	-1
+attache case	CapableOf	change	0
+program language	AtLocation	rain snow	-1
+basketball court	IsA	mass	-1
+see favorite show	UsedFor	entropy	-2
+beaver	HasProperty	furry	2
+movie house	AtLocation	small town	1
+wheel	PartOf	many use	2
+glutton	HasProperty	person	-2
+child	CapableOf	roll downhill	1
+touch	ConceptuallyRelatedTo	parent	-2
+product	AtLocation	appliance	0
+skateboard	MotivatedByGoal	rough	1
+jacket	AtLocation	bed	-1
+roadway	AtLocation	michigan	2
+bayonet	HasFirstSubevent	take shower	-2
+princess	HasProperty	gender	2
+go school	MotivatedByGoal	take course	2
+plan vacation	HasPrerequisite	decide want	2
+go drive	HasPrerequisite	strong person	-1
+visitor	HasProperty	lose	-2
+cereal bowl	AtLocation	stream	-1
+porn	HasPrerequisite	open eye	1
+cigar	Causes	understand	-1
+gel	AtLocation	fridge	1
+democrat	IsA	job	1
+chinese restaurant	AtLocation	any chity	-2
+cross	IsA	timber	-1
+sport goods store	AtLocation	telephone directory	2
+consider	IsA	preference	-2
+common emotion	IsA	projectile ball	-1
+eraser	UsedFor	erase written pencil	2
+program language	AtLocation	unit measure	-1
+empty	IsA	public	-2
+basketball team	Desires	die	-1
+exhaustion	CausesDesire	weekend	-2
+garden	HasA	escape reality	-1
+report	AtLocation	bath	-1
+darkness	ConceptuallyRelatedTo	cannon	-1
+study	UsedFor	graduate school	2
+wait table	UsedFor	income	1
+throw party	ConceptuallyRelatedTo	candle	-2
+defeat	HasProperty	action	-2
+money	ConceptuallyRelatedTo	greenback	2
+brute	IsA	door	-1
+habitation	ConceptuallyRelatedTo	like	0
+nostalgia	HasProperty	body part	-1
+coin purse	AtLocation	cabinet	1
+something	AtLocation	mexico	-2
+throw ball	HasProperty	organ	-2
+procreate	MotivatedByGoal	energetic	0
+transportation device	AtLocation	patent	1
+sate hunger	HasPrerequisite	digestion	2
+tapestry	AtLocation	outcome	-1
+do it	MotivatedByGoal	play basketball	1
+destroy enemy	HasSubevent	atomic bomb	1
+trader	CapableOf	sell	2
+tow	IsA	maintain	-2
+draw	IsA	style	-1
+discothque	MotivatedByGoal	fun	-2
+walk	Causes	body glow	-1
+cheque book cover	AtLocation	drawer	1
+daylight	HasProperty	endless	-1
+go see play	Causes	bore	1
+window	HasProperty	look outside	2
+make new friend	MotivatedByGoal	curious	1
+master	IsA	pattern	-1
+far	IsA	oatmeal	-1
+electron	IsA	elementary particle	2
+buy shirt	HasLastSubevent	put shirt bag	1
+reduce hunger	IsA	face other	-1
+gordon	IsA	make love	-1
+forfeit	HasProperty	lose pledge	-2
+company	AtLocation	shoe	-1
+milan	IsA	take out garbage	-2
+gymnastics	HasProperty	verb	-2
+subway token	AtLocation	airport	-1
+kitchenette	AtLocation	build	1
+hear aid	ConceptuallyRelatedTo	ear	1
+cuddle	HasPrerequisite	play	0
+return work	HasPrerequisite	go again job	2
+enjoy film	Causes	round shape	-1
+hose	UsedFor	siphon gas	-1
+top floor	IsA	tone	-1
+make feel better	IsA	feel	0
+kick	IsA	reaction	1
+machine	CapableOf	slap	-1
+mist	IsA	delta	-1
+house	HasProperty	live space	2
+pearl	HasProperty	cafe	-1
+decanter	AtLocation	cupboard	1
+downtown area	AtLocation	county	1
+chess queen	UsedFor	play chess	2
+asbestos	IsA	dirt	-2
+sauce	UsedFor	quench thirst	-1
+rest	IsA	relaxation	2
+sperm	UsedFor	keep warm	-1
+letter	ReceivesAction	put letter slot	2
+football team	ConceptuallyRelatedTo	steam	-1
+pizza	ReceivesAction	invent italy	2
+high price	AtLocation	land	0
+organ	AtLocation	church	2
+cranberry	AtLocation	refrigerator	1
+grandma	Desires	love	2
+arch	AtLocation	store	-1
+climb	Causes	fluoride mouthwash	-1
+leaf	LocatedNear	many plant	2
+import	HasProperty	action	-2
+take phone call	Causes	substance	-2
+pig	Desires	eat	2
+jaw	IsA	bite hinge	2
+little child	CapableOf	play	2
+shop	HasPrerequisite	computer chip	0
+small stone	Desires	die	-1
+help	IsA	support	2
+slope	HasA	loan	-2
+brick	AtLocation	where	-2
+supreme	CapableOf	drink tea	-2
+ir	Desires	die	-1
+maize	HasProperty	crop	1
+person	HasProperty	vast	1
+program language	AtLocation	high point	-2
+motel	UsedFor	sigh	-2
+worker	HasProperty	person	0
+eagle	HasProperty	spiritual	1
+television studio	AtLocation	house	-1
+prepare	IsA	startle	-1
+something	CapableOf	toothbrush handle	0
+ice hockey	UsedFor	competition	2
+even big ship	ReceivesAction	sunk iceberg	2
+captain	UsedFor	active	0
+man	CapableOf	call 911	2
+camel	HasSubevent	remember	-2
+enter	UsedFor	wash	-1
+lieutenant	Causes	guilt	0
+use imagination	HasSubevent	share	1
+mirror	AtLocation	bedroom	2
+amount	HasProperty	basin	-1
+move car	HasFirstSubevent	open door	1
+portray	IsA	verb	2
+carrot	AtLocation	roll downhill	-1
+fir	Desires	water	2
+eat	HasPrerequisite	grow organic vegetable garden	1
+free sex	Causes	sweat	1
+contraceptive	AtLocation	lace	-1
+play sport	Causes	free sex	1
+surf net	HasLastSubevent	offline	1
+one	CapableOf	use menu enter command	1
+examine	HasSubevent	let	0
+go party	HasPrerequisite	condom	1
+volcano	AtLocation	graveyard	-1
+trunk	UsedFor	store quilt	2
+museum wing	AtLocation	kansa	2
+wash car	MotivatedByGoal	kilometer	-2
+look attractive	HasProperty	lose	-1
+round brush	AtLocation	pharmacy	0
+something	AtLocation	tollbooth	2
+pasture	ConceptuallyRelatedTo	land	-2
+curry	HasProperty	food	2
+run marathon	MotivatedByGoal	mother child	-1
+athlete	AtLocation	volunteer	-2
+globe	HasProperty	world	2
+love else	HasFirstSubevent	tell	1
+garlic	AtLocation	resturant	2
+supreme	IsA	person	0
+feline	IsA	cat	2
+registry office	AtLocation	room	1
+person	PartOf	worldwide money make machine	0
+terrorism	IsA	person	-1
+locker	HasProperty	patch	-1
+play game	Causes	creator	-1
+note	HasProperty	pass	1
+marsupial	HasSubevent	talk	-2
+decanter	HasA	eat	-1
+allow	IsA	football game	-1
+japanese restaurant	ReceivesAction	born	-1
+go park	HasPrerequisite	tie shoe	1
+make sure healthy	MotivatedByGoal	shape	-1
+barbeque	CapableOf	eat banana	-1
+print	UsedFor	pattern	-1
+glad	ConceptuallyRelatedTo	leave over	0
+enjoy day	UsedFor	good live	2
+eye	AtLocation	put stand	-2
+excruciate	Desires	die	-2
+college	AtLocation	washington dc	2
+daath	IsA	knowledge hebrew	-1
+four wall syndrome	CausesDesire	go somewhere	2
+program language	AtLocation	fantastic	-2
+taxiway turn off	AtLocation	new york	2
+memory child	CausesDesire	record	1
+another name	HasA	engine	-1
+ostrich	IsA	hear	-1
+pass	ConceptuallyRelatedTo	pew	-1
+surf web	HasSubevent	click mouse	2
+nervous breakdown	HasSubevent	brat	-2
+find downtown	IsA	job	2
+scene	HasProperty	up high	-1
+seed	LocatedNear	hardwood	-1
+branch	HasProperty	pole	-2
+mane	HasProperty	furry	2
+pay tax	MotivatedByGoal	pay bill	-1
+play basketball	Causes	cramp	2
+onto web	MotivatedByGoal	evaluate	1
+exercise	HasPrerequisite	find place exercise	2
+submarine	CapableOf	sink vessel	2
+over	HasProperty	large	-1
+spit	Causes	death	-1
+marijuana	UsedFor	make out	-1
+darwin	Desires	die	-1
+large food store	AtLocation	rome	2
+eye	AtLocation	July fourth	-1
+useful tool	HasSubevent	remove clothe	-1
+typewriter ribbon	AtLocation	antique typewriter	2
+jump off cliff	IsA	eye	-1
+nomad	HasSubevent	sweaty	1
+underground area	UsedFor	star	-2
+spin	IsA	movement	-1
+jingle	HasProperty	rhyme song	2
+husband wife	IsA	sorrow	-1
+engine	AtLocation	phone	-1
+matt	HasProperty	laugh	-2
+able	IsA	loud noise	-1
+stick up chimney	AtLocation	aroma	-1
+person frighten	HasSubevent	time seem slow down	-1
+passion	IsA	master bedroom	-1
+person	CapableOf	fall love	2
+satan	AtLocation	rock	-1
+fly kite	Causes	exhiliration	2
+prepare	IsA	behaviour	2
+eye	AtLocation	competitor	2
+attitude	HasProperty	emotion	2
+hand	PartOf	analog clock	2
+anyone	CapableOf	quarrel	2
+think hard	HasPrerequisite	read book	1
+speak	IsA	phrase	-2
+waste time	HasProperty	verb	-2
+crumb	HasProperty	cake	-1
+rudder	UsedFor	create music	-1
+correct	IsA	weather	-1
+price	ConceptuallyRelatedTo	portable shower head	2
+masticate	IsA	gain	-1
+wage	AtLocation	ground	-1
+card catalog	UsedFor	look up library information	2
+inanimate	HasA	bark	-1
+philippine	AtLocation	elf	-2
+loop	ConceptuallyRelatedTo	gold	1
+hold breath	Causes	emotion	-1
+hardware	IsA	term	2
+stop car	HasSubevent	another car crash	1
+design software	Causes	north	-2
+rake	IsA	gather leave	-2
+food taste good	HasProperty	good health	1
+kid play	HasPrerequisite	play	-2
+soprano	UsedFor	salty	-2
+cattle	ReceivesAction	raise ranch	2
+crustacean	HasProperty	animal	2
+reproduce	MotivatedByGoal	maturity	1
+marble	AtLocation	bag marble	2
+furnish	IsA	command	-1
+poetry	ConceptuallyRelatedTo	hurt	1
+creator	IsA	human	1
+Monday	DefinedAs	day certain show play	2
+bacon	InheritsFrom	food	2
+link	Causes	lose track time	1
+cat	AtLocation	suburb	2
+belt	ConceptuallyRelatedTo	body	-2
+mosquito bite	MotivatedByGoal	shape	-2
+go work	UsedFor	support yourself	2
+credit card wallet	UsedFor	dream	-2
+eye	HasProperty	appearance	1
+fidelity	AtLocation	chance	-1
+mote	HasProperty	field	-1
+thesis	ConceptuallyRelatedTo	anger	2
+gym	AtLocation	public	-1
+pancake	HasProperty	lose	-2
+mailman	HasProperty	limb	1
+studio pedestal	CapableOf	teach	-1
+automaton	AtLocation	paycheck	-1
+stick up chimney	AtLocation	fudge	-2
+eraser	IsA	pencil mark	2
+earn live	HasPrerequisite	must	-2
+go airport	HasProperty	verb	-2
+spider	AtLocation	zoo	2
+push	IsA	consume	-2
+sky	ConceptuallyRelatedTo	fun play	-1
+program language	AtLocation	phase	-2
+escape	HasProperty	nail	-2
+dirt	CausesDesire	neatness	2
+nobody	CapableOf	walk dog	-1
+compromise	HasPrerequisite	take off clothe	-1
+use calculator	HasSubevent	teach child	-1
+soot	HasA	fire ash	2
+common emotion	IsA	pity	1
+commit murder	HasSubevent	trombone	-1
+mote	IsA	face other	-1
+eat place	UsedFor	city	-1
+speck	IsA	body part	-1
+person	IsA	small	1
+father	CapableOf	quiet child	1
+reason	IsA	action	-1
+cloud	IsA	fluffy cumulus	-1
+master control	AtLocation	couch	1
+go jog	HasPrerequisite	put trainer	1
+weapon	UsedFor	weakness	2
+fly kite	UsedFor	out house	2
+likely	CapableOf	fee baby	-2
+grow plant	IsA	action	2
+mexican	IsA	adjective	2
+use television	MotivatedByGoal	bore gormless	2
+sleep pil	IsA	drug	2
+egalitarian	PartOf	egalitarian society	1
+person	Desires	poke prod	2
+core	AtLocation	rain	-2
+walk through	HasProperty	medium	-2
+small car	AtLocation	park lot	0
+forgive	HasSubevent	chaos	-1
+wreck	UsedFor	test	2
+fidelity	AtLocation	amplifier	2
+listen radio	MotivatedByGoal	function	1
+period	HasProperty	female	2
+play	MotivatedByGoal	romance	0
+curl iron	HasProperty	lose	1
+meet girl	Causes	simile	1
+go performance	Causes	make new friend	1
+certificate	HasProperty	lose	1
+steal	IsA	liquor	-1
+hardwood	IsA	face other	-2
+far	UsedFor	keep clean	-2
+energy	UsedFor	violin	-2
+office worker	CapableOf	father child	1
+calendar book	UsedFor	scedule appointment	2
+person	HasA	champagne new year evee	2
+snake	AtLocation	horse race	-1
+kitchen table	AtLocation	build	2
+go play	HasSubevent	look out	1
+hide	IsA	conceal	2
+scowl	HasProperty	frown	2
+ear	LocatedNear	crown	1
+geta	IsA	smart	-2
+assistant	HasA	penis	1
+electric toothbrush	HasSubevent	become clean	2
+polish	HasA	poland	2
+salsa	Causes	fun	2
+discover	ConceptuallyRelatedTo	find	2
+dance club	UsedFor	function	2
+cow	AtLocation	russia	0
+frame	AtLocation	home	2
+rung	ConceptuallyRelatedTo	ladder	2
+rush	HasProperty	speed through	2
+soccer field	UsedFor	drive car	-1
+meet girl	HasPrerequisite	ask mutual friend	2
+hop	HasSubevent	trip	1
+fidelity	AtLocation	dress well	-2
+husband	UsedFor	genre	-2
+agent	AtLocation	marina	0
+traveller	HasProperty	vacationer	1
+rattle	HasProperty	action	1
+roll	HasProperty	circuit	-2
+human	IsA	creature	2
+sit	UsedFor	payment	-2
+pet	AtLocation	honeycomb	-1
+dust	AtLocation	high price	-1
+love	HasProperty	glad	1
+excavation	AtLocation	work area	1
+bus	UsedFor	travel between bus stop	2
+art work	AtLocation	dwell	1
+coil	AtLocation	grocery store	-1
+file box	AtLocation	house	1
+bird	CapableOf	stand branch tree	2
+something	CapableOf	take walk	2
+create idea	HasPrerequisite	excuse	1
+cloud	HasProperty	steven	-1
+reel	IsA	play card	-2
+pyramid	AtLocation	cuba	-1
+inch	HasProperty	shake hand	-2
+meet girl	Causes	delight	0
+fidelity	AtLocation	twin	2
+impairment person	IsA	major depression	1
+water cooler	HasA	male	-1
+unique	HasA	two arm	-1
+interstate highway	AtLocation	chess knight	-2
+experiment	ConceptuallyRelatedTo	often	-2
+run marathon	HasPrerequisite	train hard	2
+door lock	UsedFor	meadow	-2
+fidelity	AtLocation	styrofoam	-2
+child	CapableOf	debate	1
+use computer	HasFirstSubevent	bed cover	-2
+dew	HasProperty	wet	2
+bartender	HasProperty	lose	-1
+oil	HasA	liquid gold	1
+tadpole grow up	IsA	frog	2
+abstract	HasPrerequisite	brain	2
+gravity	IsA	sport	-1
+human	AtLocation	property	2
+joe	IsA	mexican	0
+squirrel	HasProperty	chuck	0
+elect official	HasProperty	wheel	-2
+park structure	AtLocation	rome	2
+conduct trial	Causes	mosque	-1
+kim	Desires	new computer	0
+memo	AtLocation	desk drawer	2
+take walk	HasSubevent	fall	1
+buy	HasPrerequisite	debit card	1
+eye	AtLocation	holy	-2
+tennis	IsA	umpire	-1
+mental illness	HasProperty	action	0
+flower	HasProperty	pigment	0
+underground area	UsedFor	reach root	2
+mile	UsedFor	go somewhere	-1
+lemonade	IsA	alcohol drink	-1
+election	IsA	wave	-1
+everybody	CapableOf	eat spaghetti	-1
+nation	ConceptuallyRelatedTo	under god	-1
+exchange	IsA	salad spinner	-1
+literature	SimilarSize	book	-1
+spank	Causes	death	-1
+profit	HasA	income	2
+cook	MotivatedByGoal	axe	-1
+essay	AtLocation	text	2
+pill	AtLocation	table	-1
+telephone	IsA	gap	-1
+music	IsA	band play	2
+plastic surgery	HasPrerequisite	work hard	1
+wood	HasProperty	try hard	-1
+print	HasProperty	medium	2
+seashell	AtLocation	pool	-1
+fairy tale	UsedFor	relaxation	2
+soundstage	HasProperty	alcoholic beverage	-1
+hard	HasProperty	solid	2
+go public	HasPrerequisite	bravery	2
+playroom	UsedFor	child game	2
+protection	CausesDesire	maintain muscle strength	0
+agriculture	IsA	support	2
+reserve	ConceptuallyRelatedTo	verb	2
+entranceway	AtLocation	home	2
+print	UsedFor	press	1
+child	CapableOf	say even prayer	1
+fidelity	AtLocation	ambassador	1
+population	AtLocation	politics	2
+eraser	AtLocation	philippine	1
+big city	Causes	mess	2
+nearby	IsA	place	2
+advance battle	MotivatedByGoal	print printer	-1
+moment	HasProperty	measurement	0
+go haircut	HasPrerequisite	let hair grow long	2
+icicle	HasA	roof	-1
+take phone call	UsedFor	use phone	-2
+procreate	MotivatedByGoal	much	-1
+fidelity	AtLocation	no end	-1
+human	AtLocation	begin	-1
+xylophone	UsedFor	sleet	-1
+work art	UsedFor	convey mood	2
+procrastinator	Desires	late	2
+go store	HasSubevent	drive car	2
+greeley	PartOf	colorado	0
+language	HasProperty	way to	0
+asthma attack	IsA	verb	-1
+drink wine	Causes	sleepy	1
+mend	AtLocation	long hair	-1
+carrot	IsA	person group	-1
+learn	HasSubevent	realize	2
+acquire scissor	MotivatedByGoal	cut hair	2
+theater hall	HasA	information	1
+birthday	HasA	fbus	-1
+beef	IsA	kosher deli	0
+hide-a-bed sofa	UsedFor	overnight guest	2
+clean clothe	UsedFor	heavy	-2
+output	ConceptuallyRelatedTo	text	2
+type	UsedFor	bassoon	-1
+transportation device	AtLocation	prosecutor	-1
+air travel	IsA	fast ground travel	2
+fuck	Causes	love	0
+long distance	HasPrerequisite	open book	-1
+serenity	CausesDesire	live life	0
+motor	AtLocation	car engine	2
+oboe	AtLocation	electric fan	-1
+chat friend	UsedFor	exchange information	1
+hungry person	UsedFor	eat	1
+run marathon	Causes	perspiration	2
+d	IsA	medium store information	2
+card	UsedFor	refreshment	-1
+prepare	IsA	permission	-1
+winner	HasProperty	good	1
+tie shoelace	HasSubevent	bring cash	-1
+sofa hide bed	ConceptuallyRelatedTo	government	-1
+pack	ConceptuallyRelatedTo	business	-1
+microbe	IsA	tiny organism	2
+person	CapableOf	d	0
+remember phone number	HasPrerequisite	memory	2
+growth	HasProperty	increase size	1
+meditation	CapableOf	induce trance	2
+transportation device	AtLocation	spiral	-1
+start family	MotivatedByGoal	consonant	-1
+answer	IsA	action	0
+express	MotivatedByGoal	want learn	0
+fidelity	AtLocation	ignition	-1
+cat	AtLocation	weird place	-1
+antler	AtLocation	freeway	-1
+wind	ConceptuallyRelatedTo	boo boo	2
+tom	HasProperty	shop	0
+yet	HasProperty	endless	-1
+walk	IsA	red light	-1
+floor	UsedFor	idle	-1
+tidy	UsedFor	clean body	1
+quality	IsA	assurance	-1
+gun	UsedFor	punishment	-1
+brick	AtLocation	steel cable	-1
+boar	HasA	fur	2
+manipulate	UsedFor	inspiration	-1
+eye	AtLocation	contribution	-1
+ditch	IsA	offer	-1
+without oxygen fire	CapableOf	burn	2
+outcome	HasProperty	business	2
+uncomfortable	HasSubevent	feel sad	2
+love	IsA	enough	-2
+maybe	CapableOf	rot	2
+movie star	IsA	flag	-2
+read book	UsedFor	distraction	2
+compact disk	UsedFor	write	1
+supreme reality time	DefinedAs	vulnerability planet	2
+run out steam	UsedFor	expression indication depletion resource	-2
+cruel	IsA	minister	-2
+philippine	AtLocation	adultery	-1
+small	HasProperty	tiny	2
+large city washington	IsA	seattle	0
+illinoi	AtLocation	continent	1
+cemetery	AtLocation	washington dc	2
+charge	AtLocation	credit card	-2
+fidelity	AtLocation	yoke	1
+master bedroom	UsedFor	round	-2
+marker	AtLocation	classroom chair	-1
+case	AtLocation	store	2
+music	HasProperty	important man	2
+person	Desires	understand computer	1
+call	HasProperty	speech	2
+hard surface	CausesDesire	advance battle	-1
+salad spinner	AtLocation	restaurant	1
+rhombus	HasProperty	flat	1
+tent	HasProperty	gear	-1
+swim	HasPrerequisite	natural gas	-2
+leg arm	AtLocation	workplace	2
+public	ConceptuallyRelatedTo	carafe	2
+hemoglobin	ConceptuallyRelatedTo	wet	-2
+nickel	IsA	money	1
+ash	HasProperty	fire dust	2
+always	HasProperty	never end	2
+convict suspect crime	UsedFor	traveler	-1
+contain	HasProperty	encapsulate	2
+christmas tree	HasA	fun	-1
+attend school	HasSubevent	friendship	2
+zoology	CapableOf	ask question	1
+hat	AtLocation	royal	-2
+poland	HasProperty	lose	-2
+eye	AtLocation	aware	-1
+jellyfish	AtLocation	television show	1
+road	ConceptuallyRelatedTo	cane	1
+ledger	AtLocation	drawer	1
+clean house	IsA	only find magazine	1
+time	HasProperty	century	1
+studio control room	AtLocation	dock	0
+conjunction	PartOf	sentence	-1
+cow	IsA	horse	2
+dance	HasSubevent	weight loss	1
+worth	CausesDesire	fun	1
+deliver	ConceptuallyRelatedTo	rodent	-1
+farm	HasProperty	vegetable ranch	1
+taste sweet	MotivatedByGoal	dress room	-2
+keypad	PartOf	phone	2
+eat restaurant	HasSubevent	dude	-2
+purchase	HasProperty	purchase	1
+determine truth	HasPrerequisite	time	1
+book	UsedFor	seek answer	2
+closet	AtLocation	coca cola	-1
+pay	MotivatedByGoal	task	-2
+bucket	AtLocation	house	2
+erase	HasProperty	lose	-1
+radio studio	HasA	sheep	-2
+music	CapableOf	cause emotion person	2
+sharp object	IsA	weapon	1
+person	CapableOf	discuss literature bottle	-1
+attend meet	HasPrerequisite	length	-2
+vinyl	IsA	listen	-1
+tape dispenser	AtLocation	briefcase	-1
+pope	IsA	another person	2
+prune	HasPrerequisite	good	-2
+gel	IsA	food	1
+tune	HasProperty	sell	-2
+person	Desires	brainwash corruption	-2
+lung	UsedFor	expand mind	1
+lobby	UsedFor	meet guest	2
+list	ConceptuallyRelatedTo	read	2
+success	LocatedNear	secret	1
+three four	IsA	part speech	-1
+fight enemy	UsedFor	buy clothe	-1
+theory	CreatedBy	think	2
+go haircut	HasPrerequisite	visit hair stylist	1
+royal flush	PartOf	human	-1
+leaf	AtLocation	fauna	1
+excellent	HasProperty	goal	0
+tube	AtLocation	apartment	1
+wave	HasProperty	water crest	1
+style	PartOf	small stone	-1
+electric razor	UsedFor	remove hair face	2
+cider	ConceptuallyRelatedTo	bug	-1
+divide	ConceptuallyRelatedTo	mathematical operation	2
+human	AtLocation	palace	1
+email	HasSubevent	sneeze	-1
+animal	LocatedNear	anywhere	-2
+present	HasProperty	past future	2
+servant	IsA	master employee	2
+fidelity	AtLocation	July fourth	0
+hard work	HasProperty	lose	-1
+serve customer	HasSubevent	fake	1
+sucker	AtLocation	birthday	1
+bean	AtLocation	kirstin	0
+deliver	HasProperty	person be	-2
+woman	DefinedAs	opposite logic	0
+cook	Causes	powder	-1
+kill time	HasProperty	lose	-2
+amusement	LocatedNear	hand	-2
+computer chip	HasProperty	value	1
+pay money	ConceptuallyRelatedTo	money	0
+lodgings	HasA	furniture	2
+speak	IsA	say yes	1
+money	UsedFor	commerce	2
+trombone	UsedFor	keep record	-1
+drizzle	IsA	water	-2
+glitter	LocatedNear	sky	-1
+porch	IsA	deck	2
+give away	MotivatedByGoal	need	-1
+lounge	HasPrerequisite	lie down	1
+flat	AtLocation	sidewalk	-1
+piece information	UsedFor	form opinion	2
+sew machine	HasProperty	plan	-2
+ounce	HasProperty	now	-2
+christian	ConceptuallyRelatedTo	person	1
+perspiration	HasProperty	lose	-2
+chew gum	IsA	verb	2
+frog	IsA	small mammal	-1
+go see film	Causes	feel relax	1
+develop	HasProperty	action	-2
+agent	AtLocation	love	-2
+mass	HasPrerequisite	write book	-2
+quite	IsA	green vegetable	-1
+shell	AtLocation	delta	1
+hear music	UsedFor	sing	1
+exchange idea	HasSubevent	breath	-2
+window	AtLocation	wallpaper	2
+alchemist	HasProperty	gold maker	2
+movie star	IsA	person	2
+hymn	HasA	church song	-2
+ridge	IsA	mountain ledge	2
+crown	AtLocation	sleeve	-2
+minute	HasA	pennsylvania	-2
+hear news	HasPrerequisite	understand	2
+tweed	AtLocation	suit	1
+we	CapableOf	gift ten thousandth customer	-2
+go concert	HasSubevent	celebrate	1
+green plant	IsA	vegetation	2
+accordian bag	UsedFor	accordian	2
+common emotion	IsA	frequency	-2
+bath	HasSubevent	fill tub warm water	2
+boat	AtLocation	slush	-1
+playground equipment	MotivatedByGoal	fun	2
+saint	HasProperty	person	-2
+physic	IsA	ruby	-1
+move sidewalk	AtLocation	shop mall	-1
+dog	AtLocation	heel	-2
+preposition	PartOf	speech	1
+program language	AtLocation	assemble	-1
+stick up chimney	AtLocation	satan	-2
+attempt	IsA	vapor	-1
+life preserver	MotivatedByGoal	important	2
+laundry	HasSubevent	become clean	2
+go vacation	HasSubevent	visit asia	1
+eraser	UsedFor	erase	2
+two side	AtLocation	rest area	2
+design software	HasPrerequisite	make fire	-1
+many person	AtLocation	delusion	0
+enjoy film	UsedFor	excellent	0
+integrity	HasProperty	lose	-2
+afford	HasProperty	verb	-2
+wool	HasProperty	pattern	1
+foot	UsedFor	shiver	1
+bank	HasA	bracelet	-2
+internet cafe	HasLastSubevent	pray	-2
+restaurant bill	AtLocation	refrigerator	-1
+buy small	Causes	bark	-2
+go market	HasSubevent	convenience	0
+friend	AtLocation	supermarket	1
+bear	CapableOf	fish salmon	2
+aerial bomb	MotivatedByGoal	revenge	0
+dormitory	AtLocation	house	-1
+file box	AtLocation	desk	1
+call	IsA	communicate idea	2
+meet person	HasPrerequisite	diplomacy	1
+case	HasProperty	box like	1
+cloudy	HasProperty	air	2
+remember	IsA	process	2
+clean body	HasPrerequisite	take clothe off	2
+drive work	UsedFor	get work	2
+write	IsA	abstract	2
+improve image	HasPrerequisite	express love	0
+prepare	IsA	share	-1
+triangle	UsedFor	name	-2
+hair cut	IsA	face other	-1
+answer	IsA	ask	-1
+plant garden	MotivatedByGoal	live country	1
+enjoy	ConceptuallyRelatedTo	penalty	-1
+faith	AtLocation	confession	1
+number	IsA	attribute	0
+chipmunk	CapableOf	pet	1
+program language	AtLocation	equity	-1
+sit chair	Causes	feel relax	1
+barbeque	IsA	place	-1
+person	CapableOf	count money	2
+relationship	CapableOf	wonder	-1
+chain	UsedFor	barter	-1
+write	IsA	writer activity	2
+play	HasPrerequisite	argument	-1
+dignity	HasProperty	finger	-1
+payment	LocatedNear	amount money	2
+plant	AtLocation	natural habitat	1
+receipt	AtLocation	office supply store	1
+shoot gun	HasProperty	wear	-1
+computer user	AtLocation	mall	2
+mos	CapableOf	part red sea	2
+person	IsA	angry need cool down	2
+hold breath	IsA	activity	2
+enough money	AtLocation	cash register	-2
+debate	AtLocation	national park	-1
+nest	HasProperty	baby bird	-1
+store item	HasProperty	lose	-2
+see	UsedFor	sit down	-1
+dollar	HasA	opaque	-2
+person kill	Causes	death	2
+club	HasA	member	2
+burn	IsA	stinky	1
+connie	HasProperty	spoil	-2
+australia	IsA	national park	-1
+become happy	MotivatedByGoal	pleasure	2
+eye	AtLocation	pass out	-2
+watch television	MotivatedByGoal	entertainment knowledge	2
+swiss army knife	AtLocation	grocery store	-1
+comfort	HasProperty	relaxation	1
+santum clau	AtLocation	cage	-1
+read	UsedFor	wisdom	1
+hybrid	CapableOf	slow down	2
+burner	AtLocation	kitchen	2
+grow	HasProperty	develop	1
+salty	HasProperty	extra money	-1
+saxhorn	HasProperty	map	0
+make sandwich	HasProperty	lose	-2
+lure	HasProperty	fish tool	2
+underwater	IsA	place	2
+quill brush	UsedFor	artwork	2
+space	UsedFor	draw	2
+division	HasFirstSubevent	idea	-1
+buyer	IsA	individual	2
+hat	UsedFor	four wall	-2
+spite	HasProperty	machine	-2
+balcony seat	Causes	laugh	1
+loud cry	AtLocation	long hair	-2
+eat fruit	HasProperty	let	-2
+penguin	CapableOf	near antarctica	2
+desk	UsedFor	student	-1
+savings	ConceptuallyRelatedTo	everyone	-1
+car	HasProperty	brave	-1
+birthday	IsA	special moment	2
+human	CapableOf	make choice	2
+eat breakfast	UsedFor	get energy	2
+symphony hall	IsA	instrument	-1
+jimmy	CapableOf	force dooor	-2
+physical phenomenon	ConceptuallyRelatedTo	listen	1
+brain activity	HasPrerequisite	use brain	2
+surprise	HasSubevent	walk out around corner	2
+mercury	AtLocation	car	-1
+jog park	AtLocation	new hampshire	-1
+thimble	IsA	anatomy	-1
+boulevard	HasA	bill	-1
+admit	HasSubevent	open mouth	2
+move	HasA	load	-2
+innocent	DefinedAs	opposite guilty	2
+ginger	Desires	water	-2
+foot	IsA	other extremity	2
+picture	ConceptuallyRelatedTo	cut paper	1
+woodwind instrument	UsedFor	play song	2
+plenty	IsA	face other	-2
+chimpanzee	AtLocation	water	-1
+water	AtLocation	lounge	-1
+color	ConceptuallyRelatedTo	gong	-1
+surface	AtLocation	city	1
+see movie	HasPrerequisite	go theatre	2
+grocery store	AtLocation	collar	-1
+magazine	IsA	check out	0
+shallow water	AtLocation	coffee shop	-1
+plant	ConceptuallyRelatedTo	perennial	2
+lease	AtLocation	cash register	-1
+white house	IsA	structure	2
+meet girl	Causes	some	-2
+button	AtLocation	water cooler	2
+spit	HasSubevent	arrive destination	-1
+bono	AtLocation	hair	-1
+food	AtLocation	plate	2
+stick	AtLocation	leftover	1
+toothpaste	HasPrerequisite	weapon	-1
+play	MotivatedByGoal	Sunday	1
+new job	CausesDesire	learn new	2
+person	HasProperty	all about	1
+express how funny	MotivatedByGoal	fence	-1
+centre	HasProperty	core middle	2
+stork	AtLocation	wyom	0
+title	CapableOf	return home	-1
+do	IsA	necessary	2
+foundation	AtLocation	hotel	2
+swift	IsA	face other	-1
+plum	HasA	smooth skin	2
+advance	ConceptuallyRelatedTo	verb	-2
+prepare	IsA	relate	-1
+blowfish	AtLocation	seawater	2
+good grade	IsA	grow	1
+why	IsA	ask	2
+orphan	AtLocation	long hair	1
+under tree	AtLocation	long hair	1
+fidelity	AtLocation	cedar	-1
+at	HasA	desk	-2
+traffic jam	IsA	disease	-1
+opaque	AtLocation	grand canyon	2
+may	HasA	bend over	-2
+exhaust	HasProperty	essential	-2
+conservation	CapableOf	succeed protect wildlife	2
+speedo	IsA	swimwear	2
+bird	CapableOf	see exhibit	-1
+drop	IsA	score	-2
+ride bicycle	MotivatedByGoal	exertion	1
+butter	UsedFor	set table	2
+paper	IsA	write stuff	2
+cogitate	MotivatedByGoal	system	-2
+second violin	UsedFor	make sound	2
+program language	AtLocation	witch	-1
+skillet	HasA	different color	2
+serve cart	UsedFor	eat	2
+pleasure garden	Causes	relaxation	2
+defeat	UsedFor	kill	1
+swim	HasSubevent	cramp drown	1
+bell	HasProperty	use call attention oneself	1
+look good	UsedFor	sandwich	-1
+promotion	MotivatedByGoal	freedom	-2
+chess	LocatedNear	dinner	-1
+ability	IsA	adjective	-1
+woman	UsedFor	bond	-1
+deity	Desires	die	-1
+idiot delight	IsA	pointless card game	0
+ballet	IsA	paint	-1
+attack	HasProperty	raid surprise	-2
+domesticate plant	HasSubevent	research	-1
+scandal	AtLocation	bookcase	-2
+arrow	IsA	tool	2
+occasion	IsA	perhaps	-2
+place	ConceptuallyRelatedTo	height	-1
+speaker	IsA	person talk	2
+parade	HasA	float	2
+tap	ConceptuallyRelatedTo	shop complex	-1
+cellar	AtLocation	carpal tunnel syndrome	-1
+go zoo	UsedFor	pleasure	2
+bad person	AtLocation	job	2
+calculator	UsedFor	sweep	-1
+horn	ConceptuallyRelatedTo	shopper	-1
+sick person	CapableOf	wonder	1
+go jog	MotivatedByGoal	need exercise	2
+cat hair	AtLocation	back sofa	2
+horse	IsA	big animal	2
+rein	IsA	face other	-2
+apricot	AtLocation	garden	1
+apricot	AtLocation	refrigerator	1
+steam	IsA	haze	2
+motel	UsedFor	still	0
+hallway	UsedFor	hang picture	1
+go play	HasFirstSubevent	join army	-1
+clamp	ConceptuallyRelatedTo	age	-2
+practical	AtLocation	park lot	-2
+greed	Causes	stress	1
+contagious	Desires	die	-1
+at	IsA	archway	-2
+bouquet	IsA	vegetation	-1
+young girl	AtLocation	desk drawer	-1
+necessity	IsA	emotion	-1
+work	IsA	architecture	-1
+fictional character	IsA	individual	2
+lightweight	IsA	breathe	-1
+moss	CapableOf	grow concrete under certain condition	2
+catch fish	ConceptuallyRelatedTo	wind	0
+steam ice mix	HasSubevent	result liquid water	1
+scotland	AtLocation	vermont	-1
+bus stop	UsedFor	write story	-1
+slipper	AtLocation	lair	0
+greengrocer	HasA	three	-2
+dance	HasProperty	disco waltz	1
+harp	IsA	go library	-1
+jolt	HasProperty	movement	2
+fun	Causes	feel happy	2
+exact	IsA	face other	-2
+gown	IsA	fabric	2
+send message	ConceptuallyRelatedTo	lion	-1
+little girl	IsA	child	2
+penis	CapableOf	fit snugly vagine	2
+sleep	IsA	action	2
+tub	UsedFor	hair salon	1
+household garbage	IsA	collect once week	2
+flirt	UsedFor	say like	2
+care	HasProperty	affection	2
+butter	AtLocation	picnic basket	2
+bus shelter	AtLocation	tight	-2
+knife	UsedFor	break down piece	2
+guess	HasProperty	lose	-2
+neutron	HasA	sky	-2
+June	IsA	wrong	-2
+lonely	HasSubevent	snore	-1
+student	CapableOf	smelly	2
+wage	IsA	child play	-1
+capitol	HasA	politician	2
+see particular program	HasPrerequisite	eyesight	2
+program language	AtLocation	mobile phone	1
+remember	IsA	look like	-2
+cook	HasSubevent	slice carrot	1
+woodwind instrument	UsedFor	park car	-1
+goo	AtLocation	long hair	1
+anyone	CapableOf	pitch	2
+route	UsedFor	move	1
+rattlesnake	AtLocation	delaware	-1
+hike	UsedFor	sense accomplishment	2
+dish	AtLocation	dishwasher	1
+price	ConceptuallyRelatedTo	seat belt	1
+mole	IsA	life	2
+make	IsA	combine	1
+projectile ball	Desires	die	-1
+flea	SimilarSize	crumb	2
+daisy	IsA	animal	-1
+salad bowl	AtLocation	south carolina	2
+ground	HasProperty	hamburger	1
+toyota	IsA	requirement	-1
+ring telephone	CausesDesire	set cup table	-1
+sunlight	HasProperty	good	2
+pay	MotivatedByGoal	pay tax	-2
+small car	HasA	engine	2
+belong	HasA	body part	2
+human	CapableOf	unlock door	2
+hop	HasProperty	bring	-2
+fountain	HasProperty	elect	-2
+sheepskin	CapableOf	drink tea	-1
+peace	HasProperty	calm	2
+book	HasProperty	written	2
+wool	IsA	flock	-1
+trout	IsA	torpedo-shape fish	2
+youth	HasProperty	person	-1
+pant	ConceptuallyRelatedTo	pencil	1
+velocity	IsA	face other	-1
+city	HasA	stage curtain	-2
+eat healthy	HasFirstSubevent	stretch	-1
+revolt	MotivatedByGoal	revenge	1
+win baseball game	UsedFor	competition sport	1
+deed	HasProperty	length	-2
+siren	AtLocation	band	-1
+fidelity	AtLocation	crank	-1
+dog cat	HasA	ear	2
+juror	HasProperty	blue	-1
+something	CapableOf	make paper	1
+transit card	AtLocation	mit	1
+necklace	IsA	dictatorship	-1
+church	AtLocation	downtown area	1
+gun	UsedFor	angry person	1
+advice	HasPrerequisite	language	2
+hat	IsA	warm head	2
+rumble	HasProperty	sound	2
+take bath	HasPrerequisite	run water bathtub	2
+how old	HasProperty	endless	-2
+gather energy tomorrow	HasSubevent	take deep breath	2
+rifle	AtLocation	allow	-2
+vote machine	UsedFor	cast vote	2
+horn	LocatedNear	bull head	2
+firework	AtLocation	war	-1
+skunk	AtLocation	wood	2
+key	IsA	male	-1
+ugly	AtLocation	war	2
+test	LocatedNear	ballpoint pen	1
+person	IsA	both freshwater fish	-1
+person	IsA	football player	-2
+discover truth	HasPrerequisite	watch x-file	-1
+pleasure business	CapableOf	mix	0
+cotton fiber	ReceivesAction	spin thread	2
+heavy	UsedFor	reproduction	-1
+lead	ConceptuallyRelatedTo	battlefield	1
+pride	IsA	group lion	2
+car	MadeOf	u	-2
+tap	HasProperty	dance type	2
+toyota	AtLocation	tree	-1
+talk	HasSubevent	ignore	2
+rabbit	IsA	small object	2
+bunch	IsA	horse	-1
+ago	LocatedNear	probability	-2
+repair umbrella	HasA	price	1
+poison	HasProperty	scorpion	-2
+traveler	AtLocation	recyclable	-1
+child	CapableOf	gain money	1
+water	UsedFor	use bathroom	1
+enamel	IsA	fast	-2
+purchase cellular phone	HasPrerequisite	salary	1
+hound	PartOf	animal	-2
+lose weight	HasPrerequisite	lift weight	1
+eddy	HasProperty	eat	0
+old west	AtLocation	park lot	-1
+take examination	MotivatedByGoal	playroom	-2
+drop blood	UsedFor	test	1
+einstein	Desires	die	0
+downey	PartOf	california	0
+button	IsA	fastener	2
+serve customer	UsedFor	walk through	-2
+bamboo	AtLocation	refrigerator	-1
+soft fabric	HasA	fiber	2
+wink	IsA	conscious	-2
+patron	CapableOf	walk dog	1
+kilometer	Causes	growth	-2
+person	Desires	imac	1
+another person	IsA	male	1
+garbish	AtLocation	bridge	0
+hotdog	AtLocation	kitchen	2
+play	Causes	medication	-2
+food	AtLocation	kitchen cupboard	2
+wrinkle	HasProperty	lose	-2
+human	CapableOf	make decision	2
+shoulder	ConceptuallyRelatedTo	body part	2
+defeat	ConceptuallyRelatedTo	river	1
+person	Desires	talk interest person	1
+ax	PartOf	mouth	-1
+kill	UsedFor	todd	-1
+view film home	HasPrerequisite	turn television	1
+peel	HasProperty	skin orange	1
+skate	UsedFor	aerobic exercise	1
+cool down	Causes	good health	1
+acid	IsA	liquid	2
+prepare	IsA	peer	1
+plate	HasProperty	warmth	-2
+resin	AtLocation	wild	0
+gun	AtLocation	sleep night	1
+stand queue	IsA	steam	-1
+read newspaper	HasSubevent	purpose container	-2
+manure	IsA	bad	0
+man	AtLocation	gender	2
+wee garden	HasPrerequisite	think	1
+answer	HasPrerequisite	speak	1
+play basketball	HasSubevent	play half court	2
+conquer	AtLocation	long hair	-1
+evolve	HasSubevent	break leg	-1
+wok	AtLocation	restaurant	1
+mumps	IsA	lie down	-1
+somersault	IsA	verb	1
+hut	IsA	bus	-1
+runner	CapableOf	steal	1
+piece paper	AtLocation	classroom	2
+go zoo	UsedFor	see exotic animal	2
+saltshaker	AtLocation	seashore	-1
+peach	IsA	person eat	2
+phillip head screwdriver	ConceptuallyRelatedTo	fabric	-1
+motor	IsA	engine	2
+stall	ReceivesAction	clean	2
+gun	UsedFor	quarrel	1
+chalkboard	AtLocation	class	2
+scene	AtLocation	wee	-1
+katie	IsA	watch tv	-2
+palm tree	HasA	hour	-2
+man	Desires	quit male	1
+main artery	UsedFor	blood distribution	2
+firefly	CapableOf	light up	2
+cook	Causes	liquid food	1
+fidelity	AtLocation	sleeper	-2
+result death	Causes	guilt	0
+juggle	IsA	juice	-1
+tv show	ConceptuallyRelatedTo	buy	-2
+break promise	HasSubevent	lose friend	1
+watch musician perform	UsedFor	run out gas	-2
+fight	HasSubevent	silence	-2
+bury cat	MotivatedByGoal	apology	-2
+saxaphone	HasProperty	tough	-2
+council	UsedFor	listen concern	1
+tree	UsedFor	make oxygen	1
+linen chest	AtLocation	store	1
+fidelity	AtLocation	by	-2
+ham	AtLocation	backyard	0
+oil tanker	AtLocation	bottom ocean	0
+sell	HasA	sugar	-2
+smile	AtLocation	tunnel	0
+walk dog	HasSubevent	follow	1
+program language	AtLocation	caterpillar	-1
+sit quietly	HasSubevent	heart rate go down	2
+ballot	CausesDesire	dress nice	-1
+sure	HasProperty	read	-2
+modern	HasProperty	lose	-2
+ago	IsA	state unite state	-1
+cat dog	ReceivesAction	keep pet	2
+eat fast food restaurant	UsedFor	relaxation	0
+cap	CapableOf	smile	0
+dismissal	ConceptuallyRelatedTo	air	-2
+mike	HasPrerequisite	water	2
+egg	UsedFor	hide easter	1
+drive car	HasSubevent	tune radio	2
+strength	IsA	know healthy	-2
+half	IsA	body part	-1
+randy	HasProperty	chocolate	-1
+thirsty	CausesDesire	drink	2
+person	CapableOf	piece together fabric quilt	2
+hockey player	HasProperty	lose	-2
+toothbrush handle	AtLocation	shore	-2
+nut bolt	IsA	bend	-1
+car	AtLocation	eat well	-2
+college	CapableOf	honor alumnus award	2
+status	PartOf	sentence	-1
+compute sum	MotivatedByGoal	accountant	2
+limp	HasProperty	action	-2
+statement	AtLocation	press	2
+eye	AtLocation	machinery	-1
+jeff	HasProperty	play football game	0
+bladder	HasProperty	body	0
+play	MotivatedByGoal	quarterback	-2
+become famous	HasProperty	underground	-1
+henry	HasProperty	successful	0
+sand	LocatedNear	vast	-2
+bald eagle tall snag	AtLocation	west coast north america	0
+harry	IsA	programmer	1
+cat	AtLocation	california	2
+memorise	Causes	hanger	-1
+play lacrosse	MotivatedByGoal	many child	1
+container	UsedFor	learn language	-1
+seat	HasA	one	-2
+foam	IsA	animal	-1
+article	HasProperty	magazine story	2
+telephone index	AtLocation	home	2
+decoration	HasA	visual enhancement	2
+valuable document photo	ReceivesAction	keep safe place	2
+contemplate	HasPrerequisite	contemplation	2
+crop	IsA	rake	-1
+canoe	AtLocation	bottom sea	1
+make shop list	Causes	antisipate future need	2
+secret	HasA	text	1
+salvation	HasProperty	lose	0
+away crime	Causes	stress	1
+coral	IsA	hurt	-1
+bind	ConceptuallyRelatedTo	text	1
+shine	HasProperty	admire	1
+place sleep	UsedFor	sleep	2
+love another	HasPrerequisite	lust	1
+tower	IsA	high build	2
+fast	IsA	verb	-1
+item	ConceptuallyRelatedTo	angle	0
+walk	HasProperty	jog slowly	2
+christmas	UsedFor	doll	1
+stone	AtLocation	river	2
+man	IsA	psychologist	1
+stick up chimney	AtLocation	octagon	-2
+many country	HasA	border	-2
+finland	ConceptuallyRelatedTo	land	2
+singular	AtLocation	take care	-2
+vessel	ConceptuallyRelatedTo	nebraska	-1
+wee	CapableOf	grow garden	2
+better health	ReceivesAction	paint	-1
+range	IsA	sea water	-1
+restaurant entrance	CapableOf	type	-2
+altar	AtLocation	bookcase	-1
+play	Causes	column	-1
+banker	HasA	money	1
+philippine	AtLocation	solo	-2
+scooter	HasA	engine	-1
+father	HasProperty	mother marry	-2
+stripper	HasProperty	lose	0
+dirt	CausesDesire	clean car	-1
+ticket turnstile	IsA	person	-1
+skull	AtLocation	body	2
+send email	HasPrerequisite	think	1
+cat dog	Desires	sleep	2
+massage	UsedFor	physical fitness	1
+retire	HasProperty	lose	0
+animal fur	CapableOf	eat fish	2
+fairy tale	IsA	book	0
+pail	HasA	child	-1
+pass	HasProperty	hand over	2
+keeper	AtLocation	soccer game	2
+java	HasA	picture	1
+staircase	HasProperty	give money	-2
+stethescope	UsedFor	hear heart	2
+flannel	AtLocation	suitcase	1
+purchase cellular phone	HasPrerequisite	give back	-2
+transportation device	AtLocation	chorus	0
+new exhibit	CausesDesire	visit art gallery	1
+gravel	CapableOf	wash dish	1
+go work	HasSubevent	arrive late	2
+statue liberty	ReceivesAction	cover copper	2
+organic	HasProperty	drunk	-2
+buy	HasPrerequisite	id	1
+person	UsedFor	play	1
+briefcase	AtLocation	hotel	1
+run	IsA	part history	-2
+titanic	UsedFor	learn subject	-1
+tray	UsedFor	nourishment	-1
+can	IsA	judgement	0
+race	IsA	horse car	-2
+write poem	HasSubevent	true	-2
+tote bag	AtLocation	office	1
+baby	HasProperty	pink	1
+run out	HasProperty	lose	-2
+bus break down	CausesDesire	drive work	2
+answer question	HasPrerequisite	problem solve	2
+return work	MotivatedByGoal	alter	-2
+hear sing	AtLocation	medicine chest	-1
+improvement	HasProperty	lose	-2
+arm	HasProperty	hand	-2
+tradesman	AtLocation	disco	-1
+person	AtLocation	bury	-2
+separation	AtLocation	competitive activity	1
+strong	IsA	adjective	2
+instrument	UsedFor	tune fork	-1
+type music	AtLocation	long hair	-1
+lamb	ConceptuallyRelatedTo	president	-1
+swim	HasProperty	good exercise	2
+steven	IsA	buy new car	-2
+bidet	AtLocation	shower	-1
+aim	IsA	sugar	-2
+poison	UsedFor	go prison	-1
+committee	HasA	group person	2
+self-confidence good plan ability	MotivatedByGoal	handle proposal	2
+church	IsA	correct	-2
+cluricaun	IsA	solitary fairy celtic lore	2
+heat towel rack	AtLocation	marina	0
+leave home	ConceptuallyRelatedTo	train	2
+apartment	PartOf	sailboat	-1
+lodi	PartOf	cal	2
+loyalty	IsA	write note	-2
+large container	AtLocation	bottom ocean	-1
+fidelity	AtLocation	sitekit cm	-1
+fastener	IsA	world	-1
+sperm smell like clorox	CapableOf	taste like salt	0
+learn new	Causes	expand mind	2
+skin	UsedFor	audience	-1
+safety	HasProperty	nice	2
+be	HasProperty	tv	-2
+bill	IsA	name	1
+plane	CapableOf	drop package ship	1
+clean clothe	MotivatedByGoal	stain	2
+watercolor ink	HasProperty	fun paint	2
+pedestrian	HasProperty	hot	1
+basement	IsA	live place	1
+stay bed	HasSubevent	nap	2
+watch musician perform	UsedFor	laugh play bad	1
+sapphire	HasSubevent	run fast	-2
+dwain	IsA	pull weed	-1
+lament	AtLocation	long hair	-2
+find partner	Causes	baby	2
+kick	IsA	command	2
+rosebush	AtLocation	kansa	0
+contract	HasSubevent	level	-2
+pass sentence	Causes	huh	-1
+gift	AtLocation	unlock door	1
+create	HasProperty	good	1
+person	AtLocation	hood	2
+read book	MotivatedByGoal	eye strain	-1
+college	HasProperty	yoyo	-1
+call friend	HasSubevent	breath	2
+eye	AtLocation	caravan	1
+vision	PartOf	human	2
+shower head	UsedFor	style hair	1
+bedroom	HasA	a	-2
+sport ball	UsedFor	play baseball	1
+spoon	UsedFor	wee garden	-1
+appendage	HasA	thumb	1
+merchandise	AtLocation	restaurant	2
+india	HasA	ancient vedic literature	2
+relationship	AtLocation	city	1
+tab	HasProperty	fluid	-1
+step	HasProperty	backwards	-2
+debbie	IsA	intimacy	-1
+person	Desires	take world grant	2
+dirt	CausesDesire	ivory	-1
+time period	ConceptuallyRelatedTo	clock	-2
+barn	AtLocation	zone	-1
+kill person	Causes	feeling guilt	2
+prepare	IsA	same	-2
+compassion	HasFirstSubevent	eat	-1
+weapon	UsedFor	defence	1
+fidelity	AtLocation	fright	-1
+agony	HasProperty	painful	2
+rice	IsA	rubbish	-1
+letter scale	HasProperty	one	-1
+real	HasProperty	important	1
+slip	AtLocation	banana peel	-2
+buy item	Causes	little money	2
+bench	AtLocation	bus stop	2
+glass water	AtLocation	board room	2
+integrity	AtLocation	container	0
+cross	AtLocation	red color	-1
+high	HasProperty	big	1
+lick	HasProperty	important	1
+payment counter	IsA	pay	2
+minute	HasProperty	hear	-1
+castanets	UsedFor	march	0
+make sure healthy	CapableOf	count	-2
+sweat	IsA	hydrogen	-1
+conquer opponent	ConceptuallyRelatedTo	mob	1
+circle	ConceptuallyRelatedTo	geometry	2
+move sidewalk	AtLocation	build	2
+care	AtLocation	sit desk	1
+association southeast asian nation	HasProperty	abbreviate asean	2
+print printer	UsedFor	produce paper	1
+religious	AtLocation	cathedral	2
+rank	IsA	person	-1
+knife fork	AtLocation	cabinet	2
+show horse	HasProperty	well train	1
+smart person	CausesDesire	buy	1
+jame bond	IsA	walk	2
+navigate	CapableOf	sing song	-2
+personality	HasA	text	-2
+fidelity	AtLocation	vary	-2
+rend	HasProperty	verb	-2
+heavy metal	ConceptuallyRelatedTo	metal	2
+cat	AtLocation	in	-2
+buss	IsA	vehicle	2
+novel	IsA	shelve	-1
+remember	IsA	give	-1
+thinker	IsA	human	1
+meet person	Causes	lightweight	-1
+darwin	UsedFor	feel better	-1
+arm	HasA	ankle	-1
+manufacture	ConceptuallyRelatedTo	factory	2
+move foot	IsA	locomotion	2
+catwalk	HasProperty	lose	-2
+vitamin	ConceptuallyRelatedTo	triangle	-2
+elongate filament	IsA	synthetic fiber	2
+trick	IsA	action	2
+write	HasSubevent	insert statistic	1
+relation	HasProperty	mother brother	-2
+push	IsA	bully	1
+water plant	UsedFor	grow plant up	2
+desk	HasA	black person	1
+climb	HasA	production	-2
+wheel	AtLocation	jeep	2
+thong	UsedFor	write	-1
+nickel	AtLocation	purse	1
+photography	DefinedAs	art capture image	2
+unknown	ConceptuallyRelatedTo	outside	1
+cocaine	InheritsFrom	food	-1
+joltin joe	HasA	gone away hey hey hey	2
+slug	MotivatedByGoal	revenge	-2
+express how funny	HasPrerequisite	electricity	-1
+girl	AtLocation	downtown area	2
+cogitate	MotivatedByGoal	shame	-1
+sheep	HasProperty	soft	1
+water plant	MotivatedByGoal	need water live	2
+round brush	AtLocation	pencil sharpener	-1
+sport equipment	UsedFor	catch fish	-1
+why	SimilarSize	sky	-2
+acoustic guitar	UsedFor	play orchestra	0
+credit	ConceptuallyRelatedTo	money	1
+remember	IsA	accord	0
+buy product	HasPrerequisite	candidate	-1
+slope	HasProperty	down	2
+control	IsA	movement	-2
+diversity	HasProperty	lose	-2
+citation	HasProperty	pencil	1
+four season	HasProperty	endless	-2
+drape	IsA	motion	-1
+pacifier	AtLocation	cabinet	0
+string	HasProperty	appendage	-2
+toy	IsA	christmas gift	2
+fight enemy	HasSubevent	victim	-2
+adjective	IsA	measurement	1
+pretty	ConceptuallyRelatedTo	bite beautiful	2
+price	IsA	total	1
+invest money energy	LocatedNear	person	1
+pot	AtLocation	hot cold	-2
+week	HasProperty	wal-mart	-2
+mumps	HasPrerequisite	tire	1
+rollercoaster	MotivatedByGoal	work	-2
+kitten	AtLocation	paper bag	-1
+buy love	HasSubevent	find partner	-1
+king queen	HasA	penis	1
+paperclip	AtLocation	top floor	1
+brassiere	IsA	underwear	-1
+find downtown	IsA	newspaper	1
+turn water	IsA	parent	-1
+section	IsA	face other	-2
+go drive	HasPrerequisite	use car	2
+gun	CapableOf	heat food	0
+remember	HasSubevent	stop think	1
+play hockey	HasPrerequisite	sticky	-1
+bless	IsA	movement	-2
+slipper	AtLocation	latch	-2
+play	MotivatedByGoal	football player	-2
+take bus	HasPrerequisite	part history	-2
+tank	IsA	plant grow	-2
+detroit zoo	HasA	plant	2
+see	UsedFor	tree	1
+punish	HasSubevent	indigestion	-2
+program language	AtLocation	drop blood	1
+duty	ConceptuallyRelatedTo	mountain lion	-2
+bus shelter	AtLocation	city	2
+eye	AtLocation	medical test	0
+heaven	HasProperty	god live	0
+woodwind	UsedFor	reed	-1
+something	CapableOf	tie shoe	1
+clothe store change room	AtLocation	drawer	-1
+health	ReceivesAction	acquire eat good food	1
+sonoma alopecurus	DefinedAs	alopecurus aequali sonomensis	0
+apple tree	AtLocation	grand canyon	-1
+play sport	UsedFor	calm down	-1
+box	AtLocation	storage	2
+life form	CapableOf	drink	1
+doorway	AtLocation	office	2
+library	AtLocation	budap	2
+paint picture	HasSubevent	helper	-2
+begin work	MotivatedByGoal	cent	-2
+room	IsA	where person	2
+tax	LocatedNear	negotiation	-2
+go haircut	Causes	granite	-2
+saloon	IsA	hair place	-1
+skateboard	HasFirstSubevent	pray	-1
+take film	HasSubevent	sofabed	1
+makeup	HasProperty	lose	-2
+america	IsA	boundary	0
+pest	IsA	space	-1
+ballpoint pen	UsedFor	purpose container	-1
+add up column number	MotivatedByGoal	angel	-2
+potato	AtLocation	march band	-1
+eye	AtLocation	puerto rico	2
+command	IsA	control	0
+japanese restaurant	AtLocation	flame	-1
+nothing	IsA	singularity	-1
+fidelity	AtLocation	green color	-2
+reason	IsA	cause	-2
+stick up chimney	AtLocation	nationality	-2
+check vital sign	HasSubevent	learn	2
+driver license	IsA	money	-1
+fidelity	AtLocation	hack	-2
+relationship	CapableOf	pick nose	-1
+armchair	CapableOf	paint picture	-1
+go walk	HasProperty	some	-2
+improve image	HasSubevent	spend money	2
+acorn	AtLocation	giant	-1
+start car	AtLocation	band	-2
+program language	AtLocation	goo	-1
+potato	AtLocation	saltwater	-1
+number	IsA	count aid	2
+forgive	HasSubevent	shortage	-2
+dance club	AtLocation	drink soda	-1
+express information	HasPrerequisite	make eye contact	-1
+paint	UsedFor	decoration	2
+move car	HasSubevent	sleigh ride	-1
+kitten	HasProperty	adorable	2
+denmark	Desires	die	-1
+swim pool	UsedFor	swim water	2
+upholstery	LocatedNear	shoulder	-1
+farmer	AtLocation	countryside	2
+land	AtLocation	alabama	2
+against	IsA	musical	-1
+metal	UsedFor	make weapon	1
+ticket slot	AtLocation	casino	2
+garlic	IsA	herb	2
+matt	IsA	play card	-1
+go haircut	UsedFor	get latest hairstyle	2
+reception desk	AtLocation	bend knee	-2
+two horse	AtLocation	garden	-1
+toy car	UsedFor	ice hockey	-1
+complicate	UsedFor	watch	-2
+con artist	CapableOf	dream	2
+stick eraser	UsedFor	write	2
+private	IsA	live space	1
+go someplace	HasSubevent	move leg	2
+shirt	HasProperty	friendly	1
+along	IsA	verb	-1
+store away	AtLocation	attic	1
+asthma attack	HasPrerequisite	seashell	-2
+eye	AtLocation	energetic	-1
+drive car	HasFirstSubevent	put seat belt	2
+competitor	AtLocation	dream	1
+feel ill	HasPrerequisite	lie down	1
+take bath	HasPrerequisite	propose	-1
+stick	AtLocation	piece coal	-1
+focus	UsedFor	solve problem	1
+upset	IsA	emotional state	2
+stick up chimney	AtLocation	sunrise	-2
+yolk	AtLocation	dinner	1
+tack	IsA	pacifier	-1
+knight	CapableOf	free damsel distress	2
+balance checkbook	PartOf	mouth	-1
+round trip ticket	UsedFor	owe money	-1
+cottage	IsA	wallpaper	-1
+toy car	UsedFor	cast	-1
+wild	AtLocation	windowsill	1
+line	HasProperty	insight	0
+earth	IsA	sometimes	-2
+writer	CapableOf	spell	2
+cracker crunb	AtLocation	bed	1
+woman	CapableOf	appreciate	-2
+listen radio	Causes	free	1
+finland	AtLocation	continent	2
+strength	HasProperty	important	1
+barn	AtLocation	flock	-1
+program language	AtLocation	quiver	-1
+money	IsA	tax	-2
+side	HasProperty	test	-2
+computer user	AtLocation	drawer	-1
+metal melt	HasSubevent	become hot	2
+music	HasProperty	nice song	1
+defeat	AtLocation	surf	1
+minute	HasProperty	little hour	2
+count	IsA	movement	-2
+mark	IsA	point	1
+rage	HasProperty	spiritual	-1
+express information	HasSubevent	speak	1
+corner	HasProperty	convict suspect crime	-1
+lizard	AtLocation	wildlife	2
+test	AtLocation	final	1
+watch television	Causes	laugh out loud	1
+centre	IsA	location	-1
+person	AtLocation	wal-mart	2
+billy	HasProperty	vote	-2
+eye	AtLocation	may	-2
+infant	LocatedNear	fence	1
+steve	IsA	shout	-2
+thermometer	IsA	temperature gauge	2
+barack obama	AtLocation	cambridge	0
+country	HasProperty	washington dc	-2
+fur hair	DefinedAs	same	2
+it have to	IsA	manualy	-2
+chop firewood	HasSubevent	swing axe	2
+root	PartOf	adam eve	-2
+his	CapableOf	wash car	-2
+paint	HasProperty	style	0
+workshop	UsedFor	bathe	-2
+capoeira	CreatedBy	african slave	0
+canary	AtLocation	utah	0
+even	AtLocation	school	-2
+joy	HasSubevent	sit	-2
+chance	HasProperty	require	-1
+institution	HasProperty	early	-2
+stitch	HasA	unit measurement	0
+use leg	IsA	body part	-2
+school work	CapableOf	answer question	2
+manipulate	IsA	illness	-1
+quandry	AtLocation	city	1
+origin	CapableOf	awesome	2
+party	MotivatedByGoal	lo angele	-2
+bacon	AtLocation	supermarket	2
+kick	IsA	stare	-1
+buy beer	HasSubevent	give money cashier	2
+shop	HasFirstSubevent	teller	-1
+toll road	AtLocation	see favorite show	-2
+english channel	AtLocation	kansa	-1
+capacity	ConceptuallyRelatedTo	volume	2
+professional	AtLocation	spa	1
+big house	IsA	write instrument	-1
+program language	AtLocation	sharp end	-1
+wilderness	IsA	live organism	-1
+program language	AtLocation	velocity	-2
+steakhouse	AtLocation	any large city	2
+medical	CapableOf	gay	-2
+barber shop	AtLocation	cannon	-1
+milky	AtLocation	air	2
+tortoise	IsA	common pet	1
+token slot	AtLocation	space station	0
+toothpaste	MotivatedByGoal	fight	-2
+rest	IsA	verb	2
+appliance	AtLocation	cupboard	2
+run out steam	MotivatedByGoal	take break	2
+ankle	IsA	anatomy	2
+prepare	IsA	bite	-1
+dream	HasProperty	during sleep	2
+singular	AtLocation	stop talk	-2
+gas	HasProperty	citizen	-1
+find seat	Desires	die	-2
+unpleasant	MotivatedByGoal	express yourself	1
+newspaper	AtLocation	write	2
+card	HasA	poker rummy	-2
+tribe	ConceptuallyRelatedTo	boy	2
+surf web	HasFirstSubevent	connect web	2
+suture	Desires	die	-1
+compact	CapableOf	eat fish	-1
+round trip ticket	UsedFor	vacation	2
+kill	HasPrerequisite	shelter	-1
+leader	UsedFor	blue	-1
+sardine	HasProperty	ill	1
+car wheel	AtLocation	long hair	-1
+sit quietly	UsedFor	behave class	1
+housework	UsedFor	keep dwell clean	2
+read magazine	HasPrerequisite	pick up hand	2
+duplex	IsA	steam	-1
+competitive activity	HasA	king queen	-2
+walk closet	AtLocation	apartment	1
+invest money energy	HasSubevent	eat popcorn	-1
+odor	IsA	young human	-1
+dwain	IsA	crash car	-2
+study	HasPrerequisite	write check	-2
+joy	AtLocation	usa	2
+oil tanker	ReceivesAction	file oil	2
+grandmother	IsA	human	2
+contemplate	HasPrerequisite	recall	-2
+swell	HasProperty	ocean	-2
+foyer	AtLocation	residence	-2
+memorize	HasPrerequisite	read list	1
+acne medication	AtLocation	couch	-1
+splurge	MotivatedByGoal	storm	-2
+play soccer	Causes	public place	-2
+little kid	HasProperty	nut	-1
+fear	IsA	frighten feel	2
+stay healthy	HasPrerequisite	never eat poison	2
+play soccer	MotivatedByGoal	costly	-2
+create idea	HasPrerequisite	purpose	-2
+noble	ConceptuallyRelatedTo	person	-1
+cut hair	HasPrerequisite	visit barber	2
+week	SimilarSize	seven day	2
+person	Desires	live area	-2
+band	ConceptuallyRelatedTo	medic	2
+junk mail	UsedFor	write	-1
+destroyer	AtLocation	mit	-1
+size	HasA	small	-2
+rich	IsA	wash car	-2
+pine	IsA	ginger	-1
+buy product	HasPrerequisite	ten	-2
+tie-dye	IsA	gun	-1
+go film	HasPrerequisite	cognition	-2
+body	HasA	forearm	1
+nurse	AtLocation	hospital	2
+philippine	AtLocation	bright color	-2
+go strike	UsedFor	produce	-2
+child	HasProperty	every person	-2
+window	IsA	part house	2
+water spout	CapableOf	wet	2
+glass milk	UsedFor	translucent	-2
+time	HasA	windy	-2
+yellow	IsA	money pay	-1
+fresh water	IsA	description	1
+dust	AtLocation	bottom	-2
+tap	AtLocation	nuclear	-2
+piano	ConceptuallyRelatedTo	music	2
+shake hand	MotivatedByGoal	warm	-1
+park structure	AtLocation	shop mall	2
+d	MotivatedByGoal	entertain	-2
+electric	AtLocation	manual pencil sharpener	2
+dwell	IsA	archway	-1
+move	HasA	basic	1
+person	AtLocation	africa	2
+water body	ConceptuallyRelatedTo	water	-2
+cockpit	IsA	place	2
+salsa	IsA	shout	-2
+go hairdresser	HasPrerequisite	good job	-1
+bug	AtLocation	fee family	-2
+money	CapableOf	matter love	-1
+vegetarianism	DefinedAs	only end world hunger	1
+apply job	HasPrerequisite	prepare	2
+flea	CausesDesire	clean room	1
+politics	UsedFor	write	1
+mischief	UsedFor	heat water	-1
+'run out steam	IsA	metaphor fatigue	2
+send suspect package	IsA	extremely effective terrorism technique	1
+grasshopper	HasProperty	lose	-2
+fidelity	AtLocation	call 911	0
+dim	ConceptuallyRelatedTo	cloud	1
+local	HasProperty	general term	2
+compare	IsA	activity	1
+wait table	HasPrerequisite	rust	-1
+nor	LocatedNear	cloud	-2
+four wall	HasPrerequisite	hair	-1
+view video	UsedFor	amusement	1
+summer	HasA	warm	-2
+color	HasProperty	attractive	1
+piccolo	UsedFor	vinyl	-1
+provide	HasProperty	movement	-2
+apartment house	AtLocation	street	2
+take exam	UsedFor	temper	-1
+cloudy	ConceptuallyRelatedTo	sky	2
+basketball	AtLocation	screen	1
+receive degree	UsedFor	wine cellar	-1
+few	CapableOf	wet pant	0
+patio door	AtLocation	cliff	-1
+take care proposal	HasSubevent	topic	-2
+submarine	AtLocation	slush	-1
+small dog	AtLocation	cage	2
+fish	AtLocation	water body	-2
+rural area	ConceptuallyRelatedTo	now	-1
+program language	AtLocation	emotional	-1
+flat tire	CapableOf	make late work	2
+low blood pressure	IsA	person	-1
+insanity	HasPrerequisite	investigate	0
+call	HasProperty	phone usage	2
+restaurant dine area	UsedFor	save time	-1
+traffic artery	AtLocation	large city	2
+student	CapableOf	call friend	2
+sometimes person	ReceivesAction	tire	2
+child	CapableOf	curse	2
+program language	AtLocation	much water	-2
+itself	IsA	belly	-2
+stanza	IsA	size	0
+twist	HasProperty	braid	2
+nomad	AtLocation	competitive activity	-2
+high price	AtLocation	neighborhood	1
+stack chair	AtLocation	keg	-2
+winter	IsA	computer program	0
+jump up down	UsedFor	jump rope	2
+philippine	AtLocation	fantastic	-1
+file	UsedFor	store record	2
+do it	MotivatedByGoal	surprise	2
+globe	IsA	useful tool geography	2
+brick	HasProperty	hard	2
+college	ConceptuallyRelatedTo	machine	-2
+speed up	Causes	friendship	-1
+live organism	IsA	live entity	2
+something	AtLocation	prom	-2
+cemetery	AtLocation	circular route	-2
+monopoly	HasPrerequisite	concentration	1
+ferret	IsA	lie egg	-1
+program language	AtLocation	rehearse	0
+ratchet screwdriver	AtLocation	dock	0
+wristwatch	UsedFor	piece jewellery	-1
+passageway	AtLocation	restaurant	-2
+find underground	HasProperty	welfare	-1
+transportation device	AtLocation	hamlet	-2
+visit art gallery	HasSubevent	see painter	1
+machine	HasProperty	build	-1
+spanish restaurant	AtLocation	wax dental floss	-1
+geometric figure	IsA	face other	-2
+excavation	AtLocation	italy	0
+tape	AtLocation	hospital	-1
+go opus	MotivatedByGoal	like hear classical music sing	2
+employ	IsA	honor	0
+read book	IsA	concept	0
+read	IsA	town berkshire	0
+swift	UsedFor	go somewhere	-2
+watch television show	UsedFor	happyness	1
+stone	UsedFor	demonstration	-1
+route	IsA	movement	-1
+bear person	HasProperty	bad	1
+highlighter pen	AtLocation	coin purse	1
+catch mumps	AtLocation	play	-2
+rain	HasProperty	water fall cloud	2
+oak	IsA	crock	-1
+ticket	UsedFor	gain admitance fair	1
+stop marry	HasSubevent	see lawyer	2
+birthday celebration	CapableOf	involve dinner	1
+burn	HasA	illustrate point	-2
+pliers	AtLocation	apartment	1
+finch	IsA	thrill	0
+alarm clock	AtLocation	live room	-1
+television show	IsA	tool	-1
+motor	AtLocation	aircraft	2
+kitchen utensil	UsedFor	ride bike	-1
+design	SimilarSize	pizza	-2
+wash car	HasPrerequisite	cool device	-2
+program	HasSubevent	make error	2
+pillow case	AtLocation	latch	-1
+worship	MotivatedByGoal	entertain	-1
+cowboy	HasA	engine	-1
+attend lecture	HasSubevent	odd	-2
+buy clothe	HasProperty	purchase	2
+walk	HasA	slow	2
+flush	IsA	drain	2
+go movie	HasSubevent	unhappy	0
+chop firewood	MotivatedByGoal	go college	-2
+obesity	CapableOf	run	-1
+container cup	UsedFor	bud	0
+stay fit	HasLastSubevent	take shower	1
+free	HasA	no cost	2
+assemble	UsedFor	celebrate birthday	-1
+politician	CapableOf	promise never raise tax	2
+creator	IsA	man	0
+ceo	CapableOf	father child	2
+salt	HasProperty	white crystalline	2
+piccolo	UsedFor	bang	-1
+child	CapableOf	hop	2
+value	HasProperty	pay	2
+person	AtLocation	shoulder	-2
+fauna	AtLocation	zoo	2
+row	AtLocation	stream	-2
+rest	HasProperty	refreshment	2
+not eat fat	MotivatedByGoal	eat healthily	2
+play poker	HasPrerequisite	knowledge odds	2
+chalkboard	AtLocation	university	2
+eternity	IsA	dance	-1
+william	IsA	shout	-2
+abstract	IsA	paint style	2
+fidelity	AtLocation	fantastic	-2
+lose weight	UsedFor	william	-2
+perennial	IsA	face other	-2
+test strength	HasPrerequisite	shop	-1
+professional golfer	IsA	part pga tour	2
+second	HasProperty	endless	-1
+till	AtLocation	long hair	-2
+go store	MotivatedByGoal	need	2
+watch tv	Causes	drowsiness	1
+shiver	UsedFor	learn subject	-1
+boat	UsedFor	sitekit cm	-1
+human	CapableOf	stand still	2
+drink	IsA	imbibe fluid	2
+program language	AtLocation	about	-2
+charge	HasProperty	motivate	0
+belinda	HasA	cold	0
+program language	IsA	make laugh	-1
+forward movement	HasProperty	negative	-2
+go jog	HasPrerequisite	put shoe	2
+eye	AtLocation	measles	-1
+book	UsedFor	learn christian pastoral practice	1
+retriever	ReceivesAction	keep pet	2
+sister	HasProperty	brother	-1
+war zone	HasProperty	rough	2
+grow old	HasProperty	action	-2
+spend much money	IsA	disease	0
+kleenex	HasProperty	rectangular	1
+habitation	IsA	face other	-2
+god	HasProperty	jesus dad	2
+party	HasProperty	celebration event	2
+datum	HasA	one	-2
+small dog	AtLocation	past	2
+hike	Causes	innocence	-2
+buy present	HasPrerequisite	use money	2
+advance battle	Causes	verdict	-2
+decoy	IsA	four leg	-2
+mit	IsA	prestigious institution	2
+microbe	CapableOf	lie down	-1
+asthma attack	HasPrerequisite	washington dc	-2
+maple tree	ReceivesAction	find wood	2
+fidelity	AtLocation	aurora	-2
+music stand	IsA	musical instrument	-1
+wealthy person	CapableOf	back business venture	2
+minister	AtLocation	funeral	1
+examination	HasA	book ingredient	-2
+close	HasProperty	hot state	-2
+eat sandwich	MotivatedByGoal	hungry	2
+morning	IsA	grief	-1
+move car	HasLastSubevent	turn engine off	2
+sand	IsA	beach stuff	2
+anaheim	PartOf	california	2
+toy	IsA	little	-2
+person	HasA	much paper	0
+wool	UsedFor	warm sweater	2
+pass university exam	UsedFor	demonstrate knowledge	2
+concern	IsA	sincere care	2
+turn	IsA	twirl	1
+return ticket	AtLocation	ticket	-2
+bunch	HasProperty	banana group	1
+turn	AtLocation	dance	2
+robbery	ConceptuallyRelatedTo	fancy	-2
+computer	CapableOf	broken	2
+fire	IsA	burn gas	-1
+teacher	CapableOf	plan teach lesson	2
+chalk	IsA	write medium	2
+shovel	ConceptuallyRelatedTo	deep pit	2
+rock	AtLocation	under bridge	2
+check	UsedFor	determine vehicle performance	-1
+air	HasProperty	festive time	-2
+ride	HasProperty	temperature	-2
+servant	ConceptuallyRelatedTo	type home	-2
+sound	HasProperty	slang girl	-2
+cellar	IsA	back forth	-2
+mountain	ConceptuallyRelatedTo	runt	-2
+pavement	UsedFor	drive car	2
+board	IsA	skate gear	-2
+person	CapableOf	appear sincere	2
+armoire	UsedFor	store cloth	2
+land	IsA	chirp	-2
+lemonade	HasProperty	lime aid	-1
+fire	IsA	disaster	2
+feather	AtLocation	pillow	2
+stretch	IsA	tight	-2
+dark	HasProperty	blackish	2
+message	HasProperty	committee	-2
+frog	AtLocation	pond	2
+produce	IsA	fruit vegetable	2
+lemon	ConceptuallyRelatedTo	lime	2
+clean	IsA	biological	-2
+lantern	IsA	carry light	2
+television station	CapableOf	air program	2
+whiskey	IsA	scotch	1
+hand	LocatedNear	space vehicle	-2
+algebraic notation	ReceivesAction	use modern english-language chess book	1
+paint	IsA	artifice	-2
+stand	IsA	sit	2
+effort	IsA	ownership	-2
+paint	ConceptuallyRelatedTo	squirrel	1
+gas	IsA	rate together	-2
+chief	HasProperty	practice	-2
+but	IsA	purr animal	-2
+wealthy person	CapableOf	back business venture	2
+minister	AtLocation	funeral	1
+examination	HasA	book ingredient	-2
+close	HasProperty	hot state	-2
+eat sandwich	MotivatedByGoal	hungry	2
+morning	IsA	grief	-1
+move car	HasLastSubevent	turn engine off	2
+sand	IsA	beach stuff	2
+anaheim	PartOf	california	2
+toy	IsA	little	-2
+person	HasA	much paper	0
+wool	UsedFor	warm sweater	2
+pass university exam	UsedFor	demonstrate knowledge	2
+concern	IsA	sincere care	2
+turn	IsA	twirl	1
+return ticket	AtLocation	ticket	-2
+bunch	HasProperty	banana group	1
+turn	AtLocation	dance	2
+robbery	ConceptuallyRelatedTo	fancy	-2
+computer	CapableOf	broken	2
+fire	IsA	burn gas	-1
+teacher	CapableOf	plan teach lesson	2
+chalk	IsA	write medium	2
+shovel	ConceptuallyRelatedTo	deep pit	2
+rock	AtLocation	under bridge	2
+check	UsedFor	determine vehicle performance	-1
+air	HasProperty	festive time	-2
+ride	HasProperty	temperature	-2
+servant	ConceptuallyRelatedTo	type home	-2
+sound	HasProperty	slang girl	-2
+cellar	IsA	back forth	-2
+mountain	ConceptuallyRelatedTo	runt	-2
+pavement	UsedFor	drive car	2
+board	IsA	skate gear	-2
+person	CapableOf	appear sincere	2
+armoire	UsedFor	store cloth	2
+land	IsA	chirp	-2
+lemonade	HasProperty	lime aid	-1
+fire	IsA	disaster	2
+feather	AtLocation	pillow	2
+stretch	IsA	tight	-2
+dark	HasProperty	blackish	2
+message	HasProperty	committee	-2
+frog	AtLocation	pond	2
+produce	IsA	fruit vegetable	2
+lemon	ConceptuallyRelatedTo	lime	2
+clean	IsA	biological	-2
+lantern	IsA	carry light	2
+television station	CapableOf	air program	2
+whiskey	IsA	scotch	1
+hand	LocatedNear	space vehicle	-2
+algebraic notation	ReceivesAction	use modern english-language chess book	1
+paint	IsA	artifice	-2
+stand	IsA	sit	2
+effort	IsA	ownership	-2
+paint	ConceptuallyRelatedTo	squirrel	1
+gas	IsA	rate together	-2
+chief	HasProperty	practice	-2
+but	IsA	purr animal	-2
+death	IsA	result kill	2
+go shop	MotivatedByGoal	buy shirt	2
+pale	HasProperty	huge animal	-2
+person	Desires	harm other person	0
+galaxy	IsA	dangle	-2
+thing	IsA	person place	1
+cover	IsA	bridge	0
+continent	HasA	earthquake	2
+bright	HasA	cop	-2
+tissue	UsedFor	wipe tear	1
+light match	UsedFor	light funeral pyre	1
+rush	HasProperty	big hurry	2
+garbage	ReceivesAction	thrown away	2
+defeat	HasProperty	battle loss	1
+shade	IsA	lieutenant	-1
+mercury	HasProperty	broadway platform	-2
+write	IsA	fun behavior	0
+empty stomach	CausesDesire	buy hamburger	2
+see band	UsedFor	listen music	2
+plate	ConceptuallyRelatedTo	eat	2
+boy	ConceptuallyRelatedTo	male child	2
+horse	IsA	big donkey	-1
+theory	IsA	belief system	2
+middle	HasA	able	-2
+adventure	ConceptuallyRelatedTo	christmas calendar	-1
+rend	ConceptuallyRelatedTo	arm	1
+servant	HasProperty	pay help	2
+ball	IsA	green vegetable	-1
+thong	IsA	step	-1
+health	IsA	sickly	2
+chief	ConceptuallyRelatedTo	commander	1
+river	HasProperty	oink producer	-1
+take care proposal	Causes	get bore	0
+quilt	UsedFor	bed	2
+stay	IsA	outside	-1
+real estate picture	AtLocation	newspaper	2
+rheumatiod arthritis	PartOf	immunologically mediate disease	1
+sleigh ride	HasSubevent	sing christmas song	2
+family room	AtLocation	own home	2
+yard	HasProperty	lawn place	1
+captain	IsA	native	-1
+attend rock concert	Causes	ring ear	2
+charge	ConceptuallyRelatedTo	tree cast	-2
+punish	MotivatedByGoal	discourage type behavior	2
+perhaps	HasProperty	england	2
+name	IsA	nose	-1
+bronze	ConceptuallyRelatedTo	tin zinc	2
+hang	IsA	lethal punishment	2
+history	HasProperty	deadly	2
+child	HasProperty	naughty	1
+book	UsedFor	gamble	1
+turtle	IsA	hare	2
+surprise	IsA	plural	-1
+patience	IsA	attitude	2
+paste	IsA	glue	2
+scientist	CapableOf	discover germ	2
+hike	Causes	become tire	2
+plate	LocatedNear	food	2
+help	IsA	support	2
+involve accident	MotivatedByGoal	accident prone	2
+type dinner	HasProperty	chinese	1
+human hand	HasA	five digit	2
+step	HasProperty	go stair	-2
+soup	IsA	water	-1
+sale	HasProperty	plastic	-2
+person	HasA	no fashon sense	2
+heaven	HasProperty	paradise	2
+bite	HasProperty	technological help	-1
+canon	IsA	company name	2
+squirrel	ConceptuallyRelatedTo	acorn	2
+extend	IsA	worship house	-1
+sheep	LocatedNear	passage	-2
+ounce	HasProperty	parade	-1
+biscuit	HasProperty	morning food	1
+continent	HasProperty	make up many country	2
+steam	HasProperty	measure	-1
+fish	CapableOf	form cognitive map	0
+policeman	CapableOf	hit litterbug	0
+apex	HasProperty	pinnacle	2
+boat	HasA	christmas tree	-1
+game	IsA	board toy	1
+portray	IsA	depict	2
+twig	IsA	area	-1
+cell	IsA	glass	-1
+despot	HasProperty	tyrant	2
+grow vegetable	UsedFor	pass time	1
+summer	ConceptuallyRelatedTo	come off	-1
+stone	ConceptuallyRelatedTo	small rock	2
+pudding	UsedFor	fish action	-1
+nation	HasProperty	after dinner	-1
+wife	HasA	warm bread	1
+envelope	IsA	enclosure	2
+detail	HasProperty	legal rule	-1
+involve accident	HasSubevent	death	2
+refuse	IsA	deny	2
+vegetable	AtLocation	ven	-2
+birthday	IsA	book store	-1
+know healthy	HasFirstSubevent	feel good	1
+corn	HasProperty	iowa vegetable	2
+mold	ConceptuallyRelatedTo	race	-1
+loot	IsA	plunder	2
+weed	AtLocation	street	1
+story	IsA	written tale	2
+series	ConceptuallyRelatedTo	collection	2
+adventure	HasProperty	presidential primary	-1
+write	HasProperty	done	-2
+mali	HasA	28 airport	0
+smash	IsA	break	2
+exercise	UsedFor	make body healthy	2
+robbery	HasProperty	independence	-1
+learn science	MotivatedByGoal	interest job	2
+antique	AtLocation	attic	2
+dream	ConceptuallyRelatedTo	cloud	-1
+bar	HasProperty	pistol content	-1
+see know	HasFirstSubevent	greet person	1
+verse	IsA	part	-2
+box	ReceivesAction	construct steel	2
+eye	HasProperty	sight	2
+chair	HasProperty	turn	-2
+space shuttle	AtLocation	space	2
+herd	IsA	collection	2
+earth	HasA	moon	2
+inch	IsA	length	2
+interest	IsA	like	2
+womb	IsA	fight	-1
+fellow	IsA	guy	2
+sock	IsA	garment	2
+smoke	IsA	gas	2
+orchid	IsA	flower	2
+duke	IsA	game	0
+citizen	IsA	edible fowl	-1
+ring	AtLocation	electricity static	-2
+paper	IsA	material	2
+chief	AtLocation	fly	-1
+watch television	MotivatedByGoal	see xena warrior princess	2
+doctor	HasProperty	old vinyl	-2
+grain	IsA	river motion	-1
+agony	IsA	knife usage	-1
+religion	HasProperty	score	-1
+jamaca	HasA	beach	2
+plant	IsA	arm	-1
+bath	Causes	fun	1
+metal	HasProperty	move wall	-2
+automobile	ReceivesAction	steer steer wheel	2
+romance	CausesDesire	cook	1
+fork	UsedFor	eat food	2
+farm	IsA	field	1
+quantity	IsA	lot	1
+go store	Causes	buy item	2
+few	ConceptuallyRelatedTo	scam	-2
+stay fit	HasPrerequisite	excersise	2
+go mall	HasPrerequisite	money	1
+person	Desires	sicness	2
+glass	UsedFor	hold liquid	2
+leather	UsedFor	make equipment	-1
+stamp pad	UsedFor	apply ink stamp	2
+move part	CapableOf	generate heat through friction	2
+inch	IsA	length	2
+type house	IsA	ranch house	2
+stretch	HasProperty	ruler	-2
+desk	IsA	adjective	1
+wash dirt between toe	HasPrerequisite	soapy water	2
+graph	IsA	figure	2
+brawl	IsA	fight	2
+tin	HasA	salary cap	-1
+public	IsA	family head	-1
+safe	HasA	country member	-1
+giver	IsA	book	-1
+tornado	HasProperty	little little	-2
+case	IsA	crate	1
+bed	AtLocation	photon	-1
+little	IsA	description	1
+thief	IsA	criminal	2
+question	AtLocation	pay help	-2
+taste	IsA	feel	2
+dollar	IsA	greenback	1
+porch	IsA	front door open onto	2
+napkin	ConceptuallyRelatedTo	email	-1
+cut	IsA	booboo	2
+cat	HasProperty	park allowance	-1
+christmas island	PartOf	christmas island	-2
+hand	IsA	what we	-2
+time	IsA	tooth	-1
+daughter	HasProperty	lip tooth	-2
+drive	HasA	licence	1
+crystal	IsA	gather	2
+talent	IsA	good	2
+olive	HasA	jar	1
+bang	HasA	loud noise	2
+highway	HasA	lane	2
+cut	ConceptuallyRelatedTo	stretch	-1
+stand behind person front	MotivatedByGoal	wait line	2
+crowd	HasA	group person	2
+owe	HasProperty	own	-1
+banjo	IsA	easy play guitar	2
+leg	HasA	lower limb	-2
+leg	HasA	lower appendage	-2
+horse	IsA	ride english	-2
+buy fresh fruit vegetable	HasFirstSubevent	examine colour	1
+flirt	HasPrerequisite	tease	2
+computer	HasA	replace typewritter	2
+senator	IsA	government official	2
+bus stop	UsedFor	get off bus	2
+curler	HasA	lady hair	1
+go school	HasSubevent	join club drama	2
+handle	IsA	open device	2
+tax	HasProperty	pray god	-1
+tax	HasA	government fee	1
+nest	HasA	jail inmate	-1
+property	ConceptuallyRelatedTo	dinner often	-2
+road	IsA	dentist work	-2
+beer	IsA	talk	-1
+never	ConceptuallyRelatedTo	surprise	-1
+mankind	HasProperty	tree provide	-2
+back	IsA	little twig	-1
+wind	IsA	after childhood	-1
+garden	IsA	person	-1
+can	HasA	gentleman	-1
+stitch	IsA	clock result	-1
+flask	HasA	liquid	2
+drive	IsA	traveling house	-1
+drop	HasA	little water	2
+butcher	HasA	knife	2
+continue	HasA	keep go	1
+harpsichord	HasA	key	2
+party	HasLastSubevent	vacuum	1
+stop	HasA	halt	1
+nature	DefinedAs	environment	2
+hand	HasA	glove	-2
+round brush	AtLocation	department store	1
+bargain	HasA	good buy	2
+gun	UsedFor	shoot injure horse	1
+silver	HasA	gray	2
+commuter	CapableOf	carry briefcase	2
+eat dinner	HasPrerequisite	use fork knife spoon	2
+hand	HasA	limb	1
+teach other person	UsedFor	advancement	1
+oatmeal	HasA	hot cereal	2
+village	HasA	inhabitant	2
+past	ConceptuallyRelatedTo	cook	-1
+bat	HasA	vampire like	2
+lake	IsA	young	-1
+barrel	HasA	wooden piece	2
+property	IsA	give	1
+acre	SimilarSize	personal learn	0
+door	HasProperty	open close	2
+saucer	IsA	medicine	-1
+sign	HasA	what	-2
+science	HasProperty	length away	-1
+clamp	IsA	tool	2
+sky	IsA	old instrument	-1
+person	HasProperty	tire after long day	2
+ruler	SimilarSize	twelve inch	2
+book	HasA	word picture	2
+traitor	IsA	betrayer	2
+sail	IsA	boat	-1
+atom	HasProperty	extremely small	2
+water	IsA	wet	2
+warehouse	IsA	classical music	-1
+rice	HasA	white	2
+want pass class	CausesDesire	take final exam	2
+bear	HasProperty	force	-1
+farm	HasA	tractor	2
+musician	AtLocation	concert	2
+story	HasA	word	2
+clock	ConceptuallyRelatedTo	great risk	-1
+beer	IsA	alcoholic beverage	2
+slime	IsA	ghost	0
+flannel	HasA	warm	2
+sin	IsA	square	-1
+market	HasProperty	score	-2
+person sad	HasSubevent	cry	2
+double	HasA	twice single	2
+woodwind	UsedFor	play	2
+mule	HasA	transportation capability	2
+complete	HasProperty	metal part	-2
+moisture	HasA	hold	-2
+village	IsA	bad	-2
+love	HasA	two person	2
+war	HasA	two country	2
+doormat	UsedFor	keep floor clean	2
+soap	HasA	wash material	2
+blanket	HasA	warmth	2
+oil run out	HasSubevent	bicycle become popular again	0
+learn new	HasSubevent	make mistake	2
+command	IsA	break	-1
+month	HasA	week	2
+porto	PartOf	portugal	-1
+rhapsody	IsA	knight trait	-1
+elm	HasA	tree type	2
+medium	DefinedAs	binder pigment paint	1
+cover	UsedFor	book store	2
+pray	IsA	behind curtain	-1
+country	HasProperty	peru	1
+skate	IsA	fish	-1
+person	IsA	drink	-1
+milk	HasA	white drink	2
+question	HasA	word	2
+attend lecture	HasPrerequisite	read assign read	2
+foreigner	IsA	countryman	2
+clear	HasA	no streak	-2
+present	IsA	past	2
+silver	IsA	gold	2
+lose	IsA	win	2
+regular	IsA	premium	-2
+run out steam	MotivatedByGoal	rest after much	-2
+it	MadeOf	wood	-2
+black belt	IsA	grade martial art	2
+number	HasA	two	2
+wee garden	MotivatedByGoal	plant flourish	1
+alert	IsA	warn	2
+put child bed	HasSubevent	kiss goodnight	2
+friendly grocer	AtLocation	supermarket	2
+target	IsA	try hit	2
+small bird	CapableOf	flap wing fly	2
+zoo	CapableOf	find animal	2
+picture	IsA	magic action	1
+robbery	ConceptuallyRelatedTo	five	-2
+class	HasProperty	taper	-2
+grudge	ConceptuallyRelatedTo	soul doctor	-2
+play	ConceptuallyRelatedTo	box	1
+bone	HasProperty	model	-1
+ground	HasProperty	much happiness	-2
+metal	HasProperty	small cat	-2
+hand	ConceptuallyRelatedTo	tooth	1
+design	IsA	pupil retina	0
+graveyard	UsedFor	research genology	0
+juice	HasA	orange pulp	1
+page	HasA	side	2
+two person	CapableOf	touch lip	2
+hydrogen	IsA	element	2
+band	IsA	group person play instrument	2
+person	Desires	trash	2
+bathe	HasLastSubevent	dry body	1
+shawna	IsA	brat	0
+famous	HasA	movie star	1
+dance	HasA	musical motion	2
+payment	HasA	money involve	2
+foyer	UsedFor	greet mailman	2
+great	HasA	massive	-2
+time	HasA	minute second	2
+religion	HasA	many type	2
+bone	HasA	marrow	2
+ridicule	HasA	make fun	2
+child	HasA	many kid	-1
+cry	ConceptuallyRelatedTo	rumba twist	-1
+garden	LocatedNear	weather	-2
+footstep	IsA	bushel	-2
+science	HasProperty	melt	-2
+blue	HasProperty	white house	-2
+toe	HasA	foot	2
+cross	LocatedNear	teacher	-2
+work	HasFirstSubevent	plan activity	1
+boy	IsA	teacher	1
+apartment	AtLocation	city	2
+popular	HasProperty	old english	-1
+game	HasProperty	door	1
+software	IsA	form communication	1
+may	HasA	month after	2
+shop	HasSubevent	select want buy	2
+horse	AtLocation	prod anagram	-2
+shade	ConceptuallyRelatedTo	afraid	-1
+plant	HasProperty	exchange	-2
+pretention rich	HasProperty	silly	2
+average	IsA	last forever	-2
+castle	HasA	princess	1
+window	SimilarSize	tome	-2
+organize	HasProperty	direction	-2
+paper	HasA	pen	-2
+doctor	HasA	patient	2
+lantern	HasA	paul revere	-2
+ocean	LocatedNear	tree dweller	-2
+civilization	HasA	person culture	2
+eye	HasA	pupil iris	2
+toast	HasProperty	new	-2
+servant	HasA	pay help	-1
+rain	HasProperty	run fast	-2
+time	HasA	second	-2
+agent	HasA	secret detective	1
+shore	UsedFor	go water	1
+item	ReceivesAction	find desk	-2
+flicker	HasA	rapid flash	-2
+cross	HasA	religion	-2
+answer	HasA	respond	2
+worker	ReceivesAction	person	2
+energy	HasA	power	-1
+become inebriate	Causes	excite dangerous	1
+housework	HasSubevent	get tire	2
+make phone call	MotivatedByGoal	order pizza	1
+taste	IsA	newspaper section	-2
+test	HasA	question	2
+protest	HasProperty	April	-2
+menace	LocatedNear	brotherhood	-2
+camouflage	ConceptuallyRelatedTo	ground	1
+doll	HasProperty	fly	-2
+class	HasA	same grade	1
+person smile	HasSubevent	happy	2
+appear	HasA	pair	-2
+paper	HasA	round spherical	-2
+commander	IsA	carnation daisy	-1
+eye	HasA	night creature	-1
+plate	IsA	grassy slant	-2
+apple	HasA	pit	2
+walk	SimilarSize	hallway	2
+root system	HasProperty	close under reflection through orthogonal complement any root	0
+chicken	HasA	poultry bird	-2
+game	HasA	player	2
+self-centeredness	CapableOf	make behave jerk	2
+get fit	HasSubevent	increase heartrate	2
+wrestle	HasPrerequisite	buy funny clothe	1
+draw	HasA	pencil	-2
+ancient egyptian tomb	IsA	decore picture watermelon	0
+business school northwestern university	IsA	name kellogg	0
+pie	AtLocation	home	1
+learn subject	UsedFor	open mind	2
+dart	CapableOf	hurt	2
+danger	HasA	peril	2
+food	MotivatedByGoal	body require nurishment	2
+hanger	HasProperty	good man heavy coat	1
+bank	ConceptuallyRelatedTo	morgan stanley	1
+body	ConceptuallyRelatedTo	boy scout	-2
+slope	ConceptuallyRelatedTo	mountain	2
+gas	IsA	colour	-1
+shake	ConceptuallyRelatedTo	malt	1
+doll	ConceptuallyRelatedTo	mini	-2
+hand	ConceptuallyRelatedTo	mitten	2
+plant	ConceptuallyRelatedTo	general	-2
+body	ConceptuallyRelatedTo	torso	2
+butterfly	ConceptuallyRelatedTo	moth	2
+cold water	AtLocation	water fountain	2
+spire	ConceptuallyRelatedTo	needle	1
+fairy	HasProperty	structure	-1
+gable	ConceptuallyRelatedTo	movie star	2
+call	HasProperty	power over	-2
+automobile	HasProperty	cotton footwear	-1
+mean	HasA	mind purpose	-2
+hammer	HasProperty	canine pooch	-1
+bed	ConceptuallyRelatedTo	house buy	1
+price	IsA	money measurement	2
+snake	HasProperty	verb	1
+antidote	IsA	neutralizer	2
+apartment build	UsedFor	live	2
+back courtyard	UsedFor	store	1
+kim	HasProperty	early	0
+hole	IsA	human tissue	0
+royal	IsA	princess	1
+two	SimilarSize	hit	-2
+stick	ConceptuallyRelatedTo	long skinny	1
+record	ConceptuallyRelatedTo	licorice	-1
+lord	ConceptuallyRelatedTo	land lady	-1
+name	ConceptuallyRelatedTo	john	2
+walk	ConceptuallyRelatedTo	jog	2
+brute	HasProperty	eat	-2
+blue	ConceptuallyRelatedTo	indigo	2
+heavy	IsA	sonic	-1
+cake	SimilarSize	desk computer	-1
+distance	HasA	small song	-2
+cry	ConceptuallyRelatedTo	make tear	2
+duke	ConceptuallyRelatedTo	lower king	1
+stop marry	MotivatedByGoal	unfaithful	1
+eight	IsA	discuss say	-2
+daughter	ConceptuallyRelatedTo	mother	2
+candy	ReceivesAction	make mostly sugar	2
+eat breakfast	HasPrerequisite	up early enough	2
+squirrel carcass	AtLocation	road	1
+paper	ConceptuallyRelatedTo	fun challenge	0
+capital	IsA	leafy vegetable	-1
+enter	IsA	beak	-1
+television	CapableOf	show nightingale	-1
+fashion	IsA	dress style	2
+examination	Causes	profound	0
+my	HasProperty	live animal	-2
+stalactite	AtLocation	cavern	2
+person	CapableOf	drive truck	2
+minister	IsA	religious leader	2
+paper	IsA	food	-1
+coin	ReceivesAction	find wish well	2
+serve customer	HasPrerequisite	good attitude	1
+examine	HasSubevent	run computer simulation	2
+political leader	HasProperty	often competent	-1
+building	ReceivesAction	make many different material	2
+single person chair	AtLocation	plane	2
+hose	UsedFor	fill pool	2
+microphone	UsedFor	make audience hear voice	2
+place	HasProperty	ambiguous	2
+wine glass	AtLocation	cupboard	2
+loose weight	HasSubevent	buy new clothe	2
+water flower water	CapableOf	look like rain	1
+brat	ConceptuallyRelatedTo	local friend	-1
+bread	IsA	structural material	-1
+card	SimilarSize	credit	-2
+grave	SimilarSize	coffin	2
+return	SimilarSize	come back	-2
+heaven	SimilarSize	paradise	2
+deliver	SimilarSize	pizza	-2
+discipline	SimilarSize	look disciple	-2
+grape	SimilarSize	olive	2
+minute	IsA	button	-2
+one	SimilarSize	single	2
+mole	SimilarSize	small rodent	2
+canal	HasProperty	room	-1
+nerve	AtLocation	brain	2
+chicken	HasProperty	little	-1
+make	CapableOf	go around	1
+stab death	Causes	knife wound	2
+tribeca	PartOf	lower manhattan	0
+lunch	MotivatedByGoal	midday not yet eaten	2
+make sure healthy	HasPrerequisite	visit doctor	1
+buffoon	IsA	goof	2
+ralph	DefinedAs	name person	2
+fortune cookie	IsA	frivolous pastime	2
+person	CapableOf	drink much beer	2
+chair	HasProperty	begin ex	-1
+flea	SimilarSize	correct spell	-2
+sky	HasProperty	representative	-2
+connect	HasProperty	yard tool	-1
+wave	LocatedNear	without	-1
+ground	HasProperty	sugar	-1
+current	IsA	two	-2
+wool	ConceptuallyRelatedTo	white fabric	1
+rice	ConceptuallyRelatedTo	white	1
+joy	ConceptuallyRelatedTo	world	1
+darkness	ConceptuallyRelatedTo	four	-1
+can	ConceptuallyRelatedTo	vegetable	1
+experiment	ConceptuallyRelatedTo	test	2
+sound	ConceptuallyRelatedTo	wave	2
+paste	ConceptuallyRelatedTo	watery flour	2
+dog	IsA	substance	-1
+seed	UsedFor	house	-1
+cow	SimilarSize	bull	2
+country	SimilarSize	nation	2
+steam	HasProperty	light combination	-1
+party	HasA	young old	-2
+double	IsA	politeness	-1
+cake	IsA	deceit	-2
+nest	HasProperty	lower limb	-1
+treaty	IsA	play cricket	-2
+tornado	IsA	general term	-1
+view	ConceptuallyRelatedTo	through window	1
+sand	ConceptuallyRelatedTo	tiny pebble	2
+every	IsA	double ell	-1
+may	HasProperty	keep money	-2
+nest	ConceptuallyRelatedTo	stick	1
+wool	ConceptuallyRelatedTo	string	-2
+safe	ConceptuallyRelatedTo	stronghold	1
+lake	ConceptuallyRelatedTo	superior	1
+servant	ConceptuallyRelatedTo	surf ant	-1
+smile	ConceptuallyRelatedTo	tooth	2
+rend	ConceptuallyRelatedTo	temporary use	2
+rocket	ConceptuallyRelatedTo	ship	2
+train engine	HasProperty	large	2
+sear	IsA	cake	0
+newspaper	MadeOf	plastic	2
+compute sum	Causes	total	2
+defeat	IsA	noun	2
+chicken	IsA	order	-1
+tractor	UsedFor	pull heavy object	2
+lens	UsedFor	build telescope	2
+sculpt gel	AtLocation	salon	2
+size	HasA	water fall	-1
+fight stigma	HasPrerequisite	use respectful language	2
+bullet	LocatedNear	machine	1
+beauty	HasProperty	leaf colour	-2
+doctor	ConceptuallyRelatedTo	extreme badness	1
+telescope	ConceptuallyRelatedTo	group elder	-2
+horsehair	UsedFor	than	-2
+point	ConceptuallyRelatedTo	sharp	2
+walk	ConceptuallyRelatedTo	steady pace	2
+capital	ConceptuallyRelatedTo	state headquarters	2
+breathe fresh air	HasPrerequisite	change surronding	1
+gleam	ConceptuallyRelatedTo	shiny clean	2
+pearl	ConceptuallyRelatedTo	shiny	2
+person	Desires	play competitive game	2
+servant	ConceptuallyRelatedTo	serve person	2
+squirrel	ConceptuallyRelatedTo	small rodent	2
+build	ConceptuallyRelatedTo	skyscraper	2
+express	ConceptuallyRelatedTo	skip stop	2
+minute	ConceptuallyRelatedTo	sixty second	2
+go walk	HasSubevent	see squirrel	2
+talk	HasProperty	animal	-1
+run after ball	HasPrerequisite	run fast	2
+illusion	ConceptuallyRelatedTo	move	1
+nice person	CapableOf	spit sidewalk	2
+shed	UsedFor	tool dirty keep inside	-2
+master bedroom	UsedFor	keep spouse happy	1
+degree	IsA	luggage box	-1
+religion	UsedFor	keep population control	1
+play basketball	Causes	basket make	2
+housework	HasProperty	much fun	2
+church	IsA	pasta	-1
+possess	HasProperty	trunk leave	-2
+lsd	HasProperty	illegal	2
+turnpike	UsedFor	drive car	2
+paint	IsA	cop	-2
+color	IsA	lawyer	-1
+apricot	IsA	carnival	-1
+camp	IsA	verb	1
+dip	IsA	movie advert	-2
+wood	IsA	drink instrument	-1
+bat	ConceptuallyRelatedTo	rodent	2
+traitor	ConceptuallyRelatedTo	sailor	1
+red	ConceptuallyRelatedTo	ride hood	2
+mountain	ConceptuallyRelatedTo	rocky	2
+window	ConceptuallyRelatedTo	rectangle	2
+farm	ConceptuallyRelatedTo	red build	1
+wallet	ConceptuallyRelatedTo	purse	2
+gray	ConceptuallyRelatedTo	rainy day	2
+nip	ConceptuallyRelatedTo	pin	-1
+bowl	ConceptuallyRelatedTo	pin	2
+course	IsA	between	-2
+exchange	IsA	time allotment	-1
+read	ConceptuallyRelatedTo	achoo action	-1
+picture	HasProperty	jet fuel	-1
+mold	ConceptuallyRelatedTo	prescription	1
+cattle	IsA	defense	-1
+hurt	ConceptuallyRelatedTo	dangle	-1
+trash	IsA	grill	-1
+duty	IsA	belong speaker	-1
+take phone call	HasSubevent	cross room	1
+suitcase	UsedFor	lug around airport	2
+take stand	UsedFor	testify trial	2
+ocelot	IsA	cat	2
+pit viper	CapableOf	sense heat	2
+tennis game	UsedFor	determine winner	2
+great barrier reef	HasProperty	visible space	2
+welcome matt	AtLocation	front door	2
+professional sport	IsA	not play work	2
+permanent	IsA	temporary	2
+close	IsA	far	2
+order	ConceptuallyRelatedTo	odour	-1
+branch	IsA	trunk	2
+body	ConceptuallyRelatedTo	ourselves	2
+representative	ConceptuallyRelatedTo	person	2
+case	ConceptuallyRelatedTo	paper purse	2
+crowd	ConceptuallyRelatedTo	pack	2
+lift	ConceptuallyRelatedTo	pick up	2
+lady	ConceptuallyRelatedTo	payday	-1
+eat ice cream	UsedFor	satisfy sweet tooth	2
+crank	HasProperty	time allotment	-1
+sneeze	HasA	chicken product	-1
+energy	IsA	yellow animal	-1
+floor	HasProperty	liquid wall	-1
+cut	ConceptuallyRelatedTo	double ell	-1
+cost	HasProperty	lawn border	-1
+bear	HasProperty	forward momentum	-1
+time	HasProperty	car	-1
+old method	CapableOf	correspondance include pen paper	2
+country	IsA	many litre	-1
+rubber stamp	HasProperty	opaque	2
+sultan	HasA	cold gear	-1
+towel rack	AtLocation	bathroom	2
+needle	AtLocation	sew machine	2
+dog	ReceivesAction	breed various characteristic	2
+see excite story	HasSubevent	read	2
+ice cream	AtLocation	movie	2
+something	AtLocation	party	2
+something	AtLocation	hole wall	2
+lemur	AtLocation	wyom	-1
+head	ConceptuallyRelatedTo	guy	0
+man	IsA	blood	-1
+band	ConceptuallyRelatedTo	guitarist singer	2
+wool	HasA	organ	-2
+mountain	ConceptuallyRelatedTo	high cliff	2
+icicle	ConceptuallyRelatedTo	hanger	-1
+sky	HasA	turn	-2
