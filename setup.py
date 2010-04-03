@@ -50,42 +50,9 @@ Otherwise it will probably suffice to:
 """
     sys.exit(1)
 
-
-CYTHON_OUT = 'svdlib/_svdlib.c'
-CYTHON_SRC = 'svdlib/_svdlib.pyx'
-
 ### Update the Cython file, if necessary.
 def get_modification_time(filename):
     return os.stat(filename)[ST_MTIME]
-
-if not os.path.exists(CYTHON_OUT) or get_modification_time(CYTHON_SRC) > get_modification_time(CYTHON_OUT):
-    try:
-        # Try building the Cython file
-        print 'Building Cython source'
-        from Cython.Compiler.Main import compile
-        res = compile(CYTHON_SRC)
-        if res.num_errors > 0:
-            print >>sys.stderr, "Error building the Cython file."
-            sys.exit(1)
-    except ImportError:
-        print >>sys.stderr, 'Warning: Skipped building the Cython file.'
-        print >>sys.stderr, ' The svdlib source file is more recent than the Cython output file, but'
-        print >>sys.stderr, ' you seem to lack Cython, so skipping rebuilding it.'
-
-
-svdlibc = Extension(
-    name='csc.divisi2._svdlib',
-    sources=[
-        CYTHON_OUT,
-        'svdlib/svdwrapper.c',
-        'svdlib/las2.c',
-        'svdlib/svdlib.c',
-        'svdlib/svdutil.c',
-        ],
-    include_dirs=[numpy.get_include(), 'svdlib'],
-    extra_compile_args=['-g'],
-    extra_link_args=['-g'],
-    )
 
 doclines = __doc__.split("\n")
 
@@ -100,7 +67,7 @@ setup(
     description = doclines[0],
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
-    ext_modules = [svdlibc],
+    ext_modules = [],
     packages=['csc', 'csc.divisi2'],
     namespace_packages = ['csc'],
     install_requires=['csc-utils >= 0.4.1',],
