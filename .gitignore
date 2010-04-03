@@ -1,4 +1,5 @@
 *.pyc
+*.swp
 build
 Divisi2.egg-info/
 dist
