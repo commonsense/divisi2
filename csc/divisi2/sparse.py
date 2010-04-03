@@ -58,6 +58,7 @@ class AbstractSparseArray(object):
     representations -- mostly operators.
     """
     is_sparse = True
+    dtype = np.dtype('float64')
 
     def __init__(self, *args, **kwargs):
         raise NotImplementedError("AbstractSparseArray is an abstract class")
@@ -922,8 +923,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
             raise DimensionMismatch("Inner dimensions do not match.")
         # Inner labels must match (or be unlabeled):
         if self.col_labels != other.row_labels:
-            if self.col_labels is None:
-                raise LabelError("Can't multiply labeled with unlabeled data.")
+            if self.col_labels is None or other.row_labels is None:
+                pass
             else:
                 raise LabelError("Inner labels do not match.")
         out = np.zeros((self.shape[0], other.shape[1]))

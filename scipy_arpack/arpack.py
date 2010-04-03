@@ -85,7 +85,8 @@ class _ArpackParams(object):
         ncv = min(ncv, n)
 
         if ncv > n or ncv < k:
-            raise ValueError("ncv must be k<=ncv<=n, ncv=%s" % ncv)
+            raise ValueError("ncv must be k<=ncv<=n, ncv=%s, k=%s, n=%s" %
+            (ncv, k, n))
 
         self.v = np.zeros((n, ncv), tp) # holds Ritz vectors
         self.iparam = np.zeros(11, "int")
@@ -527,9 +528,6 @@ def svd(A, k=6):
     linear_a = aslinearoperator(A)
 
     def _left(x, sz):
-        from scipy.sparse import csc_matrix, csr_matrix
-        x = csc_matrix(x)
-
         matvec = lambda x: linear_at.matvec(linear_a.matvec(x))
         params = _SymmetricArpackParams(sz, k, tp, matvec)
 
@@ -539,13 +537,10 @@ def svd(A, k=6):
         s = np.sqrt(eigvals)
 
         v = eigvec
-        u = (x * v) / s
+        u = (x.dot(v)) / s
         return u, s, op(v)
 
     def _right(x, sz):
-        from scipy.sparse import csc_matrix, csr_matrix
-        x = csr_matrix(x)
-
         matvec = lambda x: linear_a.matvec(linear_at.matvec(x))
         params = _SymmetricArpackParams(sz, k, tp, matvec)
 
