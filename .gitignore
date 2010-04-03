@@ -7,4 +7,5 @@ pip-log.txt
 .achievements
 .coverage
 .bzr
+.svn
 .bzrignore
