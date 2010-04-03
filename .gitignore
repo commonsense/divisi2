@@ -1,5 +1,6 @@
 *.pyc
 *.swp
+*.so
 build
 Divisi2.egg-info/
 dist

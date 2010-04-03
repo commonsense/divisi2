@@ -990,19 +990,12 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         - S, a dense vector representing the diagonal of Sigma
         - V as a dense labeled matrix
         """
-        if self.shape[1] >= self.shape[0] * 1.2:
-            # transpose the matrix for speed
-            V, S, U = self.T.svd(k)
-            return U, S, V
-
         # weird shit happens when there are zero rows in the matrix
         self.check_zero_rows()
         
-        from csc.divisi2 import operators
-        from csc.divisi2.reconstruct import ReconstructedMatrix
-        from csc.divisi2._svdlib import svd_llmat
-        Ut, S, Vt = svd_llmat(self.llmatrix, k)
-        U = DenseMatrix(Ut.T, self.row_labels, None)
+        from arpack import svd
+        U, S, Vt = svd(self, k)
+        U = DenseMatrix(U, self.row_labels, None)
         V = DenseMatrix(Vt.T, self.col_labels, None)
         return (U, S, V)
     
