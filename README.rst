@@ -17,6 +17,7 @@ Divisi2 belongs to two projects with many of the same people involved:
 - the MIT Mind Machine Project
 
 The primary developers are:
+
 - Rob Speer <rspeer at mit dot edu>
 - Ken Arnold <kcarnold at mit dot edu>
 
