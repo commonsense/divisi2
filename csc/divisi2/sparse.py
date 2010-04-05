@@ -1039,10 +1039,29 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         )
         kconv, L, Q, it, it_inner = result
         return DenseMatrix(Q, self.row_labels, None), L
+    
+    def to_state(self):
+        return {
+            'version': 1,
+            'lists': self.lists(),
+            'row_labels': self.row_labels,
+            'col_labels': self.col_labels,
+            'nrows': self.shape[0],
+            'ncols': self.shape[1]
+        }
 
+    @staticmethod
+    def from_state(d):
+        assert d['version'] == 1
+        mat = SparseMatrix.from_lists(d['lists'],
+                                      nrows=d['nrows'],
+                                      ncols=d['ncols'])
+        mat.row_labels = d['row_labels']
+        mat.col_labels = d['col_labels']
+        return mat
+    
     def __reduce__(self):
-        return _matrix_from_named_lists, self.named_lists()
-
+        return (_matrix_from_state, (self.to_state(),))
 
     ### methods that fall through directly to PySparse
 
@@ -1530,8 +1549,24 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         """
         return self.find()[0]
 
+    def to_state(self):
+        return {
+            'version': 1,
+            'lists': self.lists(),
+            'labels': self.labels,
+            'nentries': len(self),
+        }
+
+    @staticmethod
+    def from_state(d):
+        assert d['version'] == 1
+        mat = SparseMatrix.from_lists(d['lists'],
+                                      n=d['nentries'])
+        mat.labels = d['labels']
+        return mat
+    
     def __reduce__(self):
-        return _vector_from_named_lists, self.named_lists()
+        return (_vector_from_state, (self.to_state(),))
 
     ### methods that fall through directly to PySparse
 
@@ -1562,10 +1597,13 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         therepr = "%s: [%s]" % (repr(self)[1:-1], ', '.join(pairs))
         return therepr
 
-def _matrix_from_named_lists(*lists):
-    return SparseMatrix.from_named_lists(*lists)
-_matrix_from_named_lists.__safe_for_unpickling__ = True
+# Put the factory methods in a form __reduce__ likes
+def _matrix_from_state(state):
+    print state
+    return SparseMatrix.from_state(state)
+_matrix_from_state.__safe_for_unpickling__ = True
 
-def _vector_from_named_lists(*lists):
-    return SparseVector.from_named_lists(*lists)
-_vector_from_named_lists.__safe_for_unpickling__ = True
+def _vector_from_state(*state):
+    return SparseVector.from_state(state)
+_vector_from_state.__safe_for_unpickling__ = True
+
