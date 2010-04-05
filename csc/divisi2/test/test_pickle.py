@@ -22,3 +22,9 @@ def test_sparse_pickle():
     assert pickle_bounce(mat_4x3[0]) == mat_4x3[0]
     assert pickle_bounce(mat_4x3[:,0]) == mat_4x3[:,0]
 
+def test_dense_pickle():
+    dmat = mat_4x3.to_dense()
+    assert pickle_bounce(dmat).equals(dmat)
+    assert pickle_bounce(dmat[0]).equals(dmat[0])
+    assert pickle_bounce(dmat[:,0]).equals(dmat[:,0])
+

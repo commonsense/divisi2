@@ -63,6 +63,15 @@ class AbstractDenseArray(np.ndarray):
         """
         from csc.divisi2 import operators
         return operators.transpose_dot(self, other)
+    
+    def equals(self, other):
+        """
+        Compare two matrices by value.
+
+        This name is necessary because __eq__ is already defined as an
+        elementwise operation in NumPy.
+        """
+        return (self.same_labels_as(other) and np.all(self == other))
 
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     def __new__(cls, input_array, labels=None):
@@ -108,6 +117,9 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
             where = order[-i]
             results.append((self.label(where), self[where]))
         return results
+    
+    def __reduce__(self):
+        return DenseVector, (np.asarray(self), self.labels)
 
 class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     def __new__(cls, input_array, row_labels=None, col_labels=None):
@@ -200,3 +212,5 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         for axis in range(k):
             self.summarize_axis(axis, output)
 
+    def __reduce__(self):
+        return DenseMatrix, (np.asarray(self), self.row_labels, self.col_labels)

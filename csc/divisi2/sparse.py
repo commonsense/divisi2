@@ -168,6 +168,9 @@ class AbstractSparseArray(object):
         return self.replacedata(self.psmatrix * scalefactor)
     
     def __eq__(self, other):
+        """
+        Compare two matrices by value.
+        """
         return (type(other) == type(self) and
                 other.keys() == self.keys() and
                 np.allclose(other.value_array(), self.value_array()) and
@@ -176,6 +179,9 @@ class AbstractSparseArray(object):
     def __ne__(self, other):
         return not self.__eq__(other)
     
+    # support the same interface as dense
+    equals = __eq__
+
     @property
     def llmatrix(self):
         return self.psmatrix.matrix
