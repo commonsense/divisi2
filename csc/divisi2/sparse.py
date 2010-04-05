@@ -1059,7 +1059,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     @staticmethod
     def from_state(d):
         assert d['version'] == 1
-        mat = SparseMatrix.from_lists(d['lists'],
+        mat = SparseMatrix.from_lists(*d['lists'],
                                       nrows=d['nrows'],
                                       ncols=d['ncols'])
         mat.row_labels = d['row_labels']
@@ -1566,7 +1566,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     @staticmethod
     def from_state(d):
         assert d['version'] == 1
-        mat = SparseMatrix.from_lists(d['lists'],
+        mat = SparseVector.from_lists(*d['lists'],
                                       n=d['nentries'])
         mat.labels = d['labels']
         return mat
@@ -1605,11 +1605,10 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 
 # Put the factory methods in a form __reduce__ likes
 def _matrix_from_state(state):
-    print state
     return SparseMatrix.from_state(state)
 _matrix_from_state.__safe_for_unpickling__ = True
 
-def _vector_from_state(*state):
+def _vector_from_state(state):
     return SparseVector.from_state(state)
 _vector_from_state.__safe_for_unpickling__ = True
 
