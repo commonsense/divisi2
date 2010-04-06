@@ -1,1 +1,4 @@
-apparently normalize_rows is buggy
+- MDS
+- CCIPCA
+- Luminoso interface
+- packaging (pysparse, possibly arpack)
