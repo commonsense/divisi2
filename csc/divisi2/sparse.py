@@ -531,9 +531,35 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         rows = [row_labels.index(name) for name in rownames]
         cols = [col_labels.index(name) for name in colnames]
         # Construct matrix.
-        result = SparseMatrix.from_lists(values, rows, cols)
+        result = SparseMatrix.from_lists(values, rows, cols,
+                                         nrows=len(row_labels),
+                                         ncols=len(col_labels))
         result.row_labels = row_labels
         result.col_labels = col_labels
+        return result
+    
+    @staticmethod
+    def square_from_named_lists(values, rownames, colnames, labels=None):
+        """
+        Constructs a SparseMatrix similarly to :meth:`from_named_lists`,
+        but ensures that the resulting matrix is square and has the same
+        row and column labels.
+        """
+        if labels is None: labels = OrderedSet()
+        # Ensure that the labels are indeed an OrderedSet.
+        labels = indexable_set(labels)
+        # Ensure all labels are present.
+        labels.extend(rownames)
+        labels.extend(colnames)
+        # Look up indices.
+        rows = [labels.index(name) for name in rownames]
+        cols = [labels.index(name) for name in colnames]
+        # Construct matrix.
+        result = SparseMatrix.from_lists(values, rows, cols,
+                                         nrows=len(labels),
+                                         ncols=len(labels))
+        result.row_labels = labels
+        result.col_labels = labels
         return result
 
     @staticmethod
@@ -543,9 +569,38 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         of the form (value, rowname, colname), expressing a value and the
         labels for where it goes in the matrix.
 
-        If possible, use ``from_named_lists`` since it's faster.
+        If possible, use ``from_named_lists``, because it's faster.
         """
         return SparseMatrix.from_named_lists(*zip(*tuples))
+    
+    @staticmethod
+    def square_from_named_entries(tuples):
+        """
+        Create a new SparseMatrix from a list of tuples. Each tuple is
+        of the form (value, rowname, colname), expressing a value and the
+        labels for where it goes in the matrix. Ensure that the matrix is
+        square and has the same row and column labels.
+
+        If possible, use ``square_from_named_lists``, because it's faster.
+        
+        Example:
+
+        >>> mat1 = SparseMatrix.square_from_named_entries([
+        ...     (2, "apple", "red"),
+        ...     (2, "orange", "orange"),
+        ...     (1, "apple", "green"),
+        ...     (1, "celery", "green"),
+        ... ])
+        >>> print mat1
+        SparseMatrix (5 by 5)
+                 apple      orange     celery     red        green   
+        apple       ---        ---        ---     2.000000   1.000000  
+        orange      ---     2.000000      ---        ---        ---    
+        celery      ---        ---        ---        ---     1.000000  
+        red         ---        ---        ---        ---        ---    
+        green       ---        ---        ---        ---        ---    
+        """
+        return SparseMatrix.square_from_named_lists(*zip(*tuples))
     
     ### basic operations
 
@@ -1013,7 +1068,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         return (U, S, V)
     
     def blend_factor(self):
-        U, S, V = self.squish().svd(1)
+        U, S, V = self.svd(1)
         return S[0]
 
     def spectral(self, k=50, tau=100, verbosity=0):
