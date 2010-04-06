@@ -1,0 +1,1078 @@
+\documentclass[11pt]{article}
+\usepackage[pdftex]{graphicx}
+\usepackage[cmex10]{amsmath}
+\usepackage{palatino}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{fullpage}
+\include{pythonlisting}
+\addtolength{\itemsep}{-3mm}
+\hyphenation{Analogy-Space Concept-Net}
+
+\newcommand{\vect}[1]{\ensuremath{\mathbf{#1}}}
+
+\newenvironment{mylist}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}}{\end{itemize}
+}
+
+\begin{document}
+\pagenumbering{roman}
+\title{Learning Common Sense from Eigenvector Methods}
+
+\author{Rob Speer}
+
+\maketitle
+
+\begin{abstract}
+Open Mind Common Sense is a crowd-sourced knowledge base of natural language
+statements about the world. In my work at the MIT Media Lab, both in my M.Eng.
+thesis and in joint work with others in the group, I have created
+representations and techniques that organize this knowledge and allow a
+computer to make sense of it in applications.
+
+One important representation is ConceptNet, representing the collection of
+natural language statements as a semantic network. Given such a semantic
+network, we can construct other representations that allow a computer to learn
+from this kind of data.
+
+A very useful approach to learning has been to represent such knowledge
+as a matrix, and extract large-scale patterns from it using singular value
+decomposition. This idea was originally published as ``AnalogySpace'', and
+since then my research group has expanded it in all directions into a family of
+related techniques. The common thread between them is to work with {\em
+eigenvectors} made from many facts, instead of handling all the facts as
+separate objects.
+
+We have used these eigenvector-based representations to accomplish tasks such
+as structure mapping, word sense disambiguation, and sentiment analysis. In
+this paper, I aim to show examples of how to construct such representations in
+code, explain the benefits we get eigenvector-based methods, and review what we
+have learned about how to make effective use of this kind of representation.
+
+\end{abstract}
+
+\tableofcontents
+\vspace{3in}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{conceptnet.pdf}
+\end{center}
+\vspace{-2em}
+\caption{A few of the nodes and links in ConceptNet surrounding the concept ``cake''.}
+\label{fig:conceptnet}
+\end{figure}
+
+\newpage
+\pagenumbering{arabic}
+
+\section{Introduction}
+
+This paper is a retrospective on a lot of work I have done with the Software
+Agents group in the MIT Media Lab. It revisits the work called ``AnalogySpace''
+that I wrote about in my M.Eng. thesis and later presented at AAAI \cite{analogyspace},
+as well as later work such as that published in the IEEE journal article on
+``Digital Intuition'' \cite{ieee}.
+
+One purpose of it is, of course, that it is
+part of my RQE requirement for graduation. However, I hope to make this paper
+of interest to more professors than the two who are obligated to read it.  I'd
+like to take this opportunity to explain this area of my work from the ground
+up, so that this paper can also help future researchers in this area get up to
+speed on how this all works, and how they can take the next steps with it.
+
+With that in mind, I will start by explaining Open Mind Common Sense and how it
+acquires knowledge and stores it in a semantic network called ConceptNet (Figure~\ref{fig:conceptnet}), and from there I will explain
+why SVD-based methods are effective at learning from examples in ConceptNet.
+After presenting the particular learning process known as AnalogySpace and what
+one can do with it, I will describe the ways my colleagues and I have extended
+that idea -- such as by incorporating multiple domains of knowledge, learning
+from streaming data, and learning higher-level analogies using structure
+mapping.
+
+\subsection{A glossary: what is AnalogySpace, anyway?}
+
+I recognize that it may be difficult to identify exactly what ``AnalogySpace''
+refers to. Is it a representation of common sense knowledge? A representation
+of any kind of relational knowledge? A learning technique?
+
+%It's a fact of life in the Media Lab that everything has to have a buzzwordy
+%name. ``Machine learning from dimensionality reduction of knowledge
+%represented in a semantic network'' would have been hard to sell to sponsors.
+%However, I think we're outgrowing this single buzzword.
+
+AnalogySpace originally referred to the combined process of representing
+ConceptNet as a matrix of concepts and their features, taking the truncated
+SVD, and drawing new conclusions from the resulting dimensionality-reduced
+spaces of concepts and features. But the things we do now expand that idea in all directions, and all that's
+constant is the core idea of using a smallish number of eigenvectors to stand
+for a large amount of knowledge. The input data doesn't have to be ConceptNet,
+the matrix doesn't have to be concepts versus features, and the matrix
+decomposition doesn't have to be SVD. With all this variation, ``AnalogySpace''
+by now would have to refer to nearly nothing or nearly everything. This is why
+I have used the phrase ``eigenvector methods'' to title this paper.
+
+Here's a quick glossary of some things I {\em can} define adequately that will
+be referred to in this paper:
+
+\begin{mylist}
+\item {\bf Open Mind} \cite{openmind}: A number of loosely-related projects that collect crowd-sourced knowledge and distribute it freely.
+\item {\bf Open Mind Common Sense} \cite{omcs2}: A prominent project under the Open
+Mind banner, hosted at the MIT Media Lab. Includes a Web site that (sometimes)
+allows people to contribute new knowledge, and tools for working with that
+knowledge. Everything in this paper can be considered part of Open Mind Common
+Sense.
+\item {\bf ConceptNet} \cite{cnet2}: A semantic network created by parsing Open Mind Common Sense.
+\item {\bf Concept}: Something you can talk about in natural language.
+\item {\bf Feature}: Something you can say about a concept, such as ``it has
+wheels'' or ``people want it''. In ConceptNet, this consists of a relation that
+the concept has to another concept.
+\item {\bf ConceptNet 4 API}: A Python API for querying ConceptNet.
+\item {\bf Divisi}: A machine learning toolkit for working with matrices of
+sparse data with useful annotations. Makes techniques such as truncated SVD and
+landmark MDS available in Python.
+\end{mylist}
+
+When I refer to AnalogySpace in particular, then, I'll be referring to a particular system that takes input from ConceptNet, produces inferences from it using SVD, and can confirm those inferences through interactively asking questions.
+
+\section{Open Mind Common Sense and ConceptNet}
+
+The Open Mind Common Sense project has been compiling a corpus of common sense knowledge since 1999, expressed as a set of over one million simple English statements, plus hundreds of thousands of statements in other natural languages such as Chinese, Japanese, and Brazilian Portuguese.
+
+These statements are intended to represent, as a whole, what most people know about the world and how they describe it in words. We relied on the principle now known as ``crowdsourcing'' to collect the corpus: the best way to find out what people know, we assume, is to ask a lot of people.
+
+People have contributed knowledge to the Open Mind corpus in a variety of ways.
+Originally, Open Mind Common Sense consisted of a Web site with a simple text
+input box, in which visitors to the Web site could type free-form statements.
+Later versions of the Web site provided templates for users to fill in,
+representing the most common sentence patterns that people used to contribute
+useful knowledge, such as ``{\em X} is used for {\em Y}''. Now, we additionally
+collect knowledge implicitly from interactive games involving common-sense
+facts.
+
+To make the knowledge in the OMCS corpus accessible to AI applications and
+machine learning techniques, we transform it into a semantic network called
+ConceptNet. ConceptNet is a graph whose edges, or {\em assertions}, express
+common sense relationships between two short phrases, known as {\em concepts}.
+The edges are labeled from a defined set of {\em relations}, such as {\em
+IsA}, {\em HasA}, or {\em UsedFor}, expressing what relationship holds between
+the concepts.  Each assertion additionally has a {\em score} to indicate its
+reliability, which increases either when a contributor votes for a statement
+through our Web site or when multiple contributors submit equivalent statements
+independently.
+
+The current set of possible relations, with an example sentence pattern for
+each one, is shown in Table~\ref{table:relations}. This set of 21 relations is
+not immutable; we change it slowly over many releases of ConceptNet, as we
+focus on different kinds of knowledge and try different methods of parsing.
+
+\begin{table}[tp]
+\begin{small}
+\begin{tabular}{lp{1.5in}|lp{2.3in}}
+{\bf Relation} & {\bf Sentence pattern} & {\bf Relation} & {\bf Sentence
+pattern}\\
+\hline
+IsA & {\em NP} is a kind of {\em NP}.&              LocatedNear & You are likely to find {\em NP} near {\em NP}.\\               
+UsedFor & {\em NP} is used for {\em VP}.&           DefinedAs & {\em NP} is defined as {\em NP}.\\
+HasA & {\em NP} has {\em NP}.&                      SymbolOf & {\em NP} represents {\em NP}.\\
+CapableOf & {\em NP} can {\em VP}.&                 ReceivesAction & {\em NP} can be {\em VP}.\\
+Desires & {\em NP} wants to {\em VP}.&              HasPrerequisite & {\em NP$|$VP} requires {\em NP$|$VP}.\\
+CreatedBy & You make {\em NP} by {\em VP}.&         MotivatedByGoal & You would {\em VP} because you want {\em VP}.\\
+PartOf & {\em NP} is part of {\em NP}.&             CausesDesire & {\em NP} would make you want to {\em VP}.\\
+Causes & The effect of {\em VP} is {\em NP$|$VP}.&  MadeOf & {\em NP} is made of {\em NP}.\\             
+HasFirstSubevent & The first thing you do when you {\em VP} is {\em NP$|$VP}.& HasLastSubevent & The last thing you do when you {\em VP} is {\em NP$|$VP}.\\
+AtLocation & Somewhere {\em NP} can be is {\em NP}.& HasSubevent & One of the things you do when you {\em VP} is {\em NP$|$VP}.\\
+HasProperty & {\em NP} is {\em AP}.&                
+\end{tabular}
+\end{small}
+\caption{The 21 (or so) relations in ConceptNet.}
+\label{table:relations}
+\end{table}
+
+\subsection{Constructing ConceptNet}
+
+To understand the kind of data we are reasoning over, it is important to
+understand where the data comes from. Building ConceptNet requires
+understanding information that arrives in these multiple different forms: from
+unparsed free text, from fill-in-the-blank templates, and from online games.
+
+The goal is to fit the text into sentence patterns, or {\em frames}, expressing
+common relationships between two things. For example, the sentence pattern
+``You can use $NP$ to $VP$'', where $NP$ stands for a noun phrase and $VP$
+stands for a verb phrase, expresses the relation that we label ``UsedFor''
+between the two concepts that fill those blanks.
+
+{\bf Unparsed free text} is the hardest case to deal with, and also the case we
+had to deal with first. The tool originally used for this was Hugo Liu's
+MontyLingua, a black-box NLP stack he designed to turn the free-text OMCS
+sentences into the representation known as ConceptNet 2.
+
+When I worked with Catherine Havasi and Jason Alonso to improve the process of
+collecting new knowledge \cite{cnet3}, we found MontyLingua to be
+unreliable and, more importantly, undocumented. We built a new parsing process
+for ConceptNet 3 -- and later did it again, learning from our mistakes, to make
+ConceptNet 4 -- by building a shallow parser using Python's NLTK library.
+
+Why does this process require a custom parser, which will almost certainly have
+lower accuracy than a standard parser on general text? We have a constraint
+that cannot be explained to most parsers: the top level of the sentence should
+match one of the ConceptNet patterns whenever possible. Also, the text in OMCS
+is remarkably different from the corpora that most parsers are trained on: a
+parser can consume all the Wall Street Journal it wants and never once see the
+word ``lizard'', which occurs hundreds of times in OMCS.
+
+On the other hand, why is this not just a string-matching problem that can be
+solved by a lot of regular expressions?  String-matching fails in many common
+cases, such as by analyzing ``You can use a car to drive to the store'' as
+``You can use [a car to drive] to [the store]''. The fact that ``the store'' is
+a noun phrase, not a verb phrase, is important information.
+
+It's true, however, that most of the work is done once you have found the right
+pattern. The process in ConceptNet 4 uses a probabilistic, rule-based chart
+parser in NLTK, not to parse the entire sentence, but to identify possible
+constituents (such as noun phrases) that can then be fit into patterns. This
+allows for sentences to be matched with reasonable accuracy, even with very
+general patterns such as the ``AtLocation'' pattern ``{\em NP} is {\em P} {\em VP}''. This
+also makes it straightforward to add optional slots for frequency adverbs, as
+in ``Cats sometimes have long hair'' or ``Cats never fly''.
+
+Handling {\bf fill-in-the-blank templates} is, in contrast, the easiest case.
+We can choose the templates to be good examples of the sentence patterns, so
+that determines the relation, and whatever phrases fill the blanks are the
+concepts.
+
+The only pitfall is when the template is ambiguous to the {\em user}.
+For example, we have not come up with a better template for {\em
+ReceivesAction}
+than ``{\em NP} can be {\em VP}'', which is meant to capture knowledge such as ``Food
+can be eaten''. A user may very well fill in ``Food can be tasty'', however,
+putting ``tasty'' erroneously in the $VP$ slot. This should really be a {\em
+HasProperty} statement.
+
+Ideally, these errors could be corrected by re-parsing the text and choosing a
+better relation when the existing one clearly doesn't fit.  This would make a
+good introductory project for a UROP.
+
+{\bf Online games} help us collect more knowledge at the same time that they
+entertain the player. The game that we currently emphasize is Verbosity,
+developed at CMU by Luis von Ahn's ``Games with a Purpose'' project \cite{gwap}
+with the express purpose of collecting common sense knowledge. The goal of the
+game is to get another user to identify a given key word, by giving clues in
+the form of common-sense connections to other words or two-word phrases.
+
+The input from Verbosity fits neatly into sentence templates, but it comes with
+the issue sometimes the statements that help a player succeed at the game are
+not the same as statements that help a computer learn.  Out of frustration or
+the desire to cheat, people will make statements that are not common sense at
+all. One common example is that people will ignore the relation and simply
+enter a word that looks like or sounds like the target word.
+
+Together with Harshit Surana (who developed Verbosity), Catherine Havasi and I
+developed a classifier for separating out unhelpful answers in Verbosity.
+Although we are very conservative in what we accept from Verbosity into
+ConceptNet, throwing out approximately half of the answers, we have still
+incorporated hundreds of thousands of Verbosity statements into the English
+ConceptNet.
+
+\subsection{Reliability of ConceptNet}
+
+The most reliable knowledge in ConceptNet is knowledge that has been confirmed
+by multiple contributors. ConceptNet assertions each have a score, indicating
+how many contributors agree on that statement. Approximately 49,000 assertions
+in English have a score of 2 or higher, and users agreed with 94\% of these
+statements in a 2009 user test \cite{ieee}, compared to 83\% of statements
+overall. These statements represent a more reliable subset of ConceptNet, and should be given more weight in applications that use ConceptNet.
+
+We can see that ConceptNet has collected a large amount of useful knowledge,
+but that some of it is unreliable. In addition, because it is collected in
+natural language from non-experts, the knowledge in ConceptNet can be
+ambiguously worded and sometimes even contradictory. And, of course, 540,000
+assertions represent only a sparse sampling of the true amount of common sense
+knowledge that people have. To work most effectively with ConceptNet, we need
+to be able to work with this noisy data appropriately, and make generalizations
+from it so that we can overcome its sparsity. The next problem we face, after
+the problem of collecting and organizing the knowledge, is a learning problem.
+
+\section{Learning from examples}
+
+Some common sense knowledge projects, most notably CYC \cite{cyc}, aim to learn
+by making logical deductions from the statements they already know. Open Mind,
+with its representation that centers on natural language, is not well suited
+for this. I once tried to write a process that would simply chain together {\em
+IsA} statements transitively; these statements are so full of loops and
+occasional parsing errors, however, that I soon found it busily concluding that
+everything in the world was a kind of bathtub.
+
+A more promising way to learn from this kind of knowledge is to generalize from
+examples. A very nice implementation of this idea, which predates most of the
+work I have done with Open Mind, was Tim Chklovski's {\sc Learner}
+\cite{learner}. In his thesis where he presented {\sc Learner}, he stated a
+simple rule: ``If two things are alike in some ways, they are probably alike in
+other ways.''
+
+From there he creates the process he calls ``cumulative analogy''. Given any
+object that {\sc Learner} knows some things about, it looks up the other
+objects that have the most features in common with it. The features that are
+most common among those other objects can then be transferred, by analogy, to
+the object in question.
+
+This process can make mistakes or overgeneralize, of course, so it cannot be
+treated as a source of certain knowledge. But it is a good source of reasonable
+{\em questions} to ask. It may not be true that a penguin can fly, even though
+other birds can; but it least it's reasonable and interesting to {\em ask}
+whether they can fly. So {\sc Learner} would ask questions based on cumulative
+analogy through its Web interface, a process which I adapted to work with the
+Web interface to Open Mind Common Sense.
+
+Notice that cumulative analogy, as described, requires choosing a set of
+nearest neighbors and examining only those concepts. After all, taking the
+features of all concepts, weighted by their similarity, would be an
+unreasonably expensive query. Wouldn't it?
+
+\subsection{SVD generalizes cumulative analogy}
+
+The insight that I published in my M.Eng. thesis \cite{analogyspace} was this:
+we can perform cumulative analogy with information from all concepts
+simultaneously, by representing concepts and their features in a matrix and
+reducing its dimensionality. The linear algebra technique that lets us do this
+is the singular value decomposition.
+
+Instead of trying to propagate knowledge through our data structures ourselves,
+we can now take advantage of the fact that computers are really good at matrix
+math, and that computer scientists have been optimizing operations such as SVD
+for decades.
+
+In this process, we represent the knowledge in a semantic network as a sparse
+matrix, and use singular value decomposition to reduce its dimensionality,
+capturing the most important correlations in that knowledge.  These
+correlations could be called ``eigenconcepts'' or ``eigenfeatures'', because
+they represent the eigenvectors of the similarity values between all concepts
+or all features (you get the same vectors either way). We usually end up
+calling them ``axes''.
+
+Although nothing in the SVD guarantees that these axes -- the
+principal components of the data -- should correspond to understandable
+distinctions, many of them do. The concepts self-organize around axes that can
+be seen as representing distinctions such as ``desirable vs. undesirable'' or
+``animate vs. inanimate''. These are the distinctions that AnalogySpace will
+use to generalize its knowledge.
+
+\subsection{Reasoning with SVD}
+
+Using singular value decomposition, any matrix $A$ can be factored into an
+orthonormal matrix $U$, a diagonal matrix $\Sigma$, and an orthonormal matrix
+$V^T$, so that  $A = U\Sigma V^T$. The singular
+values in $\Sigma$ can be ordered from largest to smallest, where the larger
+values correspond to the vectors in $U$ and $V$ that are more significant
+components of the initial $A$ matrix. The largest singular values, and their
+corresponding rows of $U$ and columns of $V$, represent the principal
+components of the data.
+
+This way of factoring the matrix $A$ allows the matrix to be built from a sum
+of outer products of column vectors from $U$ and row vectors from $V^T$,
+weighted by the singular values $\sigma_i$ that appear on the diagonal of the
+matrix. This is relevant because one way to define the {\em rank} of a matrix
+is how many outer products must be summed to construct it in this way.
+
+When making use of the SVD results, we often discard all but the first $k$
+components -- the principal components of $A$ -- resulting in the smaller
+matrices $U_k$, $\Sigma_k$, and $V^T_k$. The
+components that are discarded represent relatively small variations in the
+data, and the principal components form a low-rank approximation of the
+original data. This is called a {\em truncated SVD}, represented by this
+approximation: $$A \approx U_k\Sigma_k V^T_k = A_k$$
+
+We know from the properties of SVD that the result of the approximation, $A_k$, is the nearest least-squares approximation to $A$ of rank $k$.
+
+This factorization allows the row space of $A$ and the column space of $A$ to be projected into a common space by the transformations $U$ and $V$.
+We can think of these spaces as containing two types of objects, such as
+concepts and their features. These objects are represented
+in the row and column vectors of $A$ and are related to each other by
+the values where they intersect. After the SVD transformation, both kinds of
+objects are represented in the {\em same} space, where they can be compared to
+one another as vectors.
+
+This property is used by applications of SVD, such as latent semantic indexing
+\cite{lsa}, where the row space consists of terms and the column space consists
+of documents. The principal components become the basis vectors of the common
+space, which describes both terms and documents in terms of the strongest
+correlations between them.
+
+By running a truncated SVD on a data set and multiplying the resulting
+truncated $U_k$, $\Sigma_k$, and $V^T_k$ together, an approximation to the
+input data is recovered. This approximation represents the input data after
+components that cannot be explained by the principal components are removed.
+
+Realize that truncating the SVD is not just a space-saving measure -- it's
+where all of the learning comes from. Without truncating the SVD, we would get
+back exactly the information that we put in. The approximation that comes from
+dropping the lower singular values, and their corresponding axes, is what
+causes this representation to generalize.  From this point forward, all SVDs we
+discuss will be truncated SVDs.  
+
+Now, with the truncated SVD, we've got one of those things that unfortunately
+comes along with statistical learning: a free parameter. With a bit more
+machinery, we'll be able to search for a good value of $k$, but for now I'd
+like you to take my word for it that $k=100$ is pretty good.
+
+\subsection{Representing common sense using SVD}
+
+To use this technique to make inferences about common sense, we express
+ConceptNet as a matrix. As each assertion in ConceptNet expresses a relation
+between two concepts, we can describe it with the 3-tuple ({\em concept}, {\em
+relation}, {\em concept}). To fit this data into a matrix, we break up each
+assertion into two parts, either in the form ({\em concept}, {\em relation}
+$\times$ {\em concept}) or in the from ({\em concept} $\times$ {\em relation},
+{\em concept}). These objects that join a concept with a relation are features
+that things may have, such as ``is enjoyable'' or ``is part of a car''.
+
+The entries in the matrix defined by a concept and a feature are positive or
+negative numbers, depending on whether people have made positive or negative
+assertions that connect that concept and that feature. Assertions with a higher
+confidence score get a larger magnitude (on a logarithmic scale, so very common
+assertions do not dominate). If no information is known connecting a concept to
+a feature, that entry of the matrix is 0. As most of the entries are unknown
+and therefore 0, the matrix can be represented sparsely in memory, with the
+zeros implied.
+
+When we calculate the truncated SVD, $A_k = U_k \Sigma_k V^T_k$, we are finding
+orthogonal matrices $U_k$ and $V_k$ that 
+projects both concepts and features into a
+space with the same basis. The positions of concepts and features in this space
+are $k$-dimensional vectors, containing their projections (also known as
+``loadings'') on each of the eigenvectors -- in other words, the vectors that
+comprise $U$ and $V^T$.
+
+We can gain some intuition by examining this space visually. We can identify
+general meanings that correspond to the different directions from the origin,
+such as ``places'', ``things that are alive'', and ``things
+that are found indoors''. In fact, the two largest principal components that
+arise from ConceptNet are dominated by two meaningful distinctions, which are
+``things people want vs. things people don't want'', and ``things people can do
+vs. things fewer people (or nobody) can do'', which can be seen in
+Figure~\ref{fig:analogyspace}.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{analogyspace.pdf}
+\end{center}
+\vspace{-2em}
+\caption{A projection of all concepts onto the two primary axes of
+AnalogySpace. Concept magnitudes are normalized.}
+\label{fig:analogyspace}
+\end{figure}
+
+From here, we will generally be looking the task of predicting
+assertions of common sense whose value was previously unknown (and represented
+as zero); on the other hand, this could also be used in the other direction,
+discovering known assertions whose values are too high to be explained by the
+principal components. We have used this before to find dubious assertions that
+people have entered such as ``books are for eating''.
+
+\subsection{Drawing conclusions from an SVD}
+
+There are some useful things we can find out from this representation, as long
+as we know how to ask.
+
+The similarity between two concepts, indicated by the number of and strength of
+their overlapping features, can be found in the {\em similarity matrix} $U_k
+\Sigma^2 U_k^T$. We can see that this matrix approximates $AA^T$ (the dot
+products of all transformed concepts with each other) by expanding out the
+approximation and cancelling:
+
+\begin{eqnarray*}
+AA^T &\approx& U_k \Sigma_k V^T_k (U_k \Sigma_k V^T_k)^T = U_k \Sigma_k V^T_k V_k \Sigma^T U^T_k\\
+     &=& U_k \Sigma_k \Sigma^T_k U^T_k = U_k \Sigma^2 U^T_k\\
+\end{eqnarray*}
+
+When we want to predict features that concepts should have -- that is, to
+predict a missing value in $A$ -- then we're simply looking up an entry in
+the approximated matrix $A_k = U_k \Sigma_k V^T_k$.
+
+We'll usually be discussing this in terms of predicting entries that are
+currently unknown (and therefore zero by default). However, we have also used
+this to find known assertions whose values are too {\em high} to be explained
+by the principal components. These identify dubious statements that people have
+entered that are unsupported by other statements, such as ``Books are for
+eating''.
+
+Note that $A_k$ is a dense matrix the shape of the original sparse matrix, and
+the similarity matrix $U_k \Sigma^2_k V^T_k$ is similarly dense. It is very
+inefficient to actually calculate these products directly.  It is often
+infeasible to calculate $A_k$ itself, as it is a dense matrix the shape of the
+original sparse matrix. However, we know that individual entries of $A_k$
+result from the dot product of a row of $U$ and a column of $V^T$, weighted by
+the appropriate eigenvalue from $\Sigma$, so we can simply calculate the
+appropriate dot products when necessary.
+
+\subsection{Divisi}
+Before continuing to describe how to work with these results, I'd like to
+introduce a Python library called Divisi, which I built together with Kenneth
+Arnold. Divisi makes it possible to perform a sparse SVD using Lanczos'
+algorithm in Python (I believe it is the only library that does so, aside from
+the yet-unreleased SciPy 0.8), and provides object-oriented methods for working
+with the results. Divisi is available from
+\url{http://launchpad.net/divisi}.
+
+I won't try to document the library here, but I hope its interactive output
+will be clear enough to illustrate the examples that follow. These examples are
+from the new, simplified API called {\tt divisi2}.
+
+The first thing we'll need to do is import ConceptNet and Divisi, and build a
+concept by feature matrix. The parameter {\tt cutoff=5} says to leave out
+concepts and features that appear fewer than five times.
+
+\begin{python}
+>>> from csc.conceptnet import analogyspace2
+>>> from csc import divisi2
+>>> A = analogyspace2.build_matrix('en', cutoff=5)
+>>> print A
+\end{python}
+\newpage
+\begin{python}
+SparseMatrix (12564 by 19719)
+         IsA/spor   IsA/game   UsedFor/   UsedFor/   person\\C ...
+baseball 3.609584   2.043731   0.792481   0.500000   0.500000  
+sport       ---     1.292481      ---     1.000000      ---    
+yo-yo       ---        ---        ---        ---        ---    
+toy         ---     0.500000      ---     1.160964      ---    
+dog         ---        ---        ---     0.792481      ---    
+...
+\end{python}
+
+We can see here a preview of A, a sparse matrix of 12564 concepts and 19719
+features.  Given this matrix, we can factor it using SVD and ask for 100
+principal components, and then reconstruct its approximation $A_k$ from the
+factors.  Divisi's {\em reconstruct} function does not multiply the matrices;
+it simply provides an object that acts like it does.
+
+\begin{python}
+>>> U, S, V = m.svd(k=100)
+>>> Ak = divisi2.reconstruct(U, S, V)
+\end{python}
+
+To conclude this introductory example, we look up the concept ``pig'' and ask
+for the predicted values of two features it can take on the right side: ``has
+legs'' and ``can fly''.
+
+\begin{python}
+>>> Ak.entry_named('pig', ('right', 'HasA', 'leg'))
+0.15071150848740383
+>>> Ak.entry_named('pig', ('right', 'CapableOf', 'fly'))
+-0.26456066802309008
+\end{python}
+
+\subsection{Normalization}
+
+The intuition we have about an SVD of a semantic network is that similar
+concepts (and similar features) have vectors that point in similar directions.
+Also, when concepts point in similar directions to features, it is because they
+are related to each other by cumulative analogy: a lot of concepts like that
+concept have a lot of features like that feature.
+
+While the meaning is represented by the direction, the magnitude represents how
+much knowledge the matrix contains about each concept or feature. And because
+predictions and similarities are dot products, the concepts and features with
+higher magnitudes will end up with higher values for their predictions. This
+matches the original idea of cumulative analogy -- the predictions that have
+more support have higher values -- but it can have some undesirable effects.
+
+First of all, the results we get are on no meaningful numerical scale. Consider
+this example where we look up the similarity between ``horse'' and ``cow'':
+
+\begin{python}
+>>> sim = divisi2.reconstruct_similarity(U, S)
+>>> sim.entry_named('horse', 'cow')
+36.693964805281276
+\end{python}
+
+So ``horse'' and ``cow'' are 36.69 similar to each other. Is that a lot? Who
+can tell?
+
+If we're looking for similarities between particular concepts, we can deal with
+the scale problem by neutralizing the magnitudes of the concepts altogether.
+We simply {\em normalize} every row of $U_k \Sigma_k$ to be a unit vector.  Then
+the dot products in the similarity matrix are simply the cosines of the angles
+between the corresponding vectors, creating a well-defined similarity scale
+that ranges from $1.0$ (exactly similar) to $-1.0$ (exactly dissimilar).
+
+\begin{python}
+>>> sim_n = divisi2.reconstruct_similarity(U, S, post_normalize=True)
+>>> sim_n.entry_named('horse', 'cow')
+0.82669084520494984
+>>> sim_n.entry_named('horse', 'stapler')
+-0.031207494261339251
+\end{python}
+
+In many applications, we want to rank similarities or predictions and choose
+the best ones. If we don't normalize anything, the concepts and features that
+have the most information about them will show up at the top of the results\footnote{The meaninglessly long decimals that Python outputs are truncated here.}:
+
+\begin{python}
+>>> sim.row_named('table').top_items()
+[('table', 134.82), ('desk', 60.77), ('chair', 47.08), ('kitchen', 41.74),
+('house', 40.16), ('bed', 38.14), ('restaurant', 37.04), ('plate', 30.25),
+('paper', 29.86), ('person', 29.80)]
+\end{python}
+
+A table isn't that similar to a person; ConceptNet just happens to know a lot about
+people. So what if we normalize the rows as above?
+
+\begin{python}
+>>> sim_n.row_named('table').top_items()
+[('table', 1.000), ('newspaper article', 0.694), ('dine table', 0.681),
+('dine room table', 0.676), ('table chair', 0.669), ('dine room', 0.663),
+('bookshelve', 0.636), ('table set', 0.629), ('home depot', 0.591),
+('wipe mouth', 0.587)]
+\end{python}
+
+Newspaper article? Home Depot? How did those get there? The problem is that
+normalization is too generous to some concepts. If a concept is not well
+described by the components in the SVD, it will end up with a smaller magnitude than it started
+with, as most of the information about that concept is dropped.  Normalizing
+all the rows magnifies those concepts enormously, in whatever direction they
+happen to weakly point.
+
+What we need to do is normalize the input matrix {\em before} the SVD. This
+way, all concepts are created equal, but after the SVD, the ones that are
+poorly represented are reduced in magnitude, and will not rank highly in queries
+such as this one.
+
+This presents a bit of a mathematical conundrum: the input matrix has both
+concepts and features we would need to normalize, and if we normalize just one
+direction, we let the other direction distort the results. But it's impossible
+to normalize an arbitrary matrix so that all its rows and columns are unit
+vectors. Consider the 1x2 matrix [0.1 0.2]: for the columns to be unit vectors,
+both entries must become 1.0, but then the row must be larger than a unit
+vector.
+
+The compromise I devised is to divide each entry by the {\em geometric mean} of its
+row norm and its column norm. The rows and columns don't actually become unit
+vectors, but they all become closer to unit vectors, at least.
+
+\begin{python}
+>>> A_pre = A.normalize_all()
+>>> U_pre, S_pre, V_pre = A_pre.svd(k=100)
+>>> sim_pre = divisi2.reconstruct_similarity(U_pre, S_pre)
+>>> sim_pre.row_named('table').top_items()
+[('table', 1.718), ('desk', 1.195), ('kitchen', 0.988), ('chair', 0.873),
+('restaurant', 0.850), ('plate', 0.822), ('bed', 0.772), ('cabinet', 0.678), 
+('refrigerator', 0.652), ('cupboard', 0.617)]
+\end{python}
+
+This gives satisfying results in this example, but it is a bit of
+an odd procedure that requires some justification. This brings us to the next
+topic: how to evaluate tweaks to our SVD-based reasoning using user evaluation
+data.
+
+\subsection{Automatically evaluating results}
+
+In previous papers about ConceptNet and AnalogySpace, my collaborators and I
+have created Web-based surveys in which people evaluate the accuracy of
+statements and predictions. The results of one such evaluation, which we ran
+for a AAAI paper in 2008, is shown in Figure~\ref{aaai-results}.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=3.5in]{user_results.pdf}
+\end{center}
+\vspace{-2em}
+\caption{Users' evaluations of the assertions in ConceptNet, assertions predicted from AnalogySpace, and randomly-generated assertions.}
+\label{aaai-results}
+\end{figure}
+
+After many of these evaluations, we have collected thousands of statements,
+generated by a variety of processes, whose accuracy has been assessed by people
+on a 5-point scale: ``Generally true'', ``Sometimes true'', ``Don't know /
+Opinion'', ``Not true'', and ``Doesn't make sense''.
+
+Now, when making changes to our processes, we don't necessarily have to wait
+for another user evaluation: we can use the existing evaluation data as a test
+set. The evaluation is stored separately from ConceptNet and not incorporated
+into ConceptNet's reliability scores, so we're not testing on our training
+data.
+
+While being agnostic to the numerical scale that predictions end up
+on, we can say that we want a prediction method to give higher values to
+statements that people give higher ratings. A way to measure this is to look at
+all pairs of statements that we can compare using a given prediction method
+(and which users gave different ratings to), and evaluate what percentage of
+the computer's ordering agrees with people's ordering. This is a useful
+method of automatic evaluation that we have not previously published.
+
+In the user evaluation results, let ``Generally true'' have a value of 3,
+``Sometimes true'' 2, ``Don't know'' 1, and give both ``Not true'' and
+``Doesn't make sense'' a value of 0. (It's not important to judge whether it's
+better for the computer to output falsehoods or nonsense.)
+
+When we compare this ranking of 4497 statements with a ConceptNet SVD, with a
+frequency cutoff of 5, and 100 axes (as we constructed above), there are
+5,601,011 pairs of statements that can be compared. Now, we can examine the
+effects of different methods of normalization:
+
+\vspace{0.5ex}
+\begin{tabular}{lrr}
+\hline
+{\bf Normalization}         & {\bf No. of matches} & {\bf Percent match}\\
+\hline
+None                  & 3835008        & 68.47\%\\
+Row normalization     & 3789733        & 67.66\%\\
+Column normalization  & 3769513        & 67.30\%\\
+GM of rows and columns& 3963922        & 70.77\%\\
+\hline
+\end{tabular}
+\vspace{0.5ex}
+
+The remarkable result is that, while normalizing by rows or by columns
+decreases the predictions' agreement with human evaluators, normalizing by a
+little of both increases the agreement substantially.
+
+Now let's go back and justify $k=100$, the previously unjustified value we
+choice for the number of axes. If we hold the normalization method constant (choosing the most effective method of normalizing by the geometric mean of row and column norms), we can try to optimize the value of $k$ using the same sort of evaluation. The percentage agreement for each value of
+$k$, in increments of 5 from 5 to 295, is shown in Figure~\ref{k-value-graph}.
+
+I could choose the global maximum of $k=150$, but after a sufficient number of
+axes, any value of $k$ seems to be good enough. I choose $k=100$ because it's
+well within the central plateau and it takes a third less time and memory to
+compute than $k=150$.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{k-value-graph.pdf}
+\end{center}
+\vspace{-2em}
+\caption{The percentage agreement of SVD-based prediction with human evaluations, as the number of axes varies.}
+\label{k-value-graph}
+\end{figure}
+
+%\subsection{Propagating through {\em IsA}}
+%
+%While we're tweaking the reasoning process, it would be nice if it could
+%propagate features across {\em IsA} relations. For example, if the system
+%knows that dogs chase their tails, and golden retrievers are dogs, then even
+%without a deductive reasoning system we'd like to take this as evidence that
+%golden retrievers chase their tails. Alternately,
+
+\section{Ways to use SVD-based learning}
+
+We have seen how to use SVD-based techniques to reason with and expand our common sense knowledge. This forms a sort of middle ground between traditional symbolic and statistical techniques, by being a statistical implementation of an originally symbolic procedure.
+
+However, the power of a common sense reasoning system is not simply to create more common sense or to reason with the existing common sense knowledge but to integrate common sense into other systems. This allows us to create applications that can benefit from this background of common sense knowledge when solving problems in their particular domain. 
+
+\subsection{Blending}
+
+Catherine Havasi introduced {\em blending} \cite{havasi-thesis}, a way to automatically integrate SVD-based reasoning among multiple data sets. This has proven very useful in applications where we need to combine the domain-general knowledge in ConceptNet with knowledge in a particular domain. This knowledge could be, for example, a semantic network representing a domain-specific ontology, a dataset that grounds concepts in sensory data such as colors and sounds, or even a pile of free-text documents. Where those documents might previously have been analyzed with traditional LSA, we can add background knowledge about phrase similarities from ConceptNet to get more representational power out of fewer documents.
+
+The motivation for blending is simple: you want to combine multiple sparse-matrix representations of data, essentially by aligning them to use the same labels and then summing them. But the magnitudes of the values in each original data set are arbitrary, while their relative magnitudes when combined make a huge difference in the results. We want to find relative magnitudes that encourage as much interaction as possible between the different input representations, expanding the domain of reasoning across all of the representations. Blending heuristically suggests how to weight the inputs so that this happens.
+
+To make blending work, there has to be some overlap in the representations to
+start with. Catherine Havasi explained in her thesis how to create complex
+blends from many resources effectively. One example of such a complex blend is
+a word-sense disambiguation tool that she and I created \cite{havasi-thesis},
+which performed well enough that it would retrospectively have earned fourth
+place in the SEMEVAL 2007 evaluation for coarse word-sense disambiguation. It
+aligns multiple sources of linguistic knowledge, both ambiguous and
+disambiguated, such as Extended WordNet, SemCor, and ConceptNet. The overlaps
+between inputs are shown in Figure~\ref{wsd-bridges}.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{wsd-bridges.pdf}
+\end{center}
+\vspace{-2em}
+\caption{Using blending to build a word-sense disambiguator out of general knowledge sources.}
+\label{wsd-bridges}
+\end{figure}
+
+Another project we are developing is called Colorizer, which incorporates a knowledge base of color associations with words, created by the NodeBox project \cite{nodebox}.  This is one step toward grounding relational knowledge in visual data.
+
+Colorizer can generalize from this input data to associate words and sentences in a text with colors, based on both literal and metaphorical associations. In Figure~\ref{anyone-lived}, we see Colorizer coloring the beginning of an E. E. Cummings poem.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=3in]{anyone-lived.png}
+\end{center}
+\vspace{-2em}
+\caption{Colorizer associates colors with words and sentences in a poem.}
+\label{anyone-lived}
+\end{figure}
+
+Ken Arnold has suggested applying the idea of blending even within a single
+input matrix. For example, the standard ConceptNet matrix can be seen as a
+blend of individual matrices for each relation, so using the blending heuristic
+can help produce more inferences that deal with rarer relations such as
+CreatedBy. Along the same lines, when we augment ConceptNet by adding an
+``identity'' relation to help propagate similarity through {\em IsA} statements
+(as described in my M.Eng.  thesis \cite{robthesis}, using the blending
+heuristic gives us a better value for that parameter than pulling a number out
+of thin air did.
+\label{sec:identity}
+%(The value is
+%surprisingly high: approximately 33.) Indeed, we can confirm this by revisiting
+%the automatic evaluation that I introduced in Section~\ref{sec:eval}: blending
+%in the identity data increases the predictions' agreement with test data even
+%further, from 70.77\% to 71.29\%, while what we were doing before (``A weight
+%of 5 sounds about right.'') made no noticeable difference.
+
+\subsection{Ad hoc categories}
+
+A person can create a mental category given just a few examples of things in
+it, even if it is not a category that the person has put a name to before.
+Consider the category ``convenience store, gas station, supermarket, discount
+store, dairy'': even if you don't come up with an exact name for the
+category\footnote{One possible name would be ``places where you can buy
+milk''.}, you can probably determine that ``drug store'' belongs in the category
+more than ``department store'' does. This kind of thing is called an {\em ad hoc category} \cite{gl-paper}.
+
+Because we have represented concepts and features as vectors, we can reason about the sum of multiple vectors the same way we reason about a single one. This sum vector is a synthetic concept, representing the category of whatever concepts and features were added to construct it. These help us to make distinctions much like the automatic ones such as ``desirable vs. undesirable'', 
+
+Then, the concepts that are most similar to this vector represent additional concepts that belong in the set, like the proprietary Google Sets but with more explanation. The features justify why those things are in the set, because they represent the things that many items in that set have in common. A screenshot of an interface for looking up ad hoc categories appears in Figure~\ref{adhoc}.
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=4in]{adhoc.png}
+\end{center}
+\vspace{-2em}
+\caption{An ad-hoc category of concepts related to transportation.}
+\label{adhoc}
+\end{figure}
+
+One way that ad hoc categories are being used is in a representation called
+``AffectiveSpace'' \cite{WOMSA}, developed at the University of Stirling.
+They overlay AnalogySpace with a spatial model of emotions, in order to analyze
+the emotional content of text. The emotions (and their opposites) are
+represented as ad hoc categories of concepts that are associated with each
+emotion.
+
+\subsection{Spreading activation}
+
+ConceptNet 2 provided an interface for calculating spreading activation from a concept, which could be used for tasks
+such as topic detection and sentiment analysis. It performed this operation in the standard, symbolic way, iterating over all activated nodes and transferring activation to their neighbors. This grows exponentially in complexity with the number of steps to spread.
+
+If we build an SVD representation that relates concepts to other {\em concepts}, instead of to their features, then we can create an implementation of spreading activation that is much more efficient. We build this matrix the same way as the concept by feature matrix, but now we simply add up the scores over all relations that relate one concept to another, disregarding direction. Call this matrix $C$.
+
+Applying $C$ to a vector containing a single concept spreads that concept's value to its connected concepts. Applying $C^2$ spreads that value to concepts connected by two links (including back to the concept itself). But what we'd really like is to spread the activation through any number of links, with diminishing returns, so perhaps the operator we want is more like
+$$1 + C + \frac{C^2}{2!} + \frac{C^3}{3!} + ... = e^C$$
+
+We can calculate this odd operator, $e^C$, because we can factor $C$. $C$ is already symmetric, so instead of applying Lanczos' method to $CC^T$ and getting the SVD, we can apply it directly to $C$ and get the spectral decomposition $C = Q\Lambda Q^T$. As before, we can raise this expression to any power and cancel everything but the power of $\Lambda$. Therefore, $e^C = Qe^\Lambda Q^T$. This simple twist on the SVD lets us calculate spreading activation over the whole matrix instantly.
+
+As with the SVD, we can truncate these matrices to $k$ axes and therefore save space while generalizing from similar concepts. We can even ``post-normalize'' the same way that we normalized the rows of $U\Sigma$ for the similarity matrix $U\Sigma^2U^T$, which helps the activation not collect in common concepts such as ``person'' and ``something''. This time, we normalize the truncated rows of $Qe^{\Lambda/2}$.
+
+Then, some examples of the most-activated concepts starting from particular concepts are:
+\begin{mylist}
+\item table $\rightarrow$ table, salt shaker, dining room, chair, furniture store, carpenter, table cloth, glass front cupboard, bar stool, tablecloth \ldots
+\item keyboard $\rightarrow$ keyboard, send email, laptop, PC, personal computer, access Internet, CPU, motherboard, accomplish task, search information \ldots
+\item sad $\rightarrow$ sad, sob, weep, wail, sadness, upset, shy, water in eye, deep sadness, tear \ldots
+\end{mylist}
+
+These examples show the usefulness of spreading activation in topic detection
+and sentiment analysis, operations that have already been key to the kinds of
+applications we develop in the Software Agents group \cite{aria} \cite{wear}
+\cite{wreck}. Making spreading activation easier and faster using this
+decomposition should make many of these applications more practical to
+implement.
+
+\subsection{What SVD isn't good at}
+
+Marvin Minsky has a question he likes to ask when someone introduces an idea in
+AI to him: ``What can't it do?'' It is important to be aware of the limitations
+of any technique, and never to try to claim that a single idea will eventually
+be able to do everything.
+
+One clear limitation is that you will never get anything resembling first-order
+logic by factoring a matrix. The conclusions that a system like AnalogySpace
+draws are induced from general patterns, not deduced from specific facts, and
+in fact there is no way to fit logical deduction into the representation. 
+SVD can't be used to solve constraint problems for similar reasons.
+
+SVD has no directionality. There's no way to express the idea of ``if A, then
+B'' in an SVD; you can only say that A and B have similar properties.
+Transitivity is difficult for this reason: if you augment the representation of {\em IsA} features so that you can infer ``A IsA D'' from a
+cumulative analogy based on ``A IsA B'', ``B IsA C'', and ``C IsA D'', this same representation will infer ``C IsA B'' just as strongly.
+
+SVD results have a tendency to suffer when the input is {\em too} sparse. It
+relies on redundancy and overlaps in the data, so taking an SVD of a highly
+structured and non-redundant knowledge resource such as WordNet tends to give
+unhelpful results. For the same reason, generating inferences from an SVD isn't
+a good way to build up knowledge about an entirely new concept -- there needs
+to be a sufficient amount of knowledge there already.
+
+\section{On beyond SVD}
+
+It may seem odd that the Open Mind Common Sense project has settled on building
+its representations on SVD, a tool that has been around (and efficiently
+implemented on computers) for decades. But we stick with SVD because it so
+often lets us ask the questions we want to ask.
+
+Justifying SVD shouldn't be too hard to do now: it was used in many of the most
+successful entries to the recent NetFlix Challenge on recommender systems,
+including the winning entry, BellKor's Pragmatic Chaos \cite{bellkor}. The
+contest brought lots of attention to SVD and its related methods, and
+re-popularized the idea of computing a large, sparse SVD incrementally through
+gradient descent, described among other places in BellKor's publication.
+%TODO: cite bellkor = http://www.research.att.com/~volinsky/papers/ieeecomputer.pdf
+
+But all this hype came after we started to use SVD for common sense. Our
+motivation for SVD was not to jump on any bandwagon, but that it was a better,
+more general implementation of cumulative analogy, and cumulative analogy was
+an idea that worked well for our predecessor {\sc Learner}. 
+
+There are many other approaches we could be using as well. Some of them appear
+to not be right for ConceptNet, for various reasons, but others are interesting
+avenues for future research.
+
+\subsection{The problem with probabilities}
+
+The reasoning process I've described so far has a lot in common with LSA, for
+example. Much of the field of LSA has moved on, though, first to pLSA
+(probabilistic LSA) and then to Latent Dirichlet Allocation. It merits an
+explanation why we don't follow them.
+
+pLSA \cite{plsa} replaces the SVD factorization with a generative probabilistic
+model, with the benefits that the model can be justified in terms of
+probability theory, and the predictions it makes are therefore on a standard
+probability scale from 0.0 to 1.0. These are compelling benefits, as long as
+you have input data that can be adequately expressed in terms of probabilities.
+
+Most possible entries in the ConceptNet matrix, however, make no sense in terms
+of probabilities.  What's the probability that cats have bats? What's the
+probability that dancing wants a penguin? What's the probability that colorless
+green ideas sleep furiously?
+
+There is no sensible default probability that can be assigned to arbitrary,
+probably-nonsensical statements that we know nothing about, and even sensible
+statements such as ``You write with a pencil'' require too much context before
+they can be measured probabilistically. Because we do not have a generative
+model of the entire human experience, probabilistic reasoning is mismatched
+with common sense reasoning.
+
+LDA \cite{lda} is often suggested as a replacement for SVD. But LDA not only
+requires a probabilistic model, it also changes the question that is being
+asked. In an LDA model, you no longer ask ``Are these things alike?'', but
+rather ``Are these things likely to be in the same class?'' for a limited
+number of classes. Classification problems that were once solved by running SVD
+followed by a clustering algorithm can benefit from LDA, which makes their
+process both more direct and more explainable, but understanding and predicting
+common sense knowledge is not a classification problem.
+
+This does not mean that we shun generative probabilistic models. A game of
+Twenty Questions I made with Dustin Smith \cite{20q} generated its first
+several questions using a Bayesian mixture model, to pinpoint a concept as
+being in one of several classes, at which point AnalogySpace would have enough
+information to take over. (I now believe that this model was unnecessarily
+complex, and I am interested in reimplementing Twenty Questions using a model
+that is easier to understand and faster to compute.)
+
+%\subsection{Related projects}
+%
+%There are two particular projects I should mention that have taken similar, but
+%not identical, approaches to learning common sense knowledge: Honda's Open Mind
+%Indoor Common Sense, and Turney's Latent Relational Analysis.
+%
+%Despite the extremely similar name, Open Mind Indoor Common Sense (OMICS) has
+%only a small amount of history in common with OMCS. The OMICS project was
+%another project under the Open Mind umbrella, developed at Honda to provide
+%background knowledge for their mobile robots. It focuses on knowledge about
+%things in a typical house and how to accomplish tasks with them. The OMICS
+%project uses SVD to organize its knowledge, but does so much differently than
+%OMCS -- they essentially run many small instances of LSA, one for each feature,
+%to find a ``consensus'' set of concepts that belong to that feature.
+
+\subsection{SVD with missing values}
+
+One promising variant of SVD is the {\em SVD with missing values}, as described in
+\cite{unholyalliance}, where the
+entries in the matrix corresponding to missing information can be truly
+unconstrained instead of zero.  Performing an SVD with missing values seems, at
+first, like an idea that we should adopt for the traditional AnalogySpace task
+of filling in gaps in ConceptNet. After all, our truth values for all those
+statements truly are missing.
+
+The SVD with missing values tends to appear in collaborative filtering
+applications and recommender systems, where there is presumed to be a meaningful
+value for how much each user would like each suggestion. In common sense
+knowledge, it's not so simple, again because of the presence of statements that
+are neither true nor false but simply nonsensical.
+
+The effect of an SVD with missing values is to add new assertions that make the
+data more explainable by a low-rank matrix, turning the sparse input matrix
+into a dense matrix in the process. The problem is that most of the added
+assertions don't make any sense! We experimented with a version of incremental
+SVD that converges to an SVD with missing values, and found that it added an
+amount of nonsense that seriously decreased the predictive accuracy of
+AnalogySpace.
+
+In a domain where most of the missing values can have no meaningful value,
+another heuristic we could apply is to say that the missing values should,
+in total, be as small as possible when we reconstruct our low-rank matrix from
+an SVD. Some will be larger than others, of course, and the larger values will
+correspond to our actual predictions. But the small ones should be near zero,
+so that the resulting space is not greatly skewed by unreliable predictions.
+
+If we seek to minimize the mean square of the missing values, all we have to do
+is a standard SVD where the missing values are treated as zero -- which is what
+we were doing already! The inherent properties of the SVD will ensure that the
+missing values approximate zero as closely as they can for the given rank,
+while the dimensionality reduction will ensure that meaningful predictions end
+up with larger values than the rest.
+
+This is not to say that setting missing values to 0 is the end of the
+discussion. One opportunity for future research in this area is to create a
+model of whether statements makes sense, and perform a {\em weighted SVD} that
+distinguishes between statements that are expected to make sense (whether they
+are true or false) and statements that are not.
+
+The weights should be chosen so that sensible statements have truly unknown
+values that can be freely assigned by the SVD, while nonsensical statements are
+pushed toward zero. Counterintuitively, this would seem to require strong
+weights on both known statements and nonsensical ones, and weak weights on
+statements that are unknown but likely to be sensible.
+
+\subsection{Higher-level analogies}
+
+The ``analogies'' in cumulative analogy, and therefore in AnalogySpace, are admittedly shallow. These analogies, as useful as they are for transferring knowledge between concepts, are only one level removed from plain old similarity. They do not reflect the power of analogical reasoning in humans, who can make powerful analogies between very dissimilar things such as an atomic nucleus and a star. There are projects that have gone farther, to create higher-level analogies.
+
+Peter Turney published a technique called Latent Relational Analysis
+\cite{turney}, with a very similar motivation to my original AnalogySpace, but
+with different input data and a different representation. Turney collects word
+co-occurrence data from the Web, and constructs an SVD of word {\em pairs}
+versus the patterns words that occur between them.  By looking up (normalized)
+similarities between these word pairs, Turney creates a system that can answer
+SAT-style analogy questions such as ``quart:volume ::
+mile:\underline{\hspace{1cm}}'' with comparable accuracy to an average high
+schooler.  Using LRA together with the Open Mind data is an interesting,
+somewhat unexplored direction for our project.
+
+A project within our group has done something that could be seen as a
+generalization of LRA, however: Jayant Krishnamurthy's CrossBridge
+\cite{jayant} builds another layer on top of AnalogySpace to discover
+analogical mappings between sets of concepts that could be pairs, triples, or
+even larger. CrossBridge composes these mappings together to create a
+computationally feasible implementation of the classic problem of analogical
+structure mapping \cite{structure}.
+
+\subsection{Streaming inference using CCIPCA}
+
+We have become interested in applying this kind of reasoning to problems whose data arrives in a real-time stream, such as analyzing the text of social network messages or RSS updates. In this case, a batch SVD becomes undesirable; we would rather have an incremental method that can be quickly updated.
+
+CCIPCA \cite{ccipca} provides a streaming algorithm with the properties of SVD, whose input can be incrementally updated one row at a time. Jason Alonso, Catherine Havasi, and I built on this algorithm so that it could be used on problems whose domain is not known beforehand. Our extension of CCIPCA can take sparse instead of dense input, iteratively estimates the mean of the data and subtracts it out, and keeps a priority queue of concepts to represent so that its output does not grow without bound.
+
+One demo that we are developing, Red Fish Blue Fish, reads political blogs and classifies concepts that are talked about by Democrats versus Republicans. There is still much to be done in this area, such as making an equivalent of the blending heuristic.
+
+\section{Where to go from here}
+
+An indication of AnalogySpace's success is that so many projects have been built on it, and these projects expand the frontier of research even further. There are difficult tasks we hope to undertake, such as representing sequences of events in this framework, generating natural-sounding natural language from the OMCS corpus, and making analogies that span different natural languages and cultures. But there are also some smaller ideas to explore that could yield immediate improvements to common sense reasoning, making these good projects for UROPs or new graduate students in the field.
+
+In this paper, I have noted the places where there is clear future research to be done. There is room to expand the reasoning techniques, such as by improving CrossBridge or LRA or representing ``sensicality'' in an SVD. There are ways to improve the source data, such as by developing new games that keep people involved in crowdsourced knowledge. The powerful representations we now have for sentiment analysis, structure mapping, and spreading activation can enable new applications that help computers to interact with the common-sense world that people live in.
+
+\bibliographystyle{plain}
+\begin{small}
+\bibliography{proposal}
+\end{small}
+
+\end{document}
+
+
