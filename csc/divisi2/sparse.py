@@ -1067,10 +1067,6 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         V = DenseMatrix(Vt.T, self.col_labels, None)
         return (U, S, V)
     
-    def blend_factor(self):
-        U, S, V = self.svd(1)
-        return S[0]
-
     def spectral(self, k=50, tau=100, verbosity=0):
         """
         Calculate the spectral decomposition A = Q * Lambda * Q^T.
