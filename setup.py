@@ -102,6 +102,7 @@ setup(
     long_description = "\n".join(doclines[2:]),
     ext_modules = [svdlibc],
     packages=['csc', 'csc.divisi2'],
+    package_data = {'csc.divisi2': ['data/networks/*.gml.gz', 'data/eval/*']}
     namespace_packages = ['csc'],
-    install_requires=['csc-utils >= 0.4.1',],
+    install_requires=['csc-utils >= 0.4.1', 'networkx', 'pyparsing'],
 )
