@@ -2,10 +2,12 @@
 *.swp
 *.so
 build
-Divisi2.egg-info/
 dist
 pip-log.txt
 .achievements
 .coverage
 .bzr
 .bzrignore
+Divisi2.egg-info/
+doc/_static/jsMath/
+_build
