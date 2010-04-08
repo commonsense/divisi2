@@ -1,7 +1,7 @@
 Divisi2 is a library for reasoning by analogy over semantic networks
 using the sparse singular-value decomposition.
 
-*Documentation* for this library is in development in the `doc/ <doc>`
+*Documentation* for this library is in development in the `doc/`
 directory.  Documentation for the previous version of Divisi is available at
 http://csc.media.mit.edu/docs/.
 
