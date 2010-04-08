@@ -10,7 +10,7 @@ New in Divisi2.
 
 def _meta_open(filename, mode='r'):
     if filename.startswith('data:'):
-        filename = resource_filename(__name__, filename[5:])
+        filename = resource_filename(__name__, 'data/'+filename[5:])
     
     if filename.endswith('.gz'):
         import gzip
