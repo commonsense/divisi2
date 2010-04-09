@@ -648,7 +648,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         If this matrix (A) has shape m by n, the result will have shape
         m by m.
         """
-        from csc.divisi2.reconstruct import ReconstructedMatrix
+        from csc.divisi2.reconstructed import ReconstructedMatrix
         return ReconstructedMatrix(self, self.T)
 
     def density(self):
@@ -1063,7 +1063,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         self.check_zero_rows()
         
         from csc.divisi2 import operators
-        from csc.divisi2.reconstruct import ReconstructedMatrix
+        from csc.divisi2.reconstructed import ReconstructedMatrix
         from csc.divisi2._svdlib import svd_llmat
         Ut, S, Vt = svd_llmat(self.llmatrix, k)
         U = DenseMatrix(Ut.T, self.row_labels, None)
