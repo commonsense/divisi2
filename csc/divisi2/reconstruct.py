@@ -5,7 +5,6 @@ from csc.divisi2.labels import LabeledMatrixMixin
 from csc.divisi2.ordered_set import apply_indices
 from csc.divisi2.sparse import SparseMatrix
 from csc.divisi2.dense import DenseMatrix
-from pysparse import precon, jdsym, itsolvers
 
 SLICE_ALL = slice(None, None, None)
 

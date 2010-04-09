@@ -3,8 +3,8 @@ from csc.divisi2.dense import DenseVector, DenseMatrix
 from csc.divisi2.ordered_set import OrderedSet, indexable_set, apply_indices
 from csc.divisi2.exceptions import LabelError, DimensionMismatch
 from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
-from pysparse import spmatrix, precon, itsolvers, jdsym
-from pysparse.pysparseMatrix import PysparseMatrix
+from pysparse.sparse import spmatrix
+from pysparse.sparse.pysparseMatrix import PysparseMatrix
 from copy import copy
 import warnings
 
@@ -1068,6 +1068,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         return (U, S, V)
     
     def spectral(self, k=50, tau=100, verbosity=0):
+        from pysparse import precon, itsolvers
+        from pysparse.eigen import jdsym
         """
         Calculate the spectral decomposition A = Q * Lambda * Q^T.
         This matrix, A, *must be symmetric* for the result to make any sense.

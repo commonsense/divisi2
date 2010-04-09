@@ -1,5 +1,4 @@
 numpy
 csc-utils
 networkx
-pyparsing
 -e svn+https://pysparse.svn.sourceforge.net/svnroot/pysparse/branches/new-setup-py#egg=pysparse
