@@ -6,8 +6,9 @@ def test_all_norm():
                                            cutoff=5)
     U, S, V = matrix.normalize_all().svd(k=100)
     rec = divisi2.reconstruct(U, S, V)
-    accuracy = rec.evaluate_assertions('data:eval/usertest_data.pickle')
+    correct, total, accuracy = rec.evaluate_assertions('data:eval/usertest_data.pickle')
 
+    print "accuracy =", accuracy
     assert accuracy > 0.7
     return accuracy
 
