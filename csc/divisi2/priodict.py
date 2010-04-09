@@ -12,15 +12,14 @@
 from __future__ import generators
 
 class priorityDictionary(dict):
-    def __init__(self, items=None, heap=None):
+    def __init__(self, items=[], heap=[]):
         '''Initialize priorityDictionary by creating binary heap of pairs (value,key).
 Note that changing or removing a dict entry will not remove the old pair from the heap
 until it is found by smallest() or until the heap is rebuilt.'''
-        if heap is None: self.__heap = []
-        else: self.__heap = heap
+        self.__heap = heap
         dict.__init__(self)
-        for k, v in items or []:
-            dict.__setitem__(self, k, v)
+        for k, v in items:
+            self.__setitem__(k, v)
 
     def smallest(self):
         '''Find smallest item after removing deleted items from front of heap.'''
