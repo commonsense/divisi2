@@ -120,8 +120,7 @@ class OrderedSet(object):
 
     def __repr__(self):
         if len(self) < 10:
-            # This isn't exactly right if there are blank items.
-            return u'OrderedSet(%r)' % (self.items,)
+            return u'OrderedSet(%r)' % [x for x in self.items if x is not None]
         else:
             return u'<OrderedSet of %d items like %s>' % (len(self), self[0])
 
