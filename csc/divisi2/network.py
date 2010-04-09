@@ -1,5 +1,6 @@
 from math import log
 from csc.divisi2.sparse import SparseMatrix
+import networkx as nx
 log_2 = log(2)
 
 def set_conceptnet_weights(graph):
@@ -45,19 +46,25 @@ def _extract_source_only(source, target, data):
 def _extract_target_only(source, target, data):
     return (target, target)
 
+def prune(graph, cutoff=1):
+    ugraph = graph.to_undirected()
+    cores = nx.find_cores(ugraph)
+    core_nodes = [n for n in graph.nodes() if cores[n] >= cutoff]
+    return graph.subgraph(core_nodes)
+
 LABELERS = {
     'nodes': _extract_nodes,
     'concepts': _extract_nodes,       # synonym for 'nodes'
     'features': _extract_features,
     'pairs': _extract_pairs,
     'relations': _extract_relations,
-    'source_only': _extract_source,
-    'target_only': _extract_target
+    'source_only': _extract_source_only,
+    'target_only': _extract_target_only,
 }
 
-def sparse_triples(graph, row_labeler, col_labeler):
+def sparse_triples(graph, row_labeler, col_labeler, cutoff=1):
     """
-    Get a list of sparse triples to put into a matrix, given a NetworkX graph.
+    A generator of sparse triples to put into a matrix, given a NetworkX graph.
     It is assumed that each edge of the graph yields two entries of the matrix.
     
     `row_labeler` and `col_labeler` are functions that are given each edge
@@ -77,7 +84,24 @@ def sparse_triples(graph, row_labeler, col_labeler):
     To get a pair-relation matrix, as in Latent Relational Analysis:
 
         divisi2.network.sparse_triples(graph, 'pairs', 'relations')
+    
+    `cutoff` specifies the minimum degree of nodes to include.
+    
+    The edge weights should be expressed in one of two forms:
+
+    - The standard way for NetworkX, as the entry named 'weight' in the edge
+      data dictionaries.
+    - As ConceptNet-style 'score' and 'freq' values in the edge data
+      dictionaries, which will be transformed into appropriate weights.
+
+    If no edge weights can be found, the edges will be given a default weight
+    of 1.
     """
+    first_edge = graph.edges_iter(data=True).next()
+    first_data = first_edge[2]
+    if 'score' in first_data and 'weight' not in first_data:
+        set_conceptnet_weights(graph)
+
     try:
         if isinstance(row_labeler, basestring):
             row_labeler = LABELERS[row_labeler]
@@ -86,21 +110,20 @@ def sparse_triples(graph, row_labeler, col_labeler):
     except KeyError:
         raise KeyError("Unknown row or column type. The valid types are: %s"
           % sorted(LABELERS.keys()))
-
-    for edge in graph.edges_iter(data=True):
+    subgraph = prune(graph, cutoff=cutoff)
+    for edge in subgraph.edges_iter(data=True):
         rows = row_labeler(*edge)
         cols = col_labeler(*edge)
-        yield (edge['weight'], rows[0], cols[1])
-        yield (edge['weight'], rows[1], cols[0])
+        yield (edge[2].get('weight', 1), rows[0], cols[1])
+        yield (edge[2].get('weight', 1), rows[1], cols[0])
 
-def sparse_matrix(graph, row_labeler, col_labeler):
+def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
     """
     Constructs a :class:`SparseMatrix` from a graph. See the documentation
     for :func:`sparse_triples` for how to choose the `row_labeler` and
     `col_labeler` to build different kinds of matrices.
     """
     return SparseMatrix.from_named_entries(
-      sparse_triples(graph, row_labeler, col_labeler)
-    )
-
+      list(sparse_triples(graph, row_labeler, col_labeler, cutoff))
+    ).squish(cutoff=cutoff)
 

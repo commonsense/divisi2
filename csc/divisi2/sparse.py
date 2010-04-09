@@ -182,6 +182,9 @@ class AbstractSparseArray(object):
     # support the same interface as dense
     equals = __eq__
 
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
     @property
     def llmatrix(self):
         return self.psmatrix.matrix
@@ -1153,7 +1156,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     def __repr__(self):
         return "<SparseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
     
-    def __str__(self):
+    def __unicode__(self):
         r"""
         Write out a representative picture of this matrix.
 
@@ -1656,7 +1659,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         # TODO: show something about labels
         return "<SparseVector (%d of %d entries)>" % (self.nnz, len(self))
 
-    def __str__(self):
+    def __unicode__(self):
         pairs = ["%s=%0.6g" % (key, value) for key, value in self.named_items()]
         if len(pairs) > 20: pairs[20:] = ['...']
         therepr = "%s: [%s]" % (repr(self)[1:-1], ', '.join(pairs))
@@ -1666,6 +1669,11 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 def _matrix_from_state(state):
     return SparseMatrix.from_state(state)
 _matrix_from_state.__safe_for_unpickling__ = True
+
+# backward compatibility with a pickle file
+def _matrix_from_named_lists(*lists):
+    return SparseMatrix.from_named_lists(*lists)
+_matrix_from_named_lists.__safe_for_unpickling__ = True
 
 def _vector_from_state(state):
     return SparseVector.from_state(state)
