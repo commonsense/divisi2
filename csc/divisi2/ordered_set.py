@@ -1,3 +1,5 @@
+from itertools import izip
+
 class OrderedSet(object):
     """An OrderedSet acts very much like a list. There are two important
     differences:
@@ -210,12 +212,14 @@ class OrderedSet(object):
             >>> a == b
             True
         '''
-        # FIXME: A corner case: if the element on the end gets added
-        # then deleted, it should be considered equal.
-
-        # Get 'items' from the other thing, in case it's an OrderedSet.
         if self is other: return True
-        return self.items == getattr(other, 'items', other)
+        if len(self) != len(other): return False
+        if not isinstance(other, OrderedSet): return False
+
+        for (s, o) in izip(self, other):
+            if s != o: return False
+        return True
+
     def __ne__(self, other):
         return not self == other
 
