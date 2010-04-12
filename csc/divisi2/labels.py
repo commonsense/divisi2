@@ -88,7 +88,6 @@ class LabeledMatrixMixin(object):
         Get a copy of this matrix with no labels.
         """
         return self.__class__(self, None, None)
-    
 
 def format_label(label):
     """

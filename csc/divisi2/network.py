@@ -127,3 +127,8 @@ def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
       list(sparse_triples(graph, row_labeler, col_labeler, cutoff))
     ).squish(cutoff=cutoff)
 
+def analogyspace_matrix(lang, cutoff=5):
+    from csc import divisi2
+    graph = divisi2.load('data:graphs/conceptnet_%s.graph' % lang)
+    return sparse_matrix(graph, 'concepts', 'features', cutoff)
+

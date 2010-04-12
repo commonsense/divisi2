@@ -1526,6 +1526,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 
     def normalize(self):
         return self.cmul(self.vec_op(_inv_norm))
+    hat = normalize
     
     ### specific implementations of arithmetic operators
 

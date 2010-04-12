@@ -1,5 +1,8 @@
 from csc import divisi2
+from nose.tools import *
+from nose.plugins.attrib import attr
 
+@attr('slow')
 def test_all_norm():
     conceptnet = divisi2.load('data:graphs/conceptnet_en.graph')
     matrix = divisi2.network.sparse_matrix(conceptnet, 'concepts', 'features',
