@@ -191,9 +191,6 @@ class AbstractSparseArray(object):
 
 class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     """
-    Class overview
-    --------------
-
     A SparseMatrix is a sparse matrix whose rows and columns can
     optionally have *labels*. When they do, they are referred to as *named*
     rows and columns.
@@ -238,8 +235,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     orange   1.000000   1.000000      ---    
     celery      ---        ---     2.000000  
 
-    Arithmetic operations
-    ---------------------
+    **Arithmetic operations**
 
     One simple thing to do with a SparseMatrix is to multiply or divide
     it by a scalar.
@@ -275,8 +271,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     orange      ---        ---        ---    -2.000000      ---    
     celery      ---        ---     1.000000      ---    -4.000000  
 
-    Fancy indexing
-    --------------
+    **Fancy indexing**
 
     Matrices can be sliced and indexed with "fancy indexing", as if they
     were NumPy matrices. Each index can be a single number, a slice
@@ -303,8 +298,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     >>> print mat1[:,0]
     SparseVector (1 of 3 entries): [apple=2]
 
-    Sparse multiplication
-    ---------------------
+    **Sparse multiplication**
 
     To do matrix multiplication, we need to make sure the inner labels match.
     We can accomplish this by transposing `mat1`.
@@ -357,8 +351,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     To avoid confusion, sparse matrices do not support `*` -- you need to
     explicitly ask for :meth:`multiply` or :meth:`dot`.
 
-    Normalization
-    -------------
+    **Normalization**
 
     Normalization makes sure that rows or columns have the same Euclidean
     magnitude. 

@@ -13,6 +13,7 @@ Contents:
 
    intro
    tutorial_aspace
+   sparse
 
 Indices and tables
 ==================

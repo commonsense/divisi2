@@ -12,3 +12,7 @@ def metapush():
     with cd('~/mmp'):
         push()
 
+def build_docs():
+    with cd('doc'):
+        local('make html', capture=False)
+
