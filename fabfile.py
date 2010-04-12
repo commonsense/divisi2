@@ -3,8 +3,8 @@ from fabric.api import *
 
 def push():
     local('git commit -a', capture=False)
-    local('git pull')
-    local('git push')
+    local('git pull origin master')
+    local('git push origin master')
 
 def metapush():
     with cd('~/mmp/omcs'):
