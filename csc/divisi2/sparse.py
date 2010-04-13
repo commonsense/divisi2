@@ -207,21 +207,21 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         >>> z = SparseMatrix((2, 4))
         >>> print z
         SparseMatrix (2 by 4)
-            ---        ---        ---        ---    
-            ---        ---        ---        ---    
+            ---        ---        ---        ---
+            ---        ---        ---        ---
 
 
         Creating a sparse matrix from dense list data (not advisable):
         
         >>> print SparseMatrix([[1,2], [3, 0]])
         SparseMatrix (2 by 2)
-         1.000000   2.000000  
-         3.000000      ---    
+         1.000000   2.000000
+         3.000000      ---
         >>> foobar = SparseMatrix([[1,2], [3, 0]], ['foo', 'bar'], None)
         >>> print foobar
         SparseMatrix (2 by 2)
-        foo      1.000000   2.000000  
-        bar      3.000000      ---    
+        foo      1.000000   2.000000
+        bar      3.000000      ---
         >>> foobar.nnz
         3
 
@@ -400,12 +400,12 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         ... ])
         >>> print mat1
         SparseMatrix (5 by 5)
-                 apple      orange     celery     red        green   
-        apple       ---        ---        ---     2.000000   1.000000  
-        orange      ---     2.000000      ---        ---        ---    
-        celery      ---        ---        ---        ---     1.000000  
-        red         ---        ---        ---        ---        ---    
-        green       ---        ---        ---        ---        ---    
+                 apple      orange     celery     red        green
+        apple       ---        ---        ---     2.000000   1.000000
+        orange      ---     2.000000      ---        ---        ---
+        celery      ---        ---        ---        ---     1.000000
+        red         ---        ---        ---        ---        ---
+        green       ---        ---        ---        ---        ---
         """
         return SparseMatrix.square_from_named_lists(*zip(*tuples))
     
@@ -970,8 +970,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         
         >>> print SparseMatrix((2,2))
         SparseMatrix (2 by 2)
-            ---        ---    
-            ---        ---    
+            ---        ---
+            ---        ---
         >>> print SparseMatrix((1, 8))
         SparseMatrix (1 by 8)
             ---        ---        ---        ---        ---     ...
@@ -1000,7 +1000,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
             lines[1] += ' ...'
         if self.shape[0] > 20:
             lines.append('...')
-        return '\n'.join(lines)
+        return '\n'.join(line.rstrip() for line in lines)
 
 class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     """

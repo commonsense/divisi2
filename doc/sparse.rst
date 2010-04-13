@@ -3,6 +3,22 @@
 Sparse Matrices and Vectors
 ===========================
 
+.. testsetup::
+
+    from csc import divisi2
+    mat1 = divisi2.make_sparse([
+        (2, "apple", "red"),
+        (2, "orange", "orange"),
+        (1, "apple", "green"),
+        (1, "celery", "green"),
+    ])
+    mat2 = divisi2.make_sparse([
+        (1, "apple", "fruit"),
+        (1, "orange", "fruit"),
+        (1, "orange", "orange"),
+        (2, "celery", "vegetable"),
+    ])
+
 Divisi2 uses PySparse as a representation of sparse matrices that can be sliced
 and index like NumPy matrices. Divisi's :class:`SparseMatrix` class wraps the
 PysparseMatrix class to present an interface that's consistent with the rest of
@@ -108,6 +124,8 @@ were NumPy matrices. Each index can be a single number, a slice
 (such as `2:5` to get rows 2, 3, and 4), the slice `:` (selecting
 everything), or a list of particular indices.
 
+.. doctest::
+
     >>> print mat1[:2]
     SparseMatrix (2 by 3)
              red        orange     green   
@@ -123,6 +141,8 @@ everything), or a list of particular indices.
 If the result of indexing has a single dimension, the result will be a
 :class:`SparseVector`.
 
+.. doctest::
+
     >>> print mat1[0]
     SparseVector (2 of 3 entries): [red=2, green=1]
     >>> print mat1[:,0]
@@ -134,6 +154,8 @@ Sparse multiplication
 To do matrix multiplication, we need to make sure the inner labels match.
 We can accomplish this by transposing `mat1`.
     
+.. doctest::
+
     >>> print mat1.T
     SparseMatrix (3 by 3)
              apple      orange     celery  
@@ -148,6 +170,8 @@ Now we can take the sparse matrix product of `mat1.T` and `mat2`, giving
 us a matrix that relates the set `[red, orange, green]` to the set
 `[fruit, orange, vegetable]` through the set `[apple, orange, celery]`.
 
+.. doctest::
+
     >>> print divisi2.dot(mat1.T, mat2)
     SparseMatrix (3 by 3)
              fruit      orange     vegetabl
@@ -158,6 +182,8 @@ us a matrix that relates the set `[red, orange, green]` to the set
 It turns out to be much more efficient to transpose as part
 of the product operation, instead of transposing as a separate step.
 Divisi supports this:
+
+.. doctest::
 
     >>> print divisi2.transpose_dot(mat1, mat2)
     SparseMatrix (3 by 3)
@@ -170,6 +196,8 @@ Be sure to distinguish *matrix multiplication* from *elementwise
 multiplication*, which takes in two matrices of the same shape.
 We can also do sparse elementwise multiplication, which of course
 has non-zero values only where the two matrices overlap:
+
+.. doctest::
 
     >>> print divisi2.multiply(mat1, mat2)
     SparseMatrix (3 by 5)
@@ -188,6 +216,8 @@ Normalization
 Normalization makes sure that rows or columns have the same Euclidean
 magnitude. 
     
+.. doctest::
+
     >>> print mat1.normalize_rows()
     SparseMatrix (3 by 3)
              red        orange     green   
@@ -207,6 +237,8 @@ except by throwing out most of the information and diagonalizing the
 matrix. So `normalize_all` goes halfway to normalization in both
 directions, instead, dividing each by the square root of the norm.
     
+.. doctest::
+
     >>> print mat1.normalize_all()
     SparseMatrix (3 by 3)
              red        orange     green   
@@ -217,9 +249,12 @@ directions, instead, dividing each by the square root of the norm.
 API documentation
 -----------------
 .. autoclass:: AbstractSparseArray
+   :members:
 
 .. autoclass:: SparseMatrix
+   :members:
 
 .. autoclass:: SparseVector
+   :members:
 
 
