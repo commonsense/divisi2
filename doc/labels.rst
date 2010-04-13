@@ -1,6 +1,8 @@
 Labeling data
 =============
 
+.. module:: csc.divisi2.ordered_set
+
 The OrderedSet class
 --------------------
 
@@ -94,4 +96,29 @@ elements, but it is never semantically an element of the set:
     1
     >>> None in s
     False
+
+API documentation
+.................
+
+.. autoclass:: OrderedSet
+   :members:
+
+.. module:: csc.divisi2.labels
+
+Labeling vectors and matrices
+-----------------------------
+Divisi structures, whether they are vectors or matrices, sparse or dense,
+have the ability to track the meaning of their data with labels. This is
+enabled through the :class:`LabeledVectorMixin` and :class:`LabeledMatrixMixin`
+classes.
+
+API documentation
+.................
+
+.. autoclass:: LabeledVectorMixin
+   :members:
+
+.. autoclass:: LabeledMatrixMixin
+   :members:
+
 

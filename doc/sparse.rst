@@ -253,8 +253,10 @@ API documentation
 
 .. autoclass:: SparseMatrix
    :members:
+   :show-inheritance:
 
 .. autoclass:: SparseVector
    :members:
+   :show-inheritance:
 
 

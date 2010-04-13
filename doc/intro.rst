@@ -31,7 +31,7 @@ is explained in much more detail in :ref:`tutorial_aspace`.
 (These things that look like `('right', 'IsA', 'pet')` are how we represent the
 *features* in ConceptNet.)
 
-6. Evaluate possible assertions::
+6. Evaluate possible assertions:
 
 >>> predict_matrix = divisi2.reconstruct(concept_axes, axis_weights,
 ...                                      feature_axes)

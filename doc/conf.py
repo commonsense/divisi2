@@ -35,7 +35,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'contents'
 
 # General information about the project.
 project = u'Divisi2'
@@ -199,3 +199,7 @@ latex_documents = [
 intersphinx_mapping = {'http://docs.python.org/': None}
 jsmath_path = 'jsMath/easy/load.js'
 doctest_test_doctest_blocks = ''
+autoclass_content = "init"
+default_role = "literal"
+add_module_names = False
+
