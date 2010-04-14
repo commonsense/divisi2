@@ -118,6 +118,10 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
             results.append((self.label(where), self[where]))
         return results
     
+    def normalize(self):
+        return self / np.linalg.norm(self)
+    hat = normalize
+
     def __reduce__(self):
         return DenseVector, (np.asarray(self), self.labels)
 

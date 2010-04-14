@@ -3,8 +3,8 @@ from csc.divisi2.dense import DenseVector, DenseMatrix
 from csc.divisi2.ordered_set import OrderedSet, indexable_set, apply_indices
 from csc.divisi2.exceptions import LabelError, DimensionMismatch
 from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
-from pysparse import spmatrix, precon, itsolvers, jdsym
-from pysparse.pysparseMatrix import PysparseMatrix
+from pysparse.sparse import spmatrix
+from pysparse.sparse.pysparseMatrix import PysparseMatrix
 from copy import copy
 import warnings
 
@@ -182,209 +182,16 @@ class AbstractSparseArray(object):
     # support the same interface as dense
     equals = __eq__
 
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
     @property
     def llmatrix(self):
         return self.psmatrix.matrix
 
 class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     """
-    Class overview
-    --------------
-
-    A SparseMatrix is a sparse matrix whose rows and columns can
-    optionally have *labels*. When they do, they are referred to as *named*
-    rows and columns.
-    
-    The underlying implementation represents each row as a linked list in C,
-    using the `pysparse` library. The linked list representation makes some
-    sparse matrix operations particularly fast, at the expense of making it
-    inefficient to update cells one at a time. So we suggest that you build a
-    SparseMatrix all at once, from an existing list of data.
-
-    This is easy to do with the :meth:`from_named_entries` factory method,
-    which we also give the name `divisi2.make_sparse` because we think it's the
-    best way to create a sparse matrix.  It takes in a list of tuples, each of
-    which contains a value, a row name, and a column name.
-    
-    >>> from csc import divisi2
-    >>> mat1 = divisi2.make_sparse([
-    ...     (2, "apple", "red"),
-    ...     (2, "orange", "orange"),
-    ...     (1, "apple", "green"),
-    ...     (1, "celery", "green"),
-    ... ])
-    >>> print mat1
-    SparseMatrix (3 by 3)
-             red        orange     green   
-    apple    2.000000      ---     1.000000  
-    orange      ---     2.000000      ---    
-    celery      ---        ---     1.000000  
-
-    Let's make one more matrix to work with:
-    
-    >>> mat2 = divisi2.make_sparse([
-    ...     (1, "apple", "fruit"),
-    ...     (1, "orange", "fruit"),
-    ...     (1, "orange", "orange"),
-    ...     (2, "celery", "vegetable"),
-    ... ])
-    >>> print mat2
-    SparseMatrix (3 by 3)
-             fruit      orange     vegetabl
-    apple    1.000000      ---        ---    
-    orange   1.000000   1.000000      ---    
-    celery      ---        ---     2.000000  
-
-    Arithmetic operations
-    ---------------------
-
-    One simple thing to do with a SparseMatrix is to multiply or divide
-    it by a scalar.
-    
-    >>> print mat1/2
-    SparseMatrix (3 by 3)
-             red        orange     green   
-    apple    1.000000      ---     0.500000  
-    orange      ---     1.000000      ---    
-    celery      ---        ---     0.500000  
-    
-    >>> print mat1*0.1
-    SparseMatrix (3 by 3)
-             red        orange     green   
-    apple    0.200000      ---     0.100000  
-    orange      ---     0.200000      ---    
-    celery      ---        ---     0.100000  
-
-    More interesting are operations on multiple matrices. For example, we can
-    add two sparse matrices, and the label sets will be combined appropriately.
-    
-    >>> print mat1+mat2
-    SparseMatrix (3 by 5)
-             red        orange     green      fruit      vegetabl
-    apple    2.000000      ---     1.000000   1.000000      ---    
-    orange      ---     3.000000      ---     1.000000      ---    
-    celery      ---        ---     1.000000      ---     2.000000  
-
-    >>> print mat1-2*mat2
-    SparseMatrix (3 by 5)
-             red        orange     green      fruit      vegetabl
-    apple    2.000000      ---     1.000000  -2.000000      ---    
-    orange      ---        ---        ---    -2.000000      ---    
-    celery      ---        ---     1.000000      ---    -4.000000  
-
-    Fancy indexing
-    --------------
-
-    Matrices can be sliced and indexed with "fancy indexing", as if they
-    were NumPy matrices. Each index can be a single number, a slice
-    (such as `2:5` to get rows 2, 3, and 4), the slice `:` (selecting
-    everything), or a list of particular indices.
-
-    >>> print mat1[:2]
-    SparseMatrix (2 by 3)
-             red        orange     green   
-    apple    2.000000      ---     1.000000  
-    orange      ---     2.000000      ---    
-    
-    >>> print mat1[[1,2], ::-1]
-    SparseMatrix (2 by 3)
-             green      orange     red     
-    orange      ---     2.000000      ---    
-    celery   1.000000      ---        ---    
-
-    If the result of indexing has a single dimension, the result will be a
-    :class:`SparseVector`.
-
-    >>> print mat1[0]
-    SparseVector (2 of 3 entries): [red=2, green=1]
-    >>> print mat1[:,0]
-    SparseVector (1 of 3 entries): [apple=2]
-
-    Sparse multiplication
-    ---------------------
-
-    To do matrix multiplication, we need to make sure the inner labels match.
-    We can accomplish this by transposing `mat1`.
-    
-    >>> print mat1.T
-    SparseMatrix (3 by 3)
-             apple      orange     celery  
-    red      2.000000      ---        ---    
-    orange      ---     2.000000      ---    
-    green    1.000000      ---     1.000000  
-
-    >>> mat1.T.col_labels == mat2.row_labels
-    True
-
-    Now we can take the sparse matrix product of `mat1.T` and `mat2`, giving
-    us a matrix that relates the set `[red, orange, green]` to the set
-    `[fruit, orange, vegetable]` through the set `[apple, orange, celery]`.
-
-    >>> print divisi2.dot(mat1.T, mat2)
-    SparseMatrix (3 by 3)
-             fruit      orange     vegetabl
-    red      2.000000      ---        ---    
-    orange   2.000000   2.000000      ---    
-    green    1.000000      ---     2.000000  
-    
-    It turns out to be much more efficient to transpose as part
-    of the product operation, instead of transposing as a separate step.
-    Divisi supports this:
-
-    >>> print divisi2.transpose_dot(mat1, mat2)
-    SparseMatrix (3 by 3)
-             fruit      orange     vegetabl
-    red      2.000000      ---        ---    
-    orange   2.000000   2.000000      ---    
-    green    1.000000      ---     2.000000  
-    
-    Be sure to distinguish *matrix multiplication* from *elementwise
-    multiplication*, which takes in two matrices of the same shape.
-    We can also do sparse elementwise multiplication, which of course
-    has non-zero values only where the two matrices overlap:
-
-    >>> print divisi2.multiply(mat1, mat2)
-    SparseMatrix (3 by 5)
-             red        orange     green      fruit      vegetabl
-    apple       ---        ---        ---        ---        ---    
-    orange      ---     2.000000      ---        ---        ---    
-    celery      ---        ---        ---        ---        ---    
-    
-    The `*` operator is used *very* inconsistently in Python matrix classes.
-    To avoid confusion, sparse matrices do not support `*` -- you need to
-    explicitly ask for :meth:`multiply` or :meth:`dot`.
-
-    Normalization
-    -------------
-
-    Normalization makes sure that rows or columns have the same Euclidean
-    magnitude. 
-    
-    >>> print mat1.normalize_rows()
-    SparseMatrix (3 by 3)
-             red        orange     green   
-    apple    0.894427      ---     0.447214  
-    orange      ---     1.000000      ---    
-    celery      ---        ---     1.000000  
-
-    >>> print mat1.normalize_cols()
-    SparseMatrix (3 by 3)
-             red        orange     green   
-    apple    1.000000      ---     0.707107  
-    orange      ---     1.000000      ---    
-    celery      ---        ---     0.707107  
-
-    It's impossible to make such a guarantee for both directions at once,
-    except by throwing out most of the information and diagonalizing the
-    matrix. So `normalize_all` goes halfway to normalization in both
-    directions, instead, dividing each by the square root of the norm.
-    
-    >>> print mat1.normalize_all()
-    SparseMatrix (3 by 3)
-             red        orange     green   
-    apple    0.945742      ---     0.562341  
-    orange      ---     1.000000      ---    
-    celery      ---        ---     0.840896  
+    TODO: brief docs
     """
 
     def __init__(self, arg1, row_labels=None, col_labels=None):
@@ -400,21 +207,21 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         >>> z = SparseMatrix((2, 4))
         >>> print z
         SparseMatrix (2 by 4)
-            ---        ---        ---        ---    
-            ---        ---        ---        ---    
+            ---        ---        ---        ---
+            ---        ---        ---        ---
 
 
         Creating a sparse matrix from dense list data (not advisable):
         
         >>> print SparseMatrix([[1,2], [3, 0]])
         SparseMatrix (2 by 2)
-         1.000000   2.000000  
-         3.000000      ---    
+         1.000000   2.000000
+         3.000000      ---
         >>> foobar = SparseMatrix([[1,2], [3, 0]], ['foo', 'bar'], None)
         >>> print foobar
         SparseMatrix (2 by 2)
-        foo      1.000000   2.000000  
-        bar      3.000000      ---    
+        foo      1.000000   2.000000
+        bar      3.000000      ---
         >>> foobar.nnz
         3
 
@@ -593,12 +400,12 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         ... ])
         >>> print mat1
         SparseMatrix (5 by 5)
-                 apple      orange     celery     red        green   
-        apple       ---        ---        ---     2.000000   1.000000  
-        orange      ---     2.000000      ---        ---        ---    
-        celery      ---        ---        ---        ---     1.000000  
-        red         ---        ---        ---        ---        ---    
-        green       ---        ---        ---        ---        ---    
+                 apple      orange     celery     red        green
+        apple       ---        ---        ---     2.000000   1.000000
+        orange      ---     2.000000      ---        ---        ---
+        celery      ---        ---        ---        ---     1.000000
+        red         ---        ---        ---        ---        ---
+        green       ---        ---        ---        ---        ---
         """
         return SparseMatrix.square_from_named_lists(*zip(*tuples))
     
@@ -645,7 +452,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         If this matrix (A) has shape m by n, the result will have shape
         m by m.
         """
-        from csc.divisi2.reconstruct import ReconstructedMatrix
+        from csc.divisi2.reconstructed import ReconstructedMatrix
         return ReconstructedMatrix(self, self.T)
 
     def density(self):
@@ -1060,7 +867,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         self.check_zero_rows()
         
         from csc.divisi2 import operators
-        from csc.divisi2.reconstruct import ReconstructedMatrix
+        from csc.divisi2.reconstructed import ReconstructedMatrix
         from csc.divisi2._svdlib import svd_llmat
         Ut, S, Vt = svd_llmat(self.llmatrix, k)
         U = DenseMatrix(Ut.T, self.row_labels, None)
@@ -1068,6 +875,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         return (U, S, V)
     
     def spectral(self, k=50, tau=100, verbosity=0):
+        from pysparse import precon, itsolvers
+        from pysparse.eigen import jdsym
         """
         Calculate the spectral decomposition A = Q * Lambda * Q^T.
         This matrix, A, *must be symmetric* for the result to make any sense.
@@ -1151,7 +960,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     def __repr__(self):
         return "<SparseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
     
-    def __str__(self):
+    def __unicode__(self):
         r"""
         Write out a representative picture of this matrix.
 
@@ -1161,8 +970,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         
         >>> print SparseMatrix((2,2))
         SparseMatrix (2 by 2)
-            ---        ---    
-            ---        ---    
+            ---        ---
+            ---        ---
         >>> print SparseMatrix((1, 8))
         SparseMatrix (1 by 8)
             ---        ---        ---        ---        ---     ...
@@ -1191,7 +1000,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
             lines[1] += ' ...'
         if self.shape[0] > 20:
             lines.append('...')
-        return '\n'.join(lines)
+        return '\n'.join(line.rstrip() for line in lines)
 
 class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     """
@@ -1521,6 +1330,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 
     def normalize(self):
         return self.cmul(self.vec_op(_inv_norm))
+    hat = normalize
     
     ### specific implementations of arithmetic operators
 
@@ -1654,7 +1464,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         # TODO: show something about labels
         return "<SparseVector (%d of %d entries)>" % (self.nnz, len(self))
 
-    def __str__(self):
+    def __unicode__(self):
         pairs = ["%s=%0.6g" % (key, value) for key, value in self.named_items()]
         if len(pairs) > 20: pairs[20:] = ['...']
         therepr = "%s: [%s]" % (repr(self)[1:-1], ', '.join(pairs))
@@ -1664,6 +1474,11 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 def _matrix_from_state(state):
     return SparseMatrix.from_state(state)
 _matrix_from_state.__safe_for_unpickling__ = True
+
+# backward compatibility with a pickle file
+def _matrix_from_named_lists(*lists):
+    return SparseMatrix.from_named_lists(*lists)
+_matrix_from_named_lists.__safe_for_unpickling__ = True
 
 def _vector_from_state(state):
     return SparseVector.from_state(state)

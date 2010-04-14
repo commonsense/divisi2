@@ -1,74 +1,12 @@
+from itertools import izip
+
 class OrderedSet(object):
-    """An OrderedSet acts very much like a list. There are two important
+    """
+    An OrderedSet acts very much like a list. There are two important
     differences:
 
     - Each item appears in the list only once.
     - You can look up an item's index in the list in constant time.
-
-    Use it like you would use a list. All the standard operators are defined.
-
-    Create a set with a few initial items::
-
-        >>> s = OrderedSet(['apple', 'banana', 'pear'])
-
-    Look up the index of 'banana':
-
-        >>> s.index('banana')
-        1
-        >>> s.indexFor('banana')  # (synonym)
-        1
-
-    Look up an unknown index:
-
-        >>> s.index('automobile')
-        Traceback (most recent call last):
-            ...
-        KeyError: 'automobile'
-
-    Add a new item::
-
-        >>> s.add('orange')
-        3
-        >>> s.index('orange')
-        3
-
-    Add an item that's already there::
-
-        >>> s.add('apple')
-        0
-
-    Extend with some more items::
-
-        >>> s.extend(['grapefruit', 'kiwi'])
-        >>> s.index('grapefruit')
-        4
-
-    See that it otherwise behaves like a list::
-
-        >>> s[0]
-        'apple'
-        >>> s[0] = 'Apple'
-        >>> s[0]
-        'Apple'
-        >>> len(s)
-        6
-        >>> for item in s:
-        ...     print item,
-        Apple banana pear orange grapefruit kiwi
-
-    ``None`` element is used as a placeholder for non-present
-    elements, but it is never semantically an element of the set::
-
-        >>> del s[0]
-        >>> s[0] is None
-        True
-        >>> s.index('banana')
-        1
-        >>> None in s
-        False
-
-    (We would have used ``Ellipsis``, but it's not picklable, and it's
-    not worth the trouble to work around that.)
     """
     index_is_efficient = True
 
@@ -118,8 +56,7 @@ class OrderedSet(object):
 
     def __repr__(self):
         if len(self) < 10:
-            # This isn't exactly right if there are blank items.
-            return u'OrderedSet(%r)' % (self.items,)
+            return u'OrderedSet(%r)' % [x for x in self.items if x is not None]
         else:
             return u'<OrderedSet of %d items like %s>' % (len(self), self[0])
 
@@ -210,12 +147,14 @@ class OrderedSet(object):
             >>> a == b
             True
         '''
-        # FIXME: A corner case: if the element on the end gets added
-        # then deleted, it should be considered equal.
-
-        # Get 'items' from the other thing, in case it's an OrderedSet.
         if self is other: return True
-        return self.items == getattr(other, 'items', other)
+        if len(self) != len(other): return False
+        if not isinstance(other, OrderedSet): return False
+
+        for (s, o) in izip(self, other):
+            if s != o: return False
+        return True
+
     def __ne__(self, other):
         return not self == other
 

@@ -22,7 +22,8 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.jsmath']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',
+'sphinx.ext.intersphinx', 'sphinx.ext.jsmath', 'sphinx.ext.doctest']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -34,7 +35,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'contents'
 
 # General information about the project.
 project = u'Divisi2'
@@ -197,3 +198,8 @@ latex_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
 jsmath_path = 'jsMath/easy/load.js'
+doctest_test_doctest_blocks = ''
+autoclass_content = "init"
+default_role = "literal"
+add_module_names = False
+

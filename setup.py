@@ -102,7 +102,7 @@ setup(
     long_description = "\n".join(doclines[2:]),
     ext_modules = [svdlibc],
     packages=['csc', 'csc.divisi2'],
-    package_data = {'csc.divisi2': ['data/networks/*.gml.gz', 'data/eval/*']},
+    package_data = {'csc.divisi2': ['data/graphs/*.graph', 'data/eval/*.pickle']},
     namespace_packages = ['csc'],
-    install_requires=['csc-utils >= 0.4.1', 'networkx', 'pyparsing'],
+    install_requires=['csc-utils >= 0.4.1', 'networkx', 'pysparse >= 1.1.1-dev'],
 )
