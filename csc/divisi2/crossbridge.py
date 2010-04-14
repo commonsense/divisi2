@@ -1,38 +1,54 @@
 from collections import defaultdict
 from csc.divisi.labeled_tensor import SparseLabeledTensor
 from semantic_network import SemanticNetwork
+from itertools import permutations, combinations
 import copy
 import logging
 
 class CrossBridge(object):
-    '''
+    """
     This class implements the CrossBridge analogy algorithm.
 
     Typical usage:
-    cnet_graph = cnet_graph_from_tensor(cnet_tensor)
-    crossbridge = CrossBridge(cnet_graph) # This may compute for a bit
+    # First create an instance
+    crossbridge = CrossBridge(cnet_graph) #This may compute for a bit
+    -OR-
+    crossbridge = CrossBridge.from_cnet_tensor(cnet_tensor)
+
     # Then one of the following
     analogies, top_relations = crossbridge.analogy(set(['bird', 'wing', 'fly', 'sky']))
     analogies, top_relations = crossbridge.analogy_from_concept('bird')
-    '''
-
+    """
     def __init__(self, graph, num_nodes=3, min_graph_edges=3,
                  min_feature_edges=2, max_feature_edges=3, svd_dims=100,
                  logging_interval=None):
 
         self.num_nodes = num_nodes
         self.graph = graph
+
+        logging.debug("Building analogy tensor of the graph")
         self.tensor = self._build_analogy_tensor(graph, num_nodes, min_graph_edges,
                                                  min_feature_edges, max_feature_edges,
                                                  logging_interval=logging_interval)
-        self.svd = self.tensor.svd(k=svd_dims)
 
+        logging.debug("Performing SVD on analogy tensor")
+        self.svd = self.tensor.svd(k=svd_dims)
+    
+    @staticmethod
+    def from_cnet_tensor(cnet_tensor, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
+        """
+        Factory to construct CrossBridge Instances from ConceptNet tensor.
+        """
+        logging.debug("Converting ConceptNet Tensor into a Graph")
+        cnet_graph = cnet_graph_from_tensor(cnet_tensor)
+        
+        logging.debug("Returning a new instance using the ConceptNet graph")
+        return CrossBridge(cnet_graph, num_nodes, min_graph_edges, min_feature_edges, max_feature_edges, svd_dims, logging_interval)
 
     def _build_analogy_tensor(self, graph, num_nodes, min_graph_edges,
                               min_feature_edges, max_feature_edges,
                               logging_interval=None):
-
-        '''
+        """
         Builds a tensor T whose rows correspond to maximal dense subgraphs of
         graph and whose columns are relation structures (n-ary relations
         formed by combining multiple binary relations).
@@ -46,7 +62,8 @@ class CrossBridge(object):
         Note: the min_graph_edges parameter treats the graph as if it
         is undirected and untyped, meaning there is at most 1 edge
         between 2 vertices
-        '''
+        """
+        
         k_subgraphs = k_edge_subgraphs(graph, min_graph_edges, num_nodes,
                                          logging_interval=logging_interval)
         rel_tensor = SparseLabeledTensor(ndim=2)
@@ -61,7 +78,7 @@ class CrossBridge(object):
                     for subgraph_no_repeats in subgraph.enumerate_without_repeated_edges():
                         if (len(subgraph_no_repeats.edges()) >= min_feature_edges
                             and len(subgraph_no_repeats.edges()) <= max_feature_edges):
-                            for vertex_order in enumerate_orders(subgraph_vertices):
+                            for vertex_order in permutations(subgraph_vertices):
                                 vm = dict([(y, x) for x, y in enumerate(vertex_order)])
                                 edges = frozenset([(vm[v1], vm[v2], value) for v1, v2, value in subgraph_no_repeats.edges()])
                                 rel_tensor[vertex_order, edges] = 1
@@ -75,7 +92,7 @@ class CrossBridge(object):
 
     def analogy(self, source_concept_set, logging_interval=None,
                 num_candidates=300, beam_width=10000):
-        '''
+        """
         Takes a set of source concepts and returns a sorted, scored
         list of analogies for the source concepts and the most
         important relations.
@@ -86,14 +103,12 @@ class CrossBridge(object):
 
         Note: The important relations are computed by a very hacky
         algorithm... I (jayant) don't trust them very much
-        '''
+        """
 
-        '''
-        First search for analogies between self.num_nodes concepts.
-        '''
+        # First search for analogies between self.num_nodes concepts.
         candidate_target_concept_sets = []
         candidate_relations = defaultdict(lambda: 0)
-        for concept_triple in k_subset_iter(self.num_nodes, source_concept_set):
+        for concept_triple in combinations(source_concept_set, self.num_nodes):
             try:
                 concept_triple = tuple(concept_triple)
                 candidates = self.svd.u_angles_to(self.svd.weighted_u[concept_triple, :]).top_items(num_candidates)
@@ -110,10 +125,10 @@ class CrossBridge(object):
             except KeyError:
                 pass
 
-        '''
+        """
         Iteratively merge the candidate analogies together by combining
         n-concept analogies containing 2 overlapping concepts.
-        '''
+        """
         smallest_analogies = copy.copy(candidate_target_concept_sets)
         candidates = [set(candidate_target_concept_sets)]
         iteration_num = 0
@@ -142,7 +157,7 @@ class CrossBridge(object):
             new_candidates = set([(x, candidate_scores[x]) for x in new_candidates])
 
             if beam_width is not None:
-                ''' Prune the current batch of candidates '''
+                """ Prune the current batch of candidates """
                 new_candidates = list(new_candidates)
                 new_candidates.sort(key=lambda x: x[1], reverse=True)
                 new_candidates = set(new_candidates[:beam_width])
@@ -151,7 +166,7 @@ class CrossBridge(object):
 
         all_candidates = list(reduce(lambda x, y: y.union(x), candidates, set()))
 
-        ''' Remove duplicate target sets '''
+        """ Remove duplicate target sets """
         seen_targets = defaultdict(set)
         for candidate in all_candidates:
             seen_targets[frozenset([x for x, y in candidate[0]])].add(candidate)
@@ -168,14 +183,14 @@ class CrossBridge(object):
     def analogy_from_concept(self, source_concept, logging_interval=None,
                              num_candidates=100,
                              beam_width=None):
-        '''
+        """
         Finds an analogy for a single concept. The algorithm simply
         uses the CrossBridge.analogy method to find analogies for
         neighbors of source_concept.
 
         (This procedure is hacky because not all of the neighboring
         concepts are important for the analogy)
-        '''
+        """
 
         # Get the concepts that are a part of the chosen concept
         related_concepts = set(self.graph.get_neighbors(source_concept))
@@ -191,95 +206,68 @@ class CrossBridge(object):
 
 def cnet_graph_from_tensor(cnet, delete_reltypes=None,
                            assertion_weight_threshold=0):
-    '''
+    """
     This is a sort of hacky way to transform the typical
     ConceptNet concept / feature matrix into a SemanticNetwork.
 
     assertion_weight_threshold - only assertions with scores greater than the threshold are included in the graph.
     delete_reltypes - a list of relationship types that shouldn't be included in the graph
-    '''
+    """
 
-    concepts = set(cnet.dim_keys(0))
-
+    #concepts = set(cnet.dim_keys(0)) # Concepts is not used anywhere afterwards. Why do this?
+    delete_reltypes = set(delete_reltypes or [])
+    
     cnet_graph = SemanticNetwork()
     for (concept1, (typ, r, concept2)), score in cnet.iteritems():
         if (score < assertion_weight_threshold or
-            (delete_reltypes is not None and r in delete_reltypes)):
+            r in delete_reltypes):
             continue
 
-        if typ == 'left':
-            # left feature
-            c1 = concept2
-            c2 = concept1
-        else:
-            # right feature
-            c1 = concept1
-            c2 = concept2
+        (c1, c2) = (concept2, concept1) if typ == 'left' else (concept1, concept2)
 
         cnet_graph.add_edge(c1, c2, r)
 
     return cnet_graph
 
-def graph_from_triples(triples, omit_relations=None,
-                       min_weight=0):
-    '''
+def graph_from_triples(triples, omit_relations=None,  min_weight=0):
+    """
     Make a SemanticNetwork out of a sequence of triples.
 
     You can get such a sequence from
     csc.conceptnet4.analogyspace.conceptnet_triples.
-    '''
+    """
     graph = SemanticNetwork()
     omit_relations = set(omit_relations or [])
+    
     for (c1, rel, c2), val in triples:
-        if val < min_weight or rel in omit_relations: continue
+        if val < min_weight or rel in omit_relations:
+            continue
+        
         graph.add_edge(c1, c2, rel)
+
     return graph
 
-''' these are utility functions used by CrossBridge '''
+""" these are utility functions used by CrossBridge """
 
 def k_subset_iter(k, in_set):
-    '''
+    """
     Returns an iterator over all possible subsets x of in_set where x
     contains exactly k items.
-    '''
-    def k_subset_iter_helper(k, in_set, base_set):
-        if len(base_set) == k:
-            yield base_set
-        else:
-            remaining_concepts = in_set.difference(base_set)
-            if len(remaining_concepts) == 0:
-                return
-
-            cur_concept = remaining_concepts.pop()
-            # Return all subsets without this element
-            for subset in k_subset_iter_helper(k, remaining_concepts, base_set):
-                yield subset
-
-            # Return all subsets with this element
-            new_set = copy.copy(base_set)
-            new_set.add(cur_concept)
-            for subset in k_subset_iter_helper(k, remaining_concepts, new_set):
-                yield subset
-
-    return k_subset_iter_helper(k, set(in_set), set())
+    Deprecated : use itertools.combination function instead
+    """
+    logging.warn("Deprecated: use itertools.combination instead")
+    return combinations(in_set, k)
 
 def enumerate_orders(in_set):
-    '''
-    Returns an iterator over all permutations (orderings) of in_set
-    '''
-    def helper(in_set):
-        if len(in_set) == 0:
-            yield []
-        else:
-            for item in in_set:
-                for remainder in helper(in_set - set([item])):
-                    yield [item] + remainder
-
-    for order in helper(in_set):
-        yield tuple(order)
+    """
+    Returns an iterator over all permutations (orderings) of in_set.
+    Deprecated: use itertools.permutations function instead
+    """
+    logging.warn("Deprecated: use itertools.permutation instead")
+    return permutations(in_set)
 
 def k_edge_subgraphs(graph, min_subgraph_edges, num_subgraph_vertices, logging_interval=None):
-    '''
+    """
     Bottom-up dynamic programming approach to finding all subgraphs of
     graph with exactly num_subgraph_vertices vertices and at least
     min_subgraph_edges edges.  This algorithm treats graph as if it
@@ -292,7 +280,7 @@ def k_edge_subgraphs(graph, min_subgraph_edges, num_subgraph_vertices, logging_i
 
     Returns a dictionary mapping (num vertices, num edges) tuples to
     sets of vertices, expressed as frozensets.
-    '''
+    """
     assert(min_subgraph_edges >= num_subgraph_vertices-1)
 
     found_subgraphs = defaultdict(set)
@@ -302,7 +290,8 @@ def k_edge_subgraphs(graph, min_subgraph_edges, num_subgraph_vertices, logging_i
                                   for v1, v2, type in graph.edges())
 
     logging_counter = 0
-    for num_nodes in xrange(3,num_subgraph_vertices + 1):
+    
+    for num_nodes in xrange(3, num_subgraph_vertices + 1):
         logging.debug("Finding graphs with %d vertices...", num_nodes)
         for i in xrange(num_nodes - 2, min(min_subgraph_edges, (num_nodes - 2)*(num_nodes - 1)/2 + 1)):
             # Fill in found_subgraphs[num_nodes, i]
