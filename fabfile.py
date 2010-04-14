@@ -3,7 +3,7 @@ from fabric.api import *
 
 def push():
     test()
-    local('git commit -a', capture=False)
+    local('git commit -av', capture=False)
     local('git pull origin master')
     local('git push origin master')
 

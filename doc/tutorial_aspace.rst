@@ -17,9 +17,8 @@ concepts and features that appear fewer than five times.
 This assumes you have the `conceptnet` package installed, along with its
 database.
 
->>> from csc.conceptnet import analogyspace2
 >>> from csc import divisi2
->>> A = analogyspace2.build_matrix('en', cutoff=5)
+>>> A = divisi2.network.conceptnet_matrix('en', cutoff=5)
 >>> print A
 SparseMatrix (12564 by 19719)
          IsA/spor   IsA/game   UsedFor/   UsedFor/   person\\C ...

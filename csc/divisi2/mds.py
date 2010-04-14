@@ -73,7 +73,7 @@ def aspace_mds():
     cnet = analogyspace_matrix('en')
     
     U, S, V = cnet.normalize_all().svd(k=100)
-    concept_axes = U.multiply(S)
+    concept_axes = U
     proj = mds(concept_axes)
     result = proj.project(concept_axes)
     save(result, '/tmp/mds.pickle')
