@@ -10,15 +10,26 @@ common-sense knowledge in natural language.
 Building a common sense matrix
 ------------------------------
 
-The first thing we'll need to do is import ConceptNet and Divisi, and build a
-concept by feature matrix. The parameter `cutoff=5` says to leave out
-concepts and features that appear fewer than five times.
+The first thing we'll need to do is to import Divisi, and then load its graph
+representation of ConceptNet.
 
-This assumes you have the `conceptnet` package installed, along with its
-database.
+This file is packaged with Divisi and stored in the csc/divisi2/data directory,
+so we can use a special path beginning with `data:` to get at it. You could
+give a normal path as well to load a different file.
 
 >>> from csc import divisi2
->>> A = divisi2.network.conceptnet_matrix('en', cutoff=5)
+>>> conceptnet = divisi2.load('data:graphs/conceptnet_en.graph')
+
+Now we build a Divisi sparse matrix out of this data. The rows should be the
+nodes of the graph (which are the concepts in ConceptNet), and the columns
+should represent their *features*, or connections to other nodes.
+
+The :func:`csc.divisi2.network.sparse_matrix`
+function can automate this for us -- we just need to ask for the `'nodes'` and
+`'features'`. `cutoff=5` means to keep only nodes and features with a degree of
+5 or more.
+
+>>> A = divisi2.network.sparse_matrix(conceptnet, 'nodes', 'features', cutoff=5)
 >>> print A
 SparseMatrix (12564 by 19719)
          IsA/spor   IsA/game   UsedFor/   UsedFor/   person\\C ...
@@ -29,7 +40,7 @@ toy         ---     0.500000      ---     1.160964      ---
 dog         ---        ---        ---     0.792481      ---    
 ...
 
-We can see here a preview of A, a :class:`SparseMatrix` of 12564 concepts and
+We can see here a preview of :math:`A`, a :class:`SparseMatrix` of 12564 concepts and
 19719 features.
 
 The rows of this matrix are labeled with common-sense *concepts*, and the
@@ -37,9 +48,9 @@ columns are labeled with *features* that describe them.
 
 .. note::
 
-   Divisi2 has a special way of printing concept-feature matrices. The features
+   Divisi2 has a special way of printing node-feature matrices. The features
    are actually represented as tuples of a direction (`'left'` | `'right'`), the
-   name of a relation, and the concept that is related. The direction
+   name of a relation, and the node that is related. The direction
    distinguishes "baseball is a sport" from "sport is a baseball". When
    printed as labels, however, these tuples are abbreviated:
    `('right', 'IsA', 'sport')` looks like `IsA/sport`, and
