@@ -12,6 +12,8 @@ def git_dance():
 
 def metapush():
     push()
+    with cd('~/mmp/omcs/divisi2'):
+        local('git pull')
     with cd('~/mmp/omcs'):
         git_dance()
     with cd('~/mmp'):
