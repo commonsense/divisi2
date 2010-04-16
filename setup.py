@@ -57,21 +57,22 @@ CYTHON_SRC = 'svdlib/_svdlib.pyx'
 ### Update the Cython file, if necessary.
 def get_modification_time(filename):
     return os.stat(filename)[ST_MTIME]
-
-if not os.path.exists(CYTHON_OUT) or get_modification_time(CYTHON_SRC) > get_modification_time(CYTHON_OUT):
-    try:
-        # Try building the Cython file
-        print 'Building Cython source'
-        from Cython.Compiler.Main import compile
-        res = compile(CYTHON_SRC)
-        if res.num_errors > 0:
-            print >>sys.stderr, "Error building the Cython file."
-            sys.exit(1)
-    except ImportError:
-        print >>sys.stderr, 'Warning: Skipped building the Cython file.'
-        print >>sys.stderr, ' The svdlib source file is more recent than the Cython output file, but'
-        print >>sys.stderr, ' you seem to lack Cython, so skipping rebuilding it.'
-
+try:
+    if not os.path.exists(CYTHON_OUT) or get_modification_time(CYTHON_SRC) > get_modification_time(CYTHON_OUT):
+        try:
+            # Try building the Cython file
+            print 'Building Cython source'
+            from Cython.Compiler.Main import compile
+            res = compile(CYTHON_SRC)
+            if res.num_errors > 0:
+                print >>sys.stderr, "Error building the Cython file."
+                sys.exit(1)
+        except ImportError:
+            print >>sys.stderr, 'Warning: Skipped building the Cython file.'
+            print >>sys.stderr, ' The svdlib source file is more recent than the Cython output file, but'
+            print >>sys.stderr, ' you seem to lack Cython, so skipping rebuilding it.'
+except OSError:
+    print >>sys.stderr, 'Warning: Skipped building the Cython file.'
 
 svdlibc = Extension(
     name='csc.divisi2._svdlib',

@@ -7,11 +7,10 @@ def push():
 
 def git_dance():
     local('git commit -av', capture=False)
-    local('git pull origin master')
-    local('git push origin master')
+    local('git pull origin master', capture=False)
+    local('git push origin master', capture=False)
 
 def metapush():
-    push()
     with cd('~/mmp/omcs/divisi2'):
         local('git pull')
     with cd('~/mmp/omcs'):
@@ -20,6 +19,7 @@ def metapush():
         git_dance()
 
 def release():
+    push()
     metapush()
     local('python setup.py sdist upload')
 
