@@ -6,10 +6,10 @@ functions and classes.
 from csc.divisi2.exceptions import Error, DimensionMismatch
 from csc.divisi2.fileIO import load, save
 from csc.divisi2.sparse import SparseMatrix, SparseVector, LabelError
-from csc.divisi2.blend import blend
+from csc.divisi2.blending import blend
 from csc.divisi2.operators import *
 from csc.divisi2.reconstructed import reconstruct, reconstruct_symmetric, reconstruct_similarity
-import network
+from csc.divisi2 import network
 
 from_named_entries = SparseMatrix.from_named_entries
 from_named_lists = SparseMatrix.from_named_lists
