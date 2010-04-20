@@ -30,7 +30,9 @@ class OrderedSet(object):
         self.__len__ = self.indices.__len__
     
     def __getitem__(self, index):
-        if hasattr(index, '__index__') or isinstance(index, slice):
+        if index is None:
+            raise TypeError("Can't index an OrderedSet with None")
+        elif hasattr(index, '__index__') or isinstance(index, slice):
             result = self.items[index]
             if isinstance(result, list):
                 return OrderedSet(result)
@@ -38,8 +40,6 @@ class OrderedSet(object):
                 return result
         elif isinstance(index, basestring):
             raise TypeError("Can't use a string as an OrderedSet index -- did you mean to use .index?")
-        elif isinstance(index, type(None)):
-            raise TypeError("Can't index an OrderedSet with None")
         else:
             # assume it's a fancy index list
             return OrderedSet([self.items[i] for i in index])
