@@ -10,3 +10,4 @@ pip-log.txt
 .bzrignore
 Divisi2.egg-info/
 _build
+*~
