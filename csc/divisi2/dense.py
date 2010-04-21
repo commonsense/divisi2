@@ -76,7 +76,11 @@ class AbstractDenseArray(np.ndarray):
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     def __new__(cls, input_array, labels=None):
         # add cases for compatibility with SparseVector's constructor
-        if np.isscalar(input_array):
+        if input_array is None:
+            if labels is None:
+                raise ValueError("input_array=None only makes sense when there are labels")
+            input_array = np.zeros((len(labels),))
+        elif np.isscalar(input_array):
             input_array = np.zeros((input_array,))
         elif hasattr(input_array, 'is_sparse'):
             input_array = input_array.to_dense()
@@ -84,7 +88,10 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         if ndarray.ndim != 1:
             raise ValueError("Input is not a 1-D vector")
         obj = ndarray.view(cls)
-        obj.labels = OrderedSet(labels)
+        if labels is None:
+            obj.labels = None
+        else:
+            obj.labels = OrderedSet(labels)
         return obj
     
     def __array_finalize__(self, obj):
@@ -126,9 +133,13 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return DenseVector, (np.asarray(self), self.labels)
 
 class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
-    def __new__(cls, input_array, row_labels=None, col_labels=None):
+    def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
-        if isinstance(input_array, tuple):
+        if input_array is None:
+            if row_labels is None or col_labels is None:
+                raise ValueError("input_array=None only makes sense when there are row and column labels")
+            input_array = np.zeros((len(row_labels), len(col_labels)))
+        elif isinstance(input_array, tuple):
             input_array = np.zeros(input_array)
         elif hasattr(input_array, 'is_sparse'):
             input_array = input_array.to_dense()
@@ -150,7 +161,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         if obj is None: return
         self.row_labels = getattr(obj, 'row_labels', None)
         self.col_labels = getattr(obj, 'col_labels', None)
-    
+
     def to_sparse(self):
         """
         Get this as a SparseMatrix.
