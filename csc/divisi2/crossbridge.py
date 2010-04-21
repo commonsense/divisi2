@@ -1,6 +1,6 @@
 from collections import defaultdict
-from csc.divisi.labeled_tensor import SparseLabeledTensor
-from semantic_network import SemanticNetwork
+from csc.divisi.labeled_tensor import SparseLabeledTensor #TODO: Replace with SparseMatrix
+from semantic_network import SemanticNetwork #TOOD: Replace with networkx or the new network stuff.
 from itertools import permutations, combinations
 import copy
 import logging
@@ -35,16 +35,27 @@ class CrossBridge(object):
         self.svd = self.tensor.svd(k=svd_dims)
     
     @staticmethod
-    def from_cnet_tensor(cnet_tensor, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
+    def from_cnet_tensor(cnet_tensor, delete_reltypes=[], assertion_weight_threshold=0, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
         """
         Factory to construct CrossBridge Instances from ConceptNet tensor.
         """
         logging.debug("Converting ConceptNet Tensor into a Graph")
-        cnet_graph = cnet_graph_from_tensor(cnet_tensor)
+        cnet_graph = cnet_graph_from_tensor(cnet_tensor, delete_reltypes, assertion_weight_threshold)
         
         logging.debug("Returning a new instance using the ConceptNet graph")
         return CrossBridge(cnet_graph, num_nodes, min_graph_edges, min_feature_edges, max_feature_edges, svd_dims, logging_interval)
 
+    @staticmethod
+    def from_cnet_triple(cnet_triple, delete_reltypes=[], assertion_weight_threshold=0, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
+        """
+        Factory to construct CrossBridge Instances from ConceptNet tensor.
+        """
+        logging.debug("Converting ConceptNet Triple into a Graph")
+        cnet_graph = cnet_graph_from_triple(cnet_triple, delete_reltypes, assertion_weight_threshold)
+        
+        logging.debug("Returning a new instance using the ConceptNet graph")
+        return CrossBridge(cnet_graph, num_nodes, min_graph_edges, min_feature_edges, max_feature_edges, svd_dims, logging_interval)
+    
     def _build_analogy_tensor(self, graph, num_nodes, min_graph_edges,
                               min_feature_edges, max_feature_edges,
                               logging_interval=None):
@@ -180,9 +191,7 @@ class CrossBridge(object):
         return filtered_candidates, sorted(candidate_relations.items(), key=lambda x: x[1], reverse=True)
 
 
-    def analogy_from_concept(self, source_concept, logging_interval=None,
-                             num_candidates=100,
-                             beam_width=None):
+    def analogy_from_concept(self, source_concept, logging_interval=None, num_candidates=100, beam_width=None):
         """
         Finds an analogy for a single concept. The algorithm simply
         uses the CrossBridge.analogy method to find analogies for
@@ -204,32 +213,27 @@ class CrossBridge(object):
                             beam_width=beam_width)
 
 
-def cnet_graph_from_tensor(cnet, delete_reltypes=None,
-                           assertion_weight_threshold=0):
+def cnet_graph_from_tensor(cnet, delete_reltypes=[], assertion_weight_threshold=0):
     """
-    This is a sort of hacky way to transform the typical
-    ConceptNet concept / feature matrix into a SemanticNetwork.
+    (HACK ALERT). Converts a ConceptNet concept-feature matrix into a Semantic Network. 
 
-    assertion_weight_threshold - only assertions with scores greater than the threshold are included in the graph.
-    delete_reltypes - a list of relationship types that shouldn't be included in the graph
+    delete_reltypes = a list of relation types that won't be included in the graph.
+    assertion_weight_threshold = only assertions with scores higher than the threshold are included.
     """
-
-    #concepts = set(cnet.dim_keys(0)) # Concepts is not used anywhere afterwards. Why do this?
-    delete_reltypes = set(delete_reltypes or [])
+    delete_reltypes = set(delete_reltypes)
     
     cnet_graph = SemanticNetwork()
+
     for (concept1, (typ, r, concept2)), score in cnet.iteritems():
-        if (score < assertion_weight_threshold or
-            r in delete_reltypes):
+        if score < assertion_weight_threshold or r in delete_reltypes:
             continue
 
         (c1, c2) = (concept2, concept1) if typ == 'left' else (concept1, concept2)
-
         cnet_graph.add_edge(c1, c2, r)
 
     return cnet_graph
 
-def graph_from_triples(triples, omit_relations=None,  min_weight=0):
+def graph_from_triples(triples, omit_relations=[],  min_weight=0):
     """
     Make a SemanticNetwork out of a sequence of triples.
 
@@ -237,7 +241,7 @@ def graph_from_triples(triples, omit_relations=None,  min_weight=0):
     csc.conceptnet4.analogyspace.conceptnet_triples.
     """
     graph = SemanticNetwork()
-    omit_relations = set(omit_relations or [])
+    omit_relations = set(omit_relations)
     
     for (c1, rel, c2), val in triples:
         if val < min_weight or rel in omit_relations:
@@ -248,7 +252,6 @@ def graph_from_triples(triples, omit_relations=None,  min_weight=0):
     return graph
 
 """ these are utility functions used by CrossBridge """
-
 def k_subset_iter(k, in_set):
     """
     Returns an iterator over all possible subsets x of in_set where x
