@@ -2,3 +2,4 @@
 - CCIPCA
 - Luminoso interface
 - packaging (pysparse, possibly arpack)
+Update INSTALL.txt

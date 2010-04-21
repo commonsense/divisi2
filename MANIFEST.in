@@ -1,1 +1,5 @@
+include svdlib/*.pyx
+include svdlib/*.h
 include *.txt
+recursive-include csc/divisi2/data *.pickle *.graph
+recursive-include doc *.txt *.py

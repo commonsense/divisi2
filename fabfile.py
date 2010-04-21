@@ -3,15 +3,25 @@ from fabric.api import *
 
 def push():
     test()
-    local('git commit -a', capture=False)
-    local('git pull origin master')
-    local('git push origin master')
+    git_dance()
+
+def git_dance():
+    local('git commit -av', capture=False)
+    local('git pull origin master', capture=False)
+    local('git push origin master', capture=False)
 
 def metapush():
+    with cd('~/mmp/omcs/divisi2'):
+        local('git pull')
     with cd('~/mmp/omcs'):
-        push()
+        git_dance()
     with cd('~/mmp'):
-        push()
+        git_dance()
+
+def release():
+    push()
+    metapush()
+    local('python setup.py sdist upload')
 
 def docs():
     with cd('doc'):

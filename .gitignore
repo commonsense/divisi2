@@ -9,5 +9,5 @@ pip-log.txt
 .bzr
 .bzrignore
 Divisi2.egg-info/
-doc/_static/jsMath/
 _build
+*~
