@@ -1,5 +1,6 @@
 from collections import defaultdict
 from csc.divisi.labeled_tensor import SparseLabeledTensor #TODO: Replace with SparseMatrix
+import networkx as nx
 from semantic_network import SemanticNetwork #TOOD: Replace with networkx or the new network stuff.
 from itertools import permutations, combinations
 import copy
@@ -213,41 +214,41 @@ class CrossBridge(object):
                             beam_width=beam_width)
 
 
-def cnet_graph_from_tensor(cnet, delete_reltypes=[], assertion_weight_threshold=0):
+def cnet_graph_from_tensor(cnet, delete_reltypes=None, assertion_weight_threshold=0):
     """
-    (HACK ALERT). Converts a ConceptNet concept-feature matrix into a Semantic Network. 
+    (HACK ALERT). Converts a ConceptNet concept-feature matrix into a NetworkX directed graph.
 
     delete_reltypes = a list of relation types that won't be included in the graph.
     assertion_weight_threshold = only assertions with scores higher than the threshold are included.
     """
-    delete_reltypes = set(delete_reltypes)
-    
-    cnet_graph = SemanticNetwork()
+    delete_reltypes = set(delete_reltypes or [])
 
+    cnet_graph = nx.DiGraph()
+    
     for (concept1, (typ, r, concept2)), score in cnet.iteritems():
         if score < assertion_weight_threshold or r in delete_reltypes:
             continue
 
         (c1, c2) = (concept2, concept1) if typ == 'left' else (concept1, concept2)
-        cnet_graph.add_edge(c1, c2, r)
+        cnet_graph.add_edge(c1, c2, relation = r)
 
     return cnet_graph
 
-def graph_from_triples(triples, omit_relations=[],  min_weight=0):
+def graph_from_triples(triples, omit_relations=None,  min_weight=0):
     """
-    Make a SemanticNetwork out of a sequence of triples.
+    Make a NetworkX directed graph from a sequence of triples.
 
     You can get such a sequence from
     csc.conceptnet4.analogyspace.conceptnet_triples.
     """
-    graph = SemanticNetwork()
-    omit_relations = set(omit_relations)
+    graph = nx.DiGraph()
+    omit_relations = set(omit_relations or [])
     
     for (c1, rel, c2), val in triples:
         if val < min_weight or rel in omit_relations:
             continue
         
-        graph.add_edge(c1, c2, rel)
+        graph.add_edge(c1, c2, relation = rel)
 
     return graph
 
