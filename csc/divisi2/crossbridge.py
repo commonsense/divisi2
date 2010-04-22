@@ -1,7 +1,9 @@
+#TODO: Consider using MultiDiGraphs
+#TODO: Replacement for SparseLabeledTensor
+
 from collections import defaultdict
-from csc.divisi.labeled_tensor import SparseLabeledTensor #TODO: Replace with SparseMatrix
+#from csc.divisi.labeled_tensor import SparseLabeledTensor #TODO: Replace with SparseMatrix
 import networkx as nx
-from semantic_network import SemanticNetwork #TOOD: Replace with networkx or the new network stuff.
 from itertools import permutations, combinations
 import copy
 import logging
@@ -290,27 +292,35 @@ def k_edge_subgraphs(graph, min_subgraph_edges, num_subgraph_vertices, logging_i
     found_subgraphs = defaultdict(set)
 
     # Base case: the set of 2-vertex subgraphs connected by 1 edge
-    found_subgraphs[(2, 1)] = set(frozenset([v1, v2])
-                                  for v1, v2, type in graph.edges())
-
+    found_subgraphs[(2, 1)] = set(frozenset([v1, v2]) for v1, v2 in graph.edges())
     logging_counter = 0
-    
+
+    # Inductive case: we already have graphs of size 2. Find graphs of size
+    #   3 to num_subgraph_vertices inclusive.
     for num_nodes in xrange(3, num_subgraph_vertices + 1):
         logging.debug("Finding graphs with %d vertices...", num_nodes)
-        for i in xrange(num_nodes - 2, min(min_subgraph_edges, (num_nodes - 2)*(num_nodes - 1)/2 + 1)):
-            # Fill in found_subgraphs[num_nodes, i]
+
+        max_allowed_edges = min(min_subgraph_edges,
+                                (num_nodes - 2) * (num_nodes - 1)/2 + 1)
+
+        for num_edges in xrange(num_nodes - 2, max_allowed_edges):
+            # Fill in found_subgraphs[num_nodes, num_edges]
+
+            the_subgraphs = found_subgraphs[num_nodes - 1, num_edges]
             logging.debug("Checking subgraphs with %d vertices and %d edges (total: %d)...",
-                          num_nodes - 1, i, len(found_subgraphs[num_nodes - 1, i]))
-            for soln_subgraph in found_subgraphs[num_nodes - 1, i]:
+                          num_nodes - 1, num_edges, len(the_subgraphs))
+            
+            for soln_subgraph in the_subgraphs:
                 #Compute edge counts for vertices adjacent to soln_subgraph
                 vertex_counts = defaultdict(int)
+                
                 for soln_vertex in soln_subgraph:
-                    for v in graph.get_neighbors(soln_vertex):
+                    for v in graph.neighbors(soln_vertex): # potential bug: may have to use G.edges() to avoid duplicates
                         if v not in soln_subgraph:
                             vertex_counts[v] += 1
 
                 for v, count in vertex_counts.iteritems():
-                    found_subgraphs[(num_nodes, count + i)].add(soln_subgraph.union(frozenset([v])))
+                    found_subgraphs[(num_nodes, count + num_edges)].add(soln_subgraph.union(frozenset([v])))
 
                 if logging_interval is not None and logging_counter % logging_interval == 0:
                     logging.debug("Adding vertices to %r ...", soln_subgraph)
