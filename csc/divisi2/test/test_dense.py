@@ -10,3 +10,8 @@ def test_vector_slice():
     assert isinstance(mat1[0], DenseVector)
     assert isinstance(mat1[0,:], DenseVector)
     assert isinstance(mat1[:,0], DenseVector)
+
+def test_normalize():
+    assert mat1.normalize_rows().equals( mat1.to_sparse().normalize_rows().to_dense())
+    assert mat1.normalize_all().equals( mat1.to_sparse().normalize_all().to_dense())
+

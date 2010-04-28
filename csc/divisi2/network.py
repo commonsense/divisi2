@@ -131,6 +131,7 @@ def conceptnet_matrix(lang):
     # load from the included pickle file
     from csc import divisi2
 
-    return divisi2.load('data:matrices/conceptnet_%s' % lang)
+    matrix = divisi2.load('data:matrices/conceptnet_%s' % lang)
+    return matrix
 
 analogyspace_matrix = conceptnet_matrix   # synonym
