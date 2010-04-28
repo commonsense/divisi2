@@ -1,5 +1,5 @@
-from ordered_set import OrderedSet
-from priodict import priorityDictionary
+from csc.divisi2.ordered_set import OrderedSet
+from csc.divisi2.priodict import priorityDictionary
 
 class RecyclingSet(OrderedSet):
     __slots__ = ['items', 'indices', 'index', 'indexFor', '__contains__',
