@@ -80,12 +80,9 @@ class CCIPCA(object):
         return projection(vec, eigvec)
 
     def eigenvector_projection(self, index, vec):
-        """
-        """
-        pass #...
+        # handle index==0?
+        return projection(self.get_eigenvector(index), vec)
     
     def eigenvector_residue(self, index, vec):
         eigvec = self.get_eigenvector(index)
-        if k == 0:
-            if self.auto_baseline:
-                pass #...
+        # this next part is just a projection
