@@ -33,9 +33,10 @@ class CCIPCA(object):
     def shape(self):
         return self.matrix.shape
 
-    def zerovec(self):
+    def zero_column(self):
         """
-        Get an appropriately-shaped column of all zeros.
+        Get a vector labeled like a column of the CCIPCA matrix, all of whose
+        entries are zero.
         """
         return DenseVector(np.zeros((self.shape[0],)), self.matrix.row_labels)
 
@@ -58,6 +59,15 @@ class CCIPCA(object):
         """
         return self.get_weighted_eigenvector(index).hat()
 
+    def eigenvectors(self):
+        return self.matrix.normalize_cols()
+
+    def get_eigenvalue(self, index):
+        return np.linalg.norm(self.get_weighted_eigenvector(index))
+    
+    def eigenvalues(self):
+        return np.sqrt(np.sum(self.matrix * self.matrix, mode=0))
+
     def compute_attractor(self, index, vec):
         """
         Compute the attractor vector for the eigenvector with index `index`
@@ -67,10 +77,15 @@ class CCIPCA(object):
             # special case for the mean vector
             return vec
         eigvec = self.get_eigenvector(index)
-        return self.projection(self, eigvec, vec)
+        return projection(vec, eigvec)
 
-    def projection_onto(self, v, u):
+    def eigenvector_projection(self, index, vec):
         """
-        Compute the projection of `v` onto `u`, scaled by the magnitude of `u`.
         """
-        return u * dot(u, v)
+        pass #...
+    
+    def eigenvector_residue(self, index, vec):
+        eigvec = self.get_eigenvector(index)
+        if k == 0:
+            if self.auto_baseline:
+                pass #...
