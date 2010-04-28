@@ -74,6 +74,7 @@ class AbstractDenseArray(np.ndarray):
         return (self.same_labels_as(other) and np.allclose(self, other))
 
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
+    __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
         # add cases for compatibility with SparseVector's constructor
         if input_array is None:
@@ -133,6 +134,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return DenseVector, (np.asarray(self), self.labels)
 
 class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
+    __array_priority__ = 3.0
     def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
         if input_array is None:
