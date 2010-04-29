@@ -110,8 +110,7 @@ class CrossBridge(object):
         between 2 vertices
         """
         
-        k_subgraphs = k_edge_subgraphs(graph, min_graph_edges, num_nodes,
-                                         logging_interval=logging_interval)
+        k_subgraphs = k_edge_subgraphs(graph, min_graph_edges, num_nodes, logging_interval=logging_interval)
         rel_tensor = SparseLabeledTensor(ndim=2)
 
         logging_counter = 0
@@ -226,7 +225,6 @@ class CrossBridge(object):
 
         return filtered_candidates, sorted(candidate_relations.items(), key=lambda x: x[1], reverse=True)
 
-# TODO:Convert this to use networkx
     def analogy_from_concept(self, source_concept, logging_interval=None, num_candidates=100, beam_width=None):
         """
         Finds an analogy for a single concept. The algorithm simply
@@ -238,14 +236,15 @@ class CrossBridge(object):
         """
 
         # Get the concepts that are a part of the chosen concept
+        logging.debug("Getting concepts related to %s", source_concept)
         related_concepts = set(self.graph.get_neighbors(source_concept))
         related_concepts.add(source_concept)
 
-        logging.debug("Concept analogy: %r", source_concept)
         logging.debug("looking up: %r", related_concepts)
         # Find an analogy with these concepts
         return self.analogy(related_concepts,
-                            logging_interval=logging_interval, num_candidates=num_candidates,
+                            logging_interval=logging_interval,
+                            num_candidates=num_candidates,
                             beam_width=beam_width)
 
 def k_edge_subgraphs(graph, min_subgraph_edges, num_subgraph_vertices, logging_interval=None):
