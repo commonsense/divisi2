@@ -1,7 +1,9 @@
 #TODO: Consider using MultiDiGraphs
 #TODO: Replacement for SparseLabeledTensor
+#TODO: Can we get rid of excessive copying?
 
 from collections import defaultdict
+from csc.divisi2.sparse import SparseMatrix
 #from csc.divisi.labeled_tensor import SparseLabeledTensor #TODO: Replace with SparseMatrix
 import networkx as nx
 from itertools import permutations, combinations
@@ -13,12 +15,17 @@ class CrossBridge(object):
     This class implements the CrossBridge analogy algorithm.
 
     Typical usage:
-    # First create an instance
-    crossbridge = CrossBridge(cnet_graph) #This may compute for a bit
-    -OR-
-    crossbridge = CrossBridge.from_cnet_tensor(cnet_tensor)
+    1. Create an Instance
+    If you have already have a networkX graph representing conceptnet
+    CrossBridge(cnet_graph)
 
-    # Then one of the following
+    If you have a tensor, instead, do:
+    CrossBridge.from_cnet_tensor(cnet_tensor)
+
+    If you have a list of cnet triples instead, do:
+    CrossBridge.from_cnet_triples(cnet_triples)
+
+    2. Then do one of the following
     analogies, top_relations = crossbridge.analogy(set(['bird', 'wing', 'fly', 'sky']))
     analogies, top_relations = crossbridge.analogy_from_concept('bird')
     """
@@ -36,28 +43,53 @@ class CrossBridge(object):
 
         logging.debug("Performing SVD on analogy tensor")
         self.svd = self.tensor.svd(k=svd_dims)
-    
+
+
     @staticmethod
-    def from_cnet_tensor(cnet_tensor, delete_reltypes=[], assertion_weight_threshold=0, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
+    def from_cnet_tensor(cnet_tensor, delete_reltypes=None, assertion_weight_threshold=0, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
         """
-        Factory to construct CrossBridge Instances from ConceptNet tensor.
+        Factory to construct CrossBridge instances from a ConceptNet tensor.
+        
+        delete_reltypes = List of Relation Types in the tensor that should be ignored
+        assertion_weight_threshold = only assertions with scores higher than the threshold are included.
         """
         logging.debug("Converting ConceptNet Tensor into a Graph")
         cnet_graph = cnet_graph_from_tensor(cnet_tensor, delete_reltypes, assertion_weight_threshold)
-        
+
+        delete_reltypes = set(delete_reltypes or [])
+
+        cnet_graph = nx.DiGraph()
+    
+        for (concept1, (typ, r, concept2)), score in cnet.iteritems():
+            if score < assertion_weight_threshold or r in delete_reltypes:
+                continue
+
+            (c1, c2) = (concept2, concept1) if typ == 'left' else (concept1, concept2)
+            cnet_graph.add_edge(c1, c2, relation = r)
+
         logging.debug("Returning a new instance using the ConceptNet graph")
         return CrossBridge(cnet_graph, num_nodes, min_graph_edges, min_feature_edges, max_feature_edges, svd_dims, logging_interval)
 
     @staticmethod
     def from_cnet_triple(cnet_triple, delete_reltypes=[], assertion_weight_threshold=0, num_nodes=3, min_graph_edges=3, min_feature_edges=2, max_feature_edges=3, svd_dims=100, logging_interval=None):
         """
-        Factory to construct CrossBridge Instances from ConceptNet tensor.
+        Factory to construct CrossBridge Instances from a list of ConceptNet triples.
         """
         logging.debug("Converting ConceptNet Triple into a Graph")
         cnet_graph = cnet_graph_from_triple(cnet_triple, delete_reltypes, assertion_weight_threshold)
+
+        cnet_graph = nx.DiGraph()
+        omit_relations = set(omit_relations or [])
+    
+        for (c1, rel, c2), val in triples:
+            if val < min_weight or rel in omit_relations:
+                continue
+        
+            cnet_graph.add_edge(c1, c2, relation = rel)
         
         logging.debug("Returning a new instance using the ConceptNet graph")
         return CrossBridge(cnet_graph, num_nodes, min_graph_edges, min_feature_edges, max_feature_edges, svd_dims, logging_interval)
+
     
     def _build_analogy_tensor(self, graph, num_nodes, min_graph_edges,
                               min_feature_edges, max_feature_edges,
@@ -103,7 +135,8 @@ class CrossBridge(object):
 
         return rel_tensor
 
-
+    #TODO: Split this into multiple functions
+    #TODO: Replace all traces of SemanticNetwork with networkx
     def analogy(self, source_concept_set, logging_interval=None,
                 num_candidates=300, beam_width=10000):
         """
@@ -193,7 +226,7 @@ class CrossBridge(object):
 
         return filtered_candidates, sorted(candidate_relations.items(), key=lambda x: x[1], reverse=True)
 
-
+# TODO:Convert this to use networkx
     def analogy_from_concept(self, source_concept, logging_interval=None, num_candidates=100, beam_width=None):
         """
         Finds an analogy for a single concept. The algorithm simply
@@ -214,63 +247,6 @@ class CrossBridge(object):
         return self.analogy(related_concepts,
                             logging_interval=logging_interval, num_candidates=num_candidates,
                             beam_width=beam_width)
-
-
-def cnet_graph_from_tensor(cnet, delete_reltypes=None, assertion_weight_threshold=0):
-    """
-    (HACK ALERT). Converts a ConceptNet concept-feature matrix into a NetworkX directed graph.
-
-    delete_reltypes = a list of relation types that won't be included in the graph.
-    assertion_weight_threshold = only assertions with scores higher than the threshold are included.
-    """
-    delete_reltypes = set(delete_reltypes or [])
-
-    cnet_graph = nx.DiGraph()
-    
-    for (concept1, (typ, r, concept2)), score in cnet.iteritems():
-        if score < assertion_weight_threshold or r in delete_reltypes:
-            continue
-
-        (c1, c2) = (concept2, concept1) if typ == 'left' else (concept1, concept2)
-        cnet_graph.add_edge(c1, c2, relation = r)
-
-    return cnet_graph
-
-def graph_from_triples(triples, omit_relations=None,  min_weight=0):
-    """
-    Make a NetworkX directed graph from a sequence of triples.
-
-    You can get such a sequence from
-    csc.conceptnet4.analogyspace.conceptnet_triples.
-    """
-    graph = nx.DiGraph()
-    omit_relations = set(omit_relations or [])
-    
-    for (c1, rel, c2), val in triples:
-        if val < min_weight or rel in omit_relations:
-            continue
-        
-        graph.add_edge(c1, c2, relation = rel)
-
-    return graph
-
-""" these are utility functions used by CrossBridge """
-def k_subset_iter(k, in_set):
-    """
-    Returns an iterator over all possible subsets x of in_set where x
-    contains exactly k items.
-    Deprecated : use itertools.combination function instead
-    """
-    logging.warn("Deprecated: use itertools.combination instead")
-    return combinations(in_set, k)
-
-def enumerate_orders(in_set):
-    """
-    Returns an iterator over all permutations (orderings) of in_set.
-    Deprecated: use itertools.permutations function instead
-    """
-    logging.warn("Deprecated: use itertools.permutation instead")
-    return permutations(in_set)
 
 def k_edge_subgraphs(graph, min_subgraph_edges, num_subgraph_vertices, logging_interval=None):
     """
