@@ -71,9 +71,10 @@ class AbstractDenseArray(np.ndarray):
         This name is necessary because __eq__ is already defined as an
         elementwise operation in NumPy.
         """
-        return (self.same_labels_as(other) and np.all(self == other))
+        return (self.same_labels_as(other) and np.allclose(self, other))
 
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
+    __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
         # add cases for compatibility with SparseVector's constructor
         if input_array is None:
@@ -133,6 +134,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return DenseVector, (np.asarray(self), self.labels)
 
 class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
+    __array_priority__ = 3.0
     def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
         if input_array is None:
@@ -186,6 +188,11 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     def normalize_rows(self):
         norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         return self / norms
+
+    def normalize_all(self):
+        row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
+        col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
+        return self / np.sqrt(row_norms) / np.sqrt(col_norms)
 
     @property
     def T(self):

@@ -105,5 +105,5 @@ setup(
     packages=['csc', 'csc.divisi2'],
     package_data = {'csc.divisi2': ['data/graphs/*.graph', 'data/eval/*.pickle']},
     namespace_packages = ['csc'],
-    install_requires=['csc-utils >= 0.4.1', 'networkx', 'csc-pysparse >= 1.1.1.2'],
+    install_requires=['csc-utils >= 0.4.1', 'networkx'],
 )
