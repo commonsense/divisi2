@@ -5,6 +5,7 @@ import numpy as np
 import sys
 
 SLICE_ALL = slice(None, None, None)
+EPSILON = 1e-30
 
 def from_ndarray(array):
     if array.ndim == 1:
@@ -127,7 +128,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return results
     
     def normalize(self):
-        return self / np.linalg.norm(self)
+        return self / (np.linalg.norm(self) + EPSILON)
     hat = normalize
 
     def __reduce__(self):
@@ -187,12 +188,12 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     
     def normalize_rows(self):
         norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
-        return self / norms
+        return self / (norms + EPSILON)
 
     def normalize_all(self):
         row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
-        return self / np.sqrt(row_norms) / np.sqrt(col_norms)
+        return self / np.sqrt(row_norms + EPSILON) / np.sqrt(col_norms + EPSILON)
 
     @property
     def T(self):

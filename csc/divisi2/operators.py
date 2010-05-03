@@ -168,6 +168,17 @@ def projection(u, v):
 def _vector_projection(u, v):
     return u * dot(u, v)
 
+def projection_residue(u, v):
+    """
+    Finds the projection onto `u` of the vector `v`, and returns a pair of:
+
+    - The magnitude of the projection in the direction of `u`
+    - The component of `v` that is orthogonal to `u` and therefore unprojected
+    """
+    un = u.normalize()
+    dotprod = dot(un, v)
+    return (dotprod, v - un*dotprod)
+
 def _matrix_projection(u, v):
     dots = dot(v, u)
     return outer_product(dots, u)
