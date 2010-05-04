@@ -1,4 +1,5 @@
 from itertools import izip
+from priodict import priorityDictionary
 
 class OrderedSet(object):
     """
@@ -444,7 +445,7 @@ class RecyclingSet(OrderedSet):
         return self.items[key]
 
     def __len__(self):
-        return len(self.indices)
+        return self.maxsize
 
     def _setup_quick_lookup_methods(self):
         pass
