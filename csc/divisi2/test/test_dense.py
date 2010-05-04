@@ -15,3 +15,5 @@ def test_normalize():
     assert mat1.normalize_rows().equals( mat1.to_sparse().normalize_rows().to_dense())
     assert mat1.normalize_all().equals( mat1.to_sparse().normalize_all().to_dense())
 
+def test_degenerate_normalize():
+    assert (mat1*0).normalize_all().equals( mat1*0 )
