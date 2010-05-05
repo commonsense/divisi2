@@ -109,29 +109,37 @@ class CrossBridge(object):
         is undirected and untyped, meaning there is at most 1 edge
         between 2 vertices
         """
-        
         k_subgraphs = k_edge_subgraphs(graph, min_graph_edges, num_nodes, logging_interval=logging_interval)
-        rel_tensor = SparseLabeledTensor(ndim=2)
+        rel_tensor = SparseMatrix(ndim=2)
 
         logging_counter = 0
+
         for size, subgraphs_vertices in k_subgraphs.iteritems():
-            if size[0] == num_nodes and size[1] >= min_graph_edges:
-                logging.debug("Adding graphs with %d vertices and %d edges (%d total)...",
-                              size[0], size[1], len(subgraphs_vertices))
-                for subgraph_vertices in subgraphs_vertices:
-                    subgraph = graph.subgraph_from_vertices(subgraph_vertices)
-                    for subgraph_no_repeats in subgraph.enumerate_without_repeated_edges():
-                        if (len(subgraph_no_repeats.edges()) >= min_feature_edges
-                            and len(subgraph_no_repeats.edges()) <= max_feature_edges):
-                            for vertex_order in permutations(subgraph_vertices):
-                                vm = dict([(y, x) for x, y in enumerate(vertex_order)])
-                                edges = frozenset([(vm[v1], vm[v2], value) for v1, v2, value in subgraph_no_repeats.edges()])
-                                rel_tensor[vertex_order, edges] = 1
+            if size[0] != num_nodes or size[1] < min_graph_edges:
+                continue
 
-                    if logging_interval is not None and logging_counter % logging_interval == 0:
-                        logging.debug("%r", subgraph_vertices)
-                    logging_counter += 1
+            logging.debug("Adding graphs with %d vertices and %d edges (%d total)...",
+                          size[0], size[1], len(subgraphs_vertices))
 
+            for subgraph_vertices in subgraphs_vertices:
+                subgraph = graph.subgraph_from_vertices(subgraph_vertices)
+
+                # TODO: Find NetworkX analog for this
+                for subgraph_no_repeats in subgraph.enumerate_without_repeated_edges():
+                    subgraph_no_repeats_edges = subgraph_no_repeats.edges()
+                    if (len(subgraph_no_repeats_edges) < min_feature_edges
+                        or len(subgraph_no_repeats_edges) > max_feature_edges):
+                        continue
+
+                    for vertex_order in permutations(subgraph_vertices):
+                        vm = dict([(y, x) for x, y in enumerate(vertex_order)])
+                        edges = frozenset([(vm[v1], vm[v2], value)
+                                           for v1, v2, value in subgraph_no_repeats_edges])
+                        rel_tensor[vertex_order, edges] = 1
+
+                if logging_interval is not None and logging_counter % logging_interval == 0:
+                    logging.debug("%r", subgraph_vertices)
+                logging_counter += 1
         return rel_tensor
 
     #TODO: Split this into multiple functions
