@@ -132,6 +132,22 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
 
     def __reduce__(self):
         return DenseVector, (np.asarray(self), self.labels)
+    
+    def __repr__(self):
+        return "<DenseVector (length %d): %s>" % (self.shape[0], self)
+    
+    def __unicode__(self):
+        if self.labels is None:
+            return ndarray.__str__(self)
+        else:
+            items = ["%s => %s" % (self.label(i), self[i]) for i in
+                     xrange(min(len(self), 10))]
+            if len(self) > 10: items.append('...')
+            return '[' + ', '.join(items) + ']'
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
 
 class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     __array_priority__ = 3.0
