@@ -236,3 +236,19 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
 
     def __reduce__(self):
         return DenseMatrix, (np.asarray(self), self.row_labels, self.col_labels)
+    
+    def __repr__(self):
+        return "<DenseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
+    
+    def __unicode__(self):
+        # This is called "reducing to a previously-solved problem", or
+        # alternately "being really cheap".
+        
+        sparse_version = self[:21, :6].to_sparse()
+        before, after = str(sparse_version).split('\n', 1)
+        header = "DenseMatrix (%d by %d)" % (self.shape[0], self.shape[1])
+        return header+'\n'+after
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+

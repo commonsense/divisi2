@@ -152,11 +152,12 @@ def projection(u, v):
 
     >>> u = DenseVector([0.6, 0.8])
     >>> v = DenseMatrix([[0, 1], [1, 0], [1, 1], [-3, -4]])
-    >>> projection(u, v)
-    DenseMatrix([[ 0.48,  0.64],
-           [ 0.36,  0.48],
-           [ 0.84,  1.12],
-           [-3.  , -4.  ]])
+    >>> print projection(u, v)
+    DenseMatrix (4 by 2)
+     0.480000   0.640000
+     0.360000   0.480000
+     0.840000   1.120000
+    -3.000000  -4.000000
     """
     if v.ndim == 1:
         return _vector_projection(u, v)
