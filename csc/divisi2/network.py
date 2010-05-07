@@ -123,15 +123,34 @@ def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
     for :func:`sparse_triples` for how to choose the `row_labeler` and
     `col_labeler` to build different kinds of matrices.
     """
-    return SparseMatrix.from_named_entries(
+    matrix_builder = SparseMatrix.from_named_entries
+    if row_labeler == col_labeler:
+        matrix_builder = SparseMatrix.square_from_named_entries
+    return matrix_builder(
       list(sparse_triples(graph, row_labeler, col_labeler, cutoff))
-    ).squish(cutoff=cutoff)
+    )
 
 def conceptnet_matrix(lang):
     # load from the included pickle file
     from csc import divisi2
+    try:
+        matrix = divisi2.load('data:matrices/conceptnet_%s' % lang)
+        return matrix
+    except IOError:
+        graph = divisi2.load('data:graphs/conceptnet_%s.graph' % lang)
+        matrix = sparse_matrix(graph, 'concepts', 'features', 5)
+        divisi2.save(matrix, 'data:matrices/conceptnet_%s' % lang)
+        return matrix
 
-    matrix = divisi2.load('data:matrices/conceptnet_%s' % lang)
-    return matrix
+def conceptnet_assoc(lang):
+    from csc import divisi2
+    try:
+        matrix = divisi2.load('data:matrices/conceptnet_assoc_%s' % lang)
+        return matrix
+    except IOError:
+        graph = divisi2.load('data:graphs/conceptnet_%s.graph' % lang)
+        matrix = sparse_matrix(graph, 'concepts', 'concepts', 5)
+        divisi2.save(matrix, 'data:matrices/conceptnet_assoc_%s' % lang)
+        return matrix
 
 analogyspace_matrix = conceptnet_matrix   # synonym
