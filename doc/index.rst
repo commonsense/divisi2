@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Divisi2's documentation!
-===================================
+Divisi2 documentation
+=====================
 
 Contents:
 
@@ -15,11 +15,4 @@ Contents:
    tutorial_aspace
    labels
    sparse
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
