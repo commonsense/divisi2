@@ -122,8 +122,8 @@ class CrossBridge(object):
                           size[0], size[1], len(subgraphs_vertices))
 
             for subgraph_vertices in subgraphs_vertices:
-                subgraph = graph.subgraph_from_vertices(subgraph_vertices)
-
+                subgraph = graph.subgraph(subgraph_vertices)
+                
                 # TODO: Find NetworkX analog for this
                 for subgraph_no_repeats in subgraph.enumerate_without_repeated_edges():
                     subgraph_no_repeats_edges = subgraph_no_repeats.edges()
@@ -232,6 +232,7 @@ class CrossBridge(object):
         filtered_candidates.sort(key=lambda x: x[1], reverse=True)
 
         return filtered_candidates, sorted(candidate_relations.items(), key=lambda x: x[1], reverse=True)
+
 
     def analogy_from_concept(self, source_concept, logging_interval=None, num_candidates=100, beam_width=None):
         """
