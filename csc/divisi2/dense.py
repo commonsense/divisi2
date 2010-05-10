@@ -138,7 +138,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     
     def __unicode__(self):
         if self.labels is None:
-            return ndarray.__str__(self)
+            return np.ndarray.__str__(self)
         else:
             items = ["%s => %s" % (self.label(i), self[i]) for i in
                      xrange(min(len(self), 10))]
