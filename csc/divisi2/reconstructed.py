@@ -143,3 +143,13 @@ def reconstruct_similarity(u, s, post_normalize=True):
     if post_normalize: mat = mat.normalize_rows()
     return reconstruct_symmetric(mat)
 
+def reconstruct_activation(Q, Lambda):
+    """
+    Given Q and Lambda from the eigenvector decomposition
+    A = Q * Lambda * Q^T, reconstruct an approximation to e^A, representing
+    the operation that spreading activation converges to as the number of steps
+    grows to infinity.
+    """
+    mat = (Q * np.exp(Lambda/2)).normalize_rows()
+    return reconstruct_symmetric(mat)
+    
