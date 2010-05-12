@@ -4,6 +4,7 @@ Mathematical operators that support various kinds of Divisi matrices.
 import numpy as np
 from csc.divisi2.sparse import SparseMatrix, SparseVector, AbstractSparseArray
 from csc.divisi2.dense import DenseMatrix, DenseVector, AbstractDenseArray, from_ndarray
+from csc.divisi2.ordered_set import OrderedSet
 
 def multiply(arg1, arg2):
     """
@@ -127,7 +128,26 @@ def dot(arg1, arg2):
 
     else:
         return np.dot(arg1, arg2)
+
 matrixmultiply = dot
+
+def match_inner_labels(left, right):
+    """
+    Return (left2, right2), so that the inner labels of left2 and right2
+    line up. This allows for matrix multiplication.
+    """
+    left_inner = left.all_labels()[-1]
+    right_inner = right.all_labels()[0]
+    if left_inner is None or right_inner is None: return (left, right)
+    if left_inner == right_inner: return (left, right)
+    intersection = OrderedSet(set(left_inner) & set(right_inner))
+    left_indices = [left_inner.index(x) for x in intersection]
+    right_indices = [right_inner.index(x) for x in intersection]
+    return left[..., left_indices], right[right_indices, ...]
+
+def aligned_matrix_multiply(arg1, arg2):
+    arg1m, arg2m = match_inner_labels(arg1, arg2)
+    return dot(arg1m, arg2m)
 
 def transpose_dot(arg1, arg2):
     """

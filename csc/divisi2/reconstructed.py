@@ -1,5 +1,5 @@
 import numpy as np
-from csc.divisi2.operators import dot, multiply
+from csc.divisi2.operators import dot, multiply, aligned_matrix_multiply
 from csc.divisi2.exceptions import LabelError, DimensionMismatch
 from csc.divisi2.labels import LabeledMatrixMixin
 from csc.divisi2.ordered_set import apply_indices
@@ -72,6 +72,12 @@ class ReconstructedMatrix(LabeledMatrixMixin):
 
     def matvec_transp(self, vec):
         return dot(self.right.T, dot(self.left.T, vec))
+    
+    def left_adhoc_category(self, vec):
+        return dot(aligned_matrix_multiply(vec, self.left), self.right)
+
+    def right_adhoc_category(self, vec):
+        return dot(self.left, aligned_matrix_multiply(self.right, vec))
 
     def __setitem__(self, indices, targetdata):
         # Random thought for the future:
