@@ -73,11 +73,13 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     def matvec_transp(self, vec):
         return dot(self.right.T, dot(self.left.T, vec))
     
-    def left_adhoc_category(self, vec):
+    def left_category(self, vec):
         return dot(aligned_matrix_multiply(vec, self.left), self.right)
+    left_adhoc_category = left_category
 
-    def right_adhoc_category(self, vec):
+    def right_category(self, vec):
         return dot(self.left, aligned_matrix_multiply(self.right, vec))
+    right_adhoc_category = right_category
 
     def __setitem__(self, indices, targetdata):
         # Random thought for the future:
@@ -149,13 +151,22 @@ def reconstruct_similarity(u, s, post_normalize=True):
     if post_normalize: mat = mat.normalize_rows()
     return reconstruct_symmetric(mat)
 
-def reconstruct_activation(Q, Lambda):
+def reconstruct_activation(V, S):
     """
-    Given Q and Lambda from the eigenvector decomposition
-    A = Q * Lambda * Q^T, reconstruct an approximation to e^A, representing
-    the operation that spreading activation converges to as the number of steps
-    grows to infinity.
+    A square matrix can be decomposed as A = V * Lambda * V^T, where Lambda
+    contains the eigenvalues of the matrix and V contains the eigenvectors.
+    This is similar to the SVD, A = U * Sigma * V^T.
+
+    In fact, if you take the SVD, you will get U = V and Sigma = Lambda^2.
+    
+    By exponentiating Lambda, we can turn our decomposition into an operator
+    that simulates an infinite number of steps of spreading activation, with
+    diminishing effects.
+    
+    This function takes in the SVD results V and Sigma (or, equivalently, U and
+    Sigma), and reconstructs a spreading activation operator from them.
     """
-    mat = (Q * np.exp(Lambda/2)).normalize_rows()
+    Lambda = np.sqrt(S)
+    mat = (V * np.exp(Lambda/2)).normalize_rows()
     return reconstruct_symmetric(mat)
     
