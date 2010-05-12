@@ -1133,6 +1133,14 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         """
         return SparseVector.from_named_entries([(value, key) for (key, value) in items])
 
+    @staticmethod
+    def from_dict(d):
+        """
+        Create a new SparseVector from a dictionary. The keys will become
+        the labels.
+        """
+        return SparseVector.from_named_items(d.items())
+
     ### basic operations
 
     def copy(self):
