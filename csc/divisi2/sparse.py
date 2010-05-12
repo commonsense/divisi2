@@ -1133,6 +1133,14 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         """
         return SparseVector.from_named_entries([(value, key) for (key, value) in items])
 
+    @staticmethod
+    def from_dict(d):
+        """
+        Create a new SparseVector from a dictionary. The keys will become
+        the labels.
+        """
+        return SparseVector.from_named_items(d.items())
+
     ### basic operations
 
     def copy(self):
@@ -1252,6 +1260,14 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 
         labels = apply_indices(indices, self.all_labels())
         ps_indices = (0,)+indices
+        if Ellipsis in indices:
+            ps_list = list(ps_indices)
+            index_deficit = 2 - (len(ps_list)-1)
+            for index in xrange(len(ps_list)):
+                if ps_list[index] is Ellipsis:
+                    ps_list[index:index+1] = [SLICE_ALL] * index_deficit
+                    break
+            ps_indices = tuple(ps_list)
         data = self.psmatrix[ps_indices]
         if len(labels) == 1:
             return SparseVector(data, labels[0])
