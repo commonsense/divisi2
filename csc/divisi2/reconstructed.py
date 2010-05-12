@@ -17,6 +17,8 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     This allows you to work with SVD results as if they are large dense
     matrices, without actually storing the large dense matrices.
     """
+    ndim = 2
+
     def __init__(self, left, right):
         if not isinstance(left, (SparseMatrix, DenseMatrix)):
             left = DenseMatrix(left)
