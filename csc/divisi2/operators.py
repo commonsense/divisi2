@@ -4,7 +4,6 @@ Mathematical operators that support various kinds of Divisi matrices.
 import numpy as np
 from csc.divisi2.sparse import SparseMatrix, SparseVector, AbstractSparseArray
 from csc.divisi2.dense import DenseMatrix, DenseVector, AbstractDenseArray, from_ndarray
-from csc.divisi2.reconstructed import ReconstructedMatrix
 
 def multiply(arg1, arg2):
     """
@@ -91,7 +90,7 @@ def dot(arg1, arg2):
             return arg1._dot_sparse(arg2)
         elif isinstance(arg2, (AbstractDenseArray, np.ndarray)):
             return arg1._dot_dense(arg2)
-        elif isinstance(arg2, ReconstructedMatrix):
+        elif hasattr(arg2, 'matvec_transpose'):
             return arg2.matvec_transpose(arg1.T)
         elif np.isscalar(arg2):
             return arg1.cmul(arg2)
@@ -106,7 +105,7 @@ def dot(arg1, arg2):
         elif isinstance(arg2, np.ndarray):
             # ignore labels so that operations like .matvec work
             return np.dot(arg1, arg2)
-        elif isinstance(arg2, ReconstructedMatrix):
+        elif hasattr(arg2, 'matvec_transpose'):
             return arg2.matvec_transpose(arg1.T)
         elif isscalar(arg2):
             return np.multiply(arg1, arg2)
@@ -119,7 +118,8 @@ def dot(arg1, arg2):
         else:
             return np.dot(arg1, arg2)
 
-    elif isinstance(arg1, ReconstructedMatrix):
+    elif hasattr(arg1, 'matvec'):
+        # allows multiplying ReconstructedMatrices by ad-hoc categories
         return arg1.matvec(arg2)
 
     elif np.isscalar(arg1):
