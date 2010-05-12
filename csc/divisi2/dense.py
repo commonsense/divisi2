@@ -5,6 +5,7 @@ import numpy as np
 import sys
 
 SLICE_ALL = slice(None, None, None)
+EPSILON = 1e-30
 
 def from_ndarray(array):
     if array.ndim == 1:
@@ -91,6 +92,8 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         obj = ndarray.view(cls)
         if labels is None:
             obj.labels = None
+        elif isinstance(labels, OrderedSet):
+            obj.labels = labels
         else:
             obj.labels = OrderedSet(labels)
         return obj
@@ -127,7 +130,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return results
     
     def normalize(self):
-        return self / np.linalg.norm(self)
+        return self / (np.linalg.norm(self) + EPSILON)
     hat = normalize
 
     def __reduce__(self):
@@ -167,11 +170,17 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         obj = ndarray.view(cls)
         if row_labels is None:
             obj.row_labels = None
+        elif isinstance(row_labels, OrderedSet):
+            obj.row_labels = row_labels
         else:
+            print "converting rows to orderedset"
             obj.row_labels = OrderedSet(row_labels)
         if col_labels is None:
             obj.col_labels = None
+        elif isinstance(col_labels, OrderedSet):
+            obj.col_labels = col_labels
         else:
+            print "converting cols to orderedset"
             obj.col_labels = OrderedSet(col_labels)
         return obj
     
@@ -203,12 +212,22 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     
     def normalize_rows(self):
         norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
-        return self / norms
+        return self / (norms + EPSILON)
+
+    def normalize_cols(self):
+        col_norms = self.col_norms()[np.newaxis, :]
+        return self / (col_norms + EPSILON)
 
     def normalize_all(self):
-        row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
-        col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
-        return self / np.sqrt(row_norms) / np.sqrt(col_norms)
+        row_norms = self.row_norms()[:, np.newaxis]
+        col_norms = self.col_norms()[np.newaxis, :]
+        return self / np.sqrt(row_norms + EPSILON) / np.sqrt(col_norms + EPSILON)
+    
+    def row_norms(self):
+        return np.sqrt(np.sum(self*self, axis=1))
+    
+    def col_norms(self):
+        return np.sqrt(np.sum(self*self, axis=0))
 
     @property
     def T(self):

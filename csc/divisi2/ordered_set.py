@@ -1,4 +1,5 @@
 from itertools import izip
+from priodict import priorityDictionary
 
 class OrderedSet(object):
     """
@@ -293,6 +294,10 @@ def apply_indices(indices, indexables):
     [OrderedSet([4]), None]
     >>> apply_indices((1, 2), [[3, 4], None])
     []
+
+    >>> import numpy as np
+    >>> apply_indices((ALL, np.array([0,1,2])), [OrderedSet('abcd'), None])
+    [OrderedSet(['a', 'b', 'c', 'd']), None]
     """
     
     # Make indices into a list
@@ -330,7 +335,7 @@ def apply_indices(indices, indexables):
             results.append(None)
         else:
             indexable = indexables[which_indexable]
-            if hasattr(index, '__index__'):
+            if hasattr(index, '__index__') and not hasattr(index, 'shape'):
                 # simple index: drop this result
                 pass
             elif indexable is None:
@@ -440,7 +445,7 @@ class RecyclingSet(OrderedSet):
         return self.items[key]
 
     def __len__(self):
-        return len(self.indices)
+        return self.maxsize
 
     def _setup_quick_lookup_methods(self):
         pass
