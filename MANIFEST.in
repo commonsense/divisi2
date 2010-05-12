@@ -1,5 +1,6 @@
 include svdlib/*.pyx
 include svdlib/*.h
 include *.txt
+include csc/divisi2/data/matrices/conceptnet_en
 recursive-include csc/divisi2/data *.pickle *.graph
 recursive-include doc *.txt *.py
