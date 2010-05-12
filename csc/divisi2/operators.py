@@ -136,3 +136,57 @@ def transpose_dot(arg1, arg2):
             return dot(arg1.T, arg2)
     else:
         return dot(arg1.T, arg2)
+
+def projection(u, v):
+    """
+    The projection onto `u` of `v`.
+
+    `u` should be a vector. Its magnitude will affect the scale of the output,
+    so for a pure projection, `u` should be a unit vector.
+
+    `v` is the vector to be projected. Following NumPy style, it can also be
+    a matrix whose rows are multiple vectors to be projected.
+
+    `u` comes first because you can think of `projection(u, ...)` as an
+    operator.
+
+    >>> u = DenseVector([0.6, 0.8])
+    >>> v = DenseMatrix([[0, 1], [1, 0], [1, 1], [-3, -4]])
+    >>> print projection(u, v)
+    DenseMatrix (4 by 2)
+     0.480000   0.640000
+     0.360000   0.480000
+     0.840000   1.120000
+    -3.000000  -4.000000
+    """
+    if v.ndim == 1:
+        return _vector_projection(u, v)
+    elif v.ndim == 2:
+        return _matrix_projection(u, v)
+    else:
+        raise ValueError("I don't know how to project something with %d dimensions" % v.ndim)
+
+def _vector_projection(u, v):
+    return u * dot(u, v)
+
+def _matrix_projection(u, v):
+    dots = dot(v, u)
+    return outer_product(dots, u)
+
+def outer_product(u, v):
+    """
+    Take the outer product `u * v`, giving a matrix where each row represents
+    an entry in `u` and each column represents an entry in `v`. The entries
+    of the matrix are the products of the corresponding vector entries.
+    
+    >>> u = DenseVector([0.6, 0.8], 'ab')
+    >>> print outer_product(u,u).to_sparse()
+    SparseMatrix (2 by 2)
+             a          b
+    a        0.360000   0.480000
+    b        0.480000   0.640000
+    """
+    rows = np.asarray(u)[:,np.newaxis]
+    cols = np.asarray(v)[np.newaxis,:]
+    return DenseMatrix(rows * cols, getattr(u, 'labels'), getattr(v, 'labels'))
+

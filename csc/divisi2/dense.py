@@ -74,6 +74,7 @@ class AbstractDenseArray(np.ndarray):
         return (self.same_labels_as(other) and np.allclose(self, other))
 
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
+    __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
         # add cases for compatibility with SparseVector's constructor
         if input_array is None:
@@ -131,8 +132,25 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
 
     def __reduce__(self):
         return DenseVector, (np.asarray(self), self.labels)
+    
+    def __repr__(self):
+        return "<DenseVector (length %d): %s>" % (self.shape[0], self)
+    
+    def __unicode__(self):
+        if self.labels is None:
+            return np.ndarray.__str__(self)
+        else:
+            items = ["%s => %s" % (self.label(i), self[i]) for i in
+                     xrange(min(len(self), 10))]
+            if len(self) > 10: items.append('...')
+            return '[' + ', '.join(items) + ']'
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
 
 class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
+    __array_priority__ = 3.0
     def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
         if input_array is None:
@@ -234,3 +252,19 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
 
     def __reduce__(self):
         return DenseMatrix, (np.asarray(self), self.row_labels, self.col_labels)
+    
+    def __repr__(self):
+        return "<DenseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
+    
+    def __unicode__(self):
+        # This is called "reducing to a previously-solved problem", or
+        # alternately "being really cheap".
+        
+        sparse_version = self[:21, :6].to_sparse()
+        before, after = str(sparse_version).split('\n', 1)
+        header = "DenseMatrix (%d by %d)" % (self.shape[0], self.shape[1])
+        return header+'\n'+after
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+

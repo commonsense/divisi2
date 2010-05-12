@@ -577,12 +577,14 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         """
         # Align rows.
         if self.row_labels is None and other.row_labels is None:
+            # Both matrices are unlabeled.
             merged_rows = None
             row_indices = xrange(other.shape[0])
             nrows = max(self.shape[0], other.shape[0])
         elif self.row_labels is None or other.row_labels is None:
             raise LabelError("I don't know how to merge labeled and unlabeled rows")
         else:
+            # Merge the labels.
             merged_rows, row_indices = self.row_labels.merge(other.row_labels)
             nrows = len(merged_rows)
 
