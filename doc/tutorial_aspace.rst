@@ -67,7 +67,7 @@ columns are labeled with *features* that describe them.
    distinguishes "baseball is a sport" from "sport is a baseball". When
    printed as labels, however, these tuples are abbreviated:
    `('right', 'IsA', 'sport')` looks like `IsA/sport`, and
-   `('left', 'IsA', 'sport')` looks like `sport\IsA`.
+   `('left', 'IsA', 'sport')` looks like `sport\\IsA`.
 
 Now that you've spent all this time constructing a matrix, you might want to
 save a copy of it in the current directory::

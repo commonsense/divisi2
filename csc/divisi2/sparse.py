@@ -6,6 +6,7 @@ from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_la
 from pysparse.sparse import spmatrix
 from pysparse.sparse.pysparseMatrix import PysparseMatrix
 from copy import copy
+from collections import defaultdict
 import warnings
 
 SLICE_ALL = slice(None, None, None)
@@ -523,6 +524,16 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         # workaround for psmatrix index glitch
         if not isinstance(indices, tuple):
             indices = (indices,)
+        
+        if Ellipsis in indices:
+            ps_list = list(indices)
+            index_deficit = 2 - (len(ps_list)-1)
+            for index in xrange(len(ps_list)):
+                if ps_list[index] is Ellipsis:
+                    ps_list[index:index+1] = [SLICE_ALL] * index_deficit
+                    break
+            indices = tuple(ps_list)
+        
         if len(indices) < 2:
             indices += (SLICE_ALL,) * (2 - len(indices))
 
@@ -1141,6 +1152,17 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         """
         return SparseVector.from_named_items(d.items())
 
+    @staticmethod
+    def from_counts(lst):
+        """
+        Create a new SparseVector that counts the number of times each item
+        appears in a list.
+        """
+        d = defaultdict(int)
+        for item in lst:
+            d[item] += 1
+        return SparseVector.from_dict(d)
+
     ### basic operations
 
     def copy(self):
@@ -1255,11 +1277,8 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         # workaround for psmatrix index glitch
         if not isinstance(indices, tuple):
             indices = (indices,)
-        if len(indices) == 0:
-            indices += (SLICE_ALL,)
-
-        labels = apply_indices(indices, self.all_labels())
         ps_indices = (0,)+indices
+        
         if Ellipsis in indices:
             ps_list = list(ps_indices)
             index_deficit = 2 - (len(ps_list)-1)
@@ -1268,6 +1287,11 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
                     ps_list[index:index+1] = [SLICE_ALL] * index_deficit
                     break
             ps_indices = tuple(ps_list)
+        
+        if len(indices) == 0:
+            indices += (SLICE_ALL,)
+        labels = apply_indices(indices, self.all_labels())
+
         data = self.psmatrix[ps_indices]
         if len(labels) == 1:
             return SparseVector(data, labels[0])
