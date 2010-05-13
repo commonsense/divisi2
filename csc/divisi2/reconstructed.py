@@ -153,7 +153,7 @@ def reconstruct_similarity(u, s, post_normalize=True):
     if post_normalize: mat = mat.normalize_rows()
     return reconstruct_symmetric(mat)
 
-def reconstruct_activation(V, S):
+def reconstruct_activation(V, S, post_normalize=True):
     """
     A square matrix can be decomposed as A = V * Lambda * V^T, where Lambda
     contains the eigenvalues of the matrix and V contains the eigenvectors.
@@ -169,6 +169,7 @@ def reconstruct_activation(V, S):
     Sigma), and reconstructs a spreading activation operator from them.
     """
     Lambda = np.sqrt(S)
-    mat = (V * np.exp(Lambda/2)).normalize_rows()
+    mat = (V * np.exp(Lambda/2))
+    if post_normalize: mat = mat.normalize_rows()
     return reconstruct_symmetric(mat)
     

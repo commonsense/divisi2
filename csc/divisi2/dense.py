@@ -73,6 +73,9 @@ class AbstractDenseArray(np.ndarray):
         """
         return (self.same_labels_as(other) and np.allclose(self, other))
 
+    def to_dense(self):
+        return self
+
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
