@@ -13,6 +13,7 @@ Contents:
 
    intro
    tutorial_aspace
+   tutorial_category
    labels
    sparse
 
