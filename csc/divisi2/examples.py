@@ -16,4 +16,10 @@ def analogyspace_similarity():
 def spreading_activation():
     assoc = conceptnet_assoc('en')
     U, S, _ = assoc.svd(k=100)
-    return reconstruct_activation(U, S)
+    return reconstruct_activation(U, S, post_normalize=True)
+
+def spreading_activation_weighted():
+    assoc = conceptnet_assoc('en')
+    U, S, _ = assoc.normalize_all().svd(k=100)
+    return reconstruct_activation(U, S, post_normalize=False)
+
