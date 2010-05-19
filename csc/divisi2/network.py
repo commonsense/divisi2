@@ -16,7 +16,6 @@ def set_conceptnet_weights(graph):
         score = edgedata['score']
         freq = edgedata['freq']
         edgedata['weight'] = conceptnet_weight(score, freq)
-        weight = log(edgedata['score'])/log(2)
 
     data_foreach(graph, set_weight)
 
@@ -47,7 +46,11 @@ def _extract_target_only(source, target, data):
     return (target, target)
 
 def prune(graph, cutoff=1):
-    ugraph = graph.to_undirected()
+    # The to_undirected function is tempting, but it copies all the
+    # data, which is unnecessary for this algorithm.
+    ugraph = nx.Graph()
+    ugraph.add_nodes_from(graph)
+    ugraph.add_edges_from(graph.edges_iter())
     cores = nx.find_cores(ugraph)
     core_nodes = [n for n in graph.nodes() if cores[n] >= cutoff]
     return graph.subgraph(core_nodes)
