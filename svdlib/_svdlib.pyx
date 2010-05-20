@@ -128,7 +128,7 @@ def svd_llmat(llmat, int k):
     svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
 
-def svd_ndarray(np.ndarray[double, ndim=2] mat, int k):
+def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
     cdef dmat *packed
     cdef svdrec *svdrec
     cdef int rows = mat.shape[0]
