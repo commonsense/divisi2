@@ -135,6 +135,8 @@ def match_inner_labels(left, right):
     """
     Return (left2, right2), so that the inner labels of left2 and right2
     line up. This allows for matrix multiplication.
+
+    See also SparseMatrix.match_labels.
     """
     left_inner = left.all_labels()[-1]
     right_inner = right.all_labels()[0]
@@ -144,6 +146,17 @@ def match_inner_labels(left, right):
     left_indices = [left_inner.index(x) for x in intersection]
     right_indices = [right_inner.index(x) for x in intersection]
     return left[..., left_indices], right[right_indices, ...]
+
+def filter_labels(matrix, rows=None, cols=None):
+    all_rows, all_cols = matrix.row_labels, matrix.col_labels
+    if rows is not None:
+        # Slice rows first
+        row_indices = [all_rows.index(row) for row in rows]
+        matrix = matrix[row_indices, ...]
+    if cols is not None:
+        col_indices = [all_cols.index(col) for col in cols]
+        matrix = matrix[..., col_indices]
+    return matrix
 
 def aligned_matrix_multiply(arg1, arg2):
     arg1m, arg2m = match_inner_labels(arg1, arg2)

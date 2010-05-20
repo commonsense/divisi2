@@ -280,7 +280,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         # alternately "being really cheap".
         
         sparse_version = self[:21, :6].to_sparse()
-        before, after = str(sparse_version).split('\n', 1)
+        before, after = unicode(sparse_version).split('\n', 1)
         header = "DenseMatrix (%d by %d)" % (self.shape[0], self.shape[1])
         return header+'\n'+after
 
