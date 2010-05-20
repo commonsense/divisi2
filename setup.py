@@ -71,6 +71,7 @@ try:
             print >>sys.stderr, 'Warning: Skipped building the Cython file.'
             print >>sys.stderr, ' The svdlib source file is more recent than the Cython output file, but'
             print >>sys.stderr, ' you seem to lack Cython, so skipping rebuilding it.'
+            raw_input('Press Enter to acknowledge. ')
 except OSError:
     print >>sys.stderr, 'Warning: Skipped building the Cython file.'
 
