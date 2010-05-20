@@ -12,11 +12,16 @@ cdef extern from "svdlib.h":
     ### Structures
     ###
    
-    # Harwell-Boeing sparse matrix.
-    cdef struct smat:
+    # Abstract matrix class
+    cdef struct matrix:
+        # we don't have to tell Cython about the ops pointers.
         long rows
         long cols
-        long vals      # /* Total non-zero entries. */
+        long vals # Total specified entries.
+
+    # Harwell-Boeing sparse matrix.
+    cdef struct smat:
+        matrix h
         long *pointr   # /* For each col (plus 1), index of first non-zero entry. */
         long *rowind   # /* For each nz entry, the row index. */
         double *value  # /* For each nz entry, the value. */
@@ -25,8 +30,7 @@ cdef extern from "svdlib.h":
     
     # Row-major dense matrix.  Rows are consecutive vectors.
     cdef struct dmat:
-        long rows
-        long cols
+        matrix h
         double **value # /* Accessed by [row][col]. Free value[0] and value to free.*/
 
     cdef struct svdrec:
@@ -42,6 +46,12 @@ cdef extern from "svdlib.h":
     
     #/* Frees a sparse matrix. */
     cdef extern void svdFreeSMat(smat *S)
+
+    # Creates an empty dense matrix. */
+    cdef extern dmat *svdNewDMat(int rows, int cols)
+    # Frees a dense matrix.
+    cdef extern void svdFreeDMat(dmat *D)
+
     
     #/* Creates an empty SVD record. */
     cdef extern svdrec *svdNewSVDRec()
@@ -53,7 +63,7 @@ cdef extern from "svdlib.h":
     #cdef extern svdrec *svdLAS2(smat *A, long dimensions, long iterations, double end[2], double kappa)
     
     #/* Chooses default parameter values.  Set dimensions to 0 for all dimensions: */
-    cdef extern svdrec *svdLAS2A(smat *A, long dimensions)
+    cdef extern svdrec *svdLAS2A(matrix *A, long dimensions)
     
     #cdef extern void freeVector(double *v)
     #cdef extern double *mulDMatSlice(DMat *D1, DMat *D2, int index, double *weight)
@@ -114,9 +124,24 @@ def svd_llmat(llmat, int k):
     cdef svdrec *svdrec
     llmat.compress()
     packed = llmat_to_smat(<LLMatObject *> llmat)
-    svdrec = svdLAS2A(packed, k)
+    svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
+
+def svd_ndarray(np.ndarray[double, ndim=2] mat, int k):
+    cdef dmat *packed
+    cdef svdrec *svdrec
+    cdef int rows = mat.shape[0]
+    cdef int cols = mat.shape[1]
+    cdef dmat *output
+    packed = svdNewDMat(rows, cols)
+    for row from 0 <= row < rows:
+        for col from 0 <= col < cols:
+            packed.value[row][col] = mat[row, col]
+    svdrec = svdLAS2A(<matrix *>packed, k)
+    svdFreeDMat(packed)
+    return wrapSVDrec(svdrec, 0)
+
 
 cdef class CSCMatrix:
     cdef object tensor #holds our Python tensor
@@ -234,7 +259,7 @@ cdef class CSCMatrix:
 
     cpdef object svdA(self, int k):
         cdef svdrec *svdrec
-        svdrec = svdLAS2A(self.cmatrix, k)
+        svdrec = svdLAS2A(<matrix *> self.cmatrix, k)
         return wrapSVDrec(svdrec, self.transposed)
                 
 def svd(tensor, k=50, row_factors=None, offset_for_row=None, offset_for_col=None):

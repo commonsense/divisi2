@@ -219,10 +219,27 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     
     ### eigenproblems
     def svd(self, k):
-        U, S, Vh = np.linalg.svd(self)
-        U = DenseMatrix(U, self.row_labels, None)
-        V = DenseMatrix(Vh.T, self.col_labels, None)
-        return (U[:,:k], S[:k], V[:,:k])
+        """
+        Calculate the truncated singular value decomposition A ~= U * Sigma * V^T.
+        Returns a triple of:
+        
+        - U as a dense labeled matrix
+        - S, a dense vector representing the diagonal of Sigma
+        - V as a dense labeled matrix
+        """
+        if self.shape[1] >= self.shape[0] * 1.2:
+            # transpose the matrix for speed
+            V, S, U = self.T.svd(k)
+            return U, S, V
+
+        # Skip checking for zero rows, though it could still be a problem.
+        
+        from csc.divisi2 import operators
+        from csc.divisi2._svdlib import svd_ndarray
+        Ut, S, Vt = svd_ndarray(self, k)
+        U = DenseMatrix(Ut.T, self.row_labels, None)
+        V = DenseMatrix(Vt.T, self.col_labels, None)
+        return U, S, V
 
     def spectral(self):
         raise NotImplementedError
