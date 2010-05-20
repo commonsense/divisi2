@@ -46,6 +46,9 @@ def _extract_target_only(source, target, data):
     return (target, target)
 
 def prune(graph, cutoff=1):
+    '''
+    Only keep nodes with a connectivity >= cutoff.
+    '''
     # The to_undirected function is tempting, but it copies all the
     # data, which is unnecessary for this algorithm.
     ugraph = nx.Graph()
@@ -117,8 +120,9 @@ def sparse_triples(graph, row_labeler, col_labeler, cutoff=1):
     for edge in subgraph.edges_iter(data=True):
         rows = row_labeler(*edge)
         cols = col_labeler(*edge)
-        yield (edge[2].get('weight', 1), rows[0], cols[1])
-        yield (edge[2].get('weight', 1), rows[1], cols[0])
+        weight = edge[2].get('weight', 1)
+        yield (weight, rows[0], cols[1])
+        yield (weight, rows[1], cols[0])
 
 def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
     """
