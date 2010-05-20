@@ -924,7 +924,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         )
         kconv, L, Q, it, it_inner = result
         return DenseMatrix(Q, self.row_labels, None), L
-    
+
+    # Pickling and unpickling
     def to_state(self):
         return {
             'version': 1,
