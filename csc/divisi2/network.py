@@ -58,6 +58,12 @@ def prune(graph, cutoff=1):
     core_nodes = [n for n in graph.nodes() if cores[n] >= cutoff]
     return graph.subgraph(core_nodes)
 
+def relation_filter(relation):
+    if isinstance(relation, basestring): relation = [relation]
+    def filter(source, target, data):
+        return data['rel'] in relation
+    return filter
+
 LABELERS = {
     'nodes': _extract_nodes,
     'concepts': _extract_nodes,       # synonym for 'nodes'
@@ -68,7 +74,7 @@ LABELERS = {
     'target_only': _extract_target_only,
 }
 
-def sparse_triples(graph, row_labeler, col_labeler, cutoff=1):
+def sparse_triples(graph, row_labeler, col_labeler, cutoff=1, filter=None):
     """
     A generator of sparse triples to put into a matrix, given a NetworkX graph.
     It is assumed that each edge of the graph yields two entries of the matrix.
@@ -118,6 +124,7 @@ def sparse_triples(graph, row_labeler, col_labeler, cutoff=1):
           % sorted(LABELERS.keys()))
     subgraph = prune(graph, cutoff=cutoff)
     for edge in subgraph.edges_iter(data=True):
+        if filter is not None and not filter(*edge): continue
         rows = row_labeler(*edge)
         cols = col_labeler(*edge)
         weight = edge[2].get('weight', 1)
