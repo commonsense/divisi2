@@ -144,6 +144,18 @@ def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
       list(sparse_triples(graph, row_labeler, col_labeler, cutoff))
     )
 
+def filter_by_relation(concept_feature_matrix, relation):
+    '''
+    Returns only the part of the matrix about the given relation.
+
+    Be aware that empty rows may remain.
+    '''
+    from csc.divisi2.operators import filter_labels
+    all_features = concept_feature_matrix.col_labels
+    features_to_keep = [feature for feature in all_features
+                        if feature[1] == relation]
+    return filter_labels(concept_feature_matrix, cols=features_to_keep)
+
 def conceptnet_matrix(lang):
     # load from the included pickle file
     from csc import divisi2
