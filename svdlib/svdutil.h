@@ -87,20 +87,22 @@ extern void svd_dswap(long n, double *dx, long incx, double *dy, long incy);
  *****************************************************************/ 
 extern long svd_idamax(long n, double *dx, long incx);
 
+
 /**************************************************************
- * multiplication of matrix B by vector x, where B = A'A,     *
+ * multiplication of matrix B by vector vec, where B = A'A,     *
  * and A is nrow by ncol (nrow >> ncol). Hence, B is of order *
- * n = ncol (y stores product vector).		              *
+ * n = ncol (out stores product vector).		              *
  **************************************************************/
-extern void svd_opb(SMat A, double *x, double *y, double *temp);
+void ATransposeA_by_vec(Matrix A, double *vec, double *out, double *temp);
 
 /***********************************************************
  * multiplication of matrix A by vector x, where A is 	   *
  * nrow by ncol (nrow >> ncol).  y stores product vector.  *
  ***********************************************************/
-extern void svd_opa(SMat A, double *x, double *y);
-
-void mat_transposed_by_vec(SMat A, double *x, double *out);
+void sparse_mat_by_vec(Matrix A_, double *x, double *y);
+void dense_mat_by_vec(Matrix A_, double *x, double *y);
+void dense_mat_transposed_by_vec(Matrix A_, double *vec, double *out);
+void sparse_mat_transposed_by_vec(Matrix A_, double *x, double *out);
 
 /***********************************************************************
  *                                                                     *

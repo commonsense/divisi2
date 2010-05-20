@@ -48,25 +48,25 @@ void   purge(long n, long ll, double *r, double *q, double *ra,
              double *rnmp, double tol);
 void   ortbnd(double *alf, double *eta, double *oldeta, double *bet, long step,
               double rnm);
-double startv(SMat A, double *wptr[], long step, long n);
+double startv(Matrix A, double *wptr[], long step, long n);
 void   store(long, long, long, double *);
 void   imtql2(long, long, double *, double *, double *);
 void   imtqlb(long n, double d[], double e[], double bnd[]);
 void   write_header(long, long, double, double, long, double, long, long, 
                     long);
-long   check_parameters(SMat A, long dimensions, long iterations, 
+long   check_parameters(Matrix A, long dimensions, long iterations, 
                         double endl, double endr, long vectors);
-int    lanso(SMat A, long iterations, long dimensions, double endl,
+int    lanso(Matrix A, long iterations, long dimensions, double endl,
              double endr, double *ritz, double *bnd, double *wptr[], 
              long *neigp, long n);
-long   ritvec(long n, SMat A, SVDRec R, double kappa, double *ritz, 
+long   ritvec(long n, Matrix A, SVDRec R, double kappa, double *ritz, 
               double *bnd, double *alf, double *bet, double *w2, 
               long steps, long neig);
-long   lanczos_step(SMat A, long first, long last, double *wptr[],
+long   lanczos_step(Matrix A, long first, long last, double *wptr[],
                     double *alf, double *eta, double *oldeta,
                     double *bet, long *ll, long *enough, double *rnmp, 
                     double *tolp, long n);
-void   stpone(SMat A, double *wrkptr[], double *rnmp, double *tolp, long n);
+void   stpone(Matrix A, double *wrkptr[], double *rnmp, double *tolp, long n);
 long   error_bound(long *, double, double, double *, double *, long step, 
                    double tol);
 void   machar(long *ibeta, long *it, long *irnd, long *machep, long *negep);
@@ -196,7 +196,7 @@ void   machar(long *ibeta, long *it, long *irnd, long *machep, long *negep);
                                                                       
  ***********************************************************************/
 
-long check_parameters(SMat A, long dimensions, long iterations, 
+long check_parameters(Matrix A, long dimensions, long iterations, 
 		      double endl, double endr, long vectors) {
    long error_index;
    error_index = 0;
@@ -312,7 +312,7 @@ void write_header(long iterations, long dimensions, double endl, double endr,
 
  ***********************************************************************/
 
-SVDRec svdLAS2A(SMat A, long dimensions) {
+SVDRec svdLAS2A(Matrix A, long dimensions) {
   double end[2] = {-1.0e-30, 1.0e-30};
   double kappa = 1e-6;
   if (!A) {
@@ -323,7 +323,7 @@ SVDRec svdLAS2A(SMat A, long dimensions) {
 }
 
 
-SVDRec svdLAS2(SMat A, long dimensions, long iterations, double end[2], 
+SVDRec svdLAS2(Matrix A, long dimensions, long iterations, double end[2], 
                double kappa) {
   char transpose = FALSE;
   long ibeta, it, irnd, machep, negep, n, i, steps, nsig, neig, m;
@@ -352,7 +352,7 @@ SVDRec svdLAS2(SMat A, long dimensions, long iterations, double end[2],
   if (A->cols >= A->rows * 1.2) {
     if (SVDVerbosity > 0) printf("TRANSPOSING THE MATRIX FOR SPEED\n");
     transpose = TRUE;
-    A = svdTransposeS(A);
+    A = A->transposed(A);
   }
 
   n = A->cols;
@@ -451,7 +451,7 @@ SVDRec svdLAS2(SMat A, long dimensions, long iterations, double end[2],
   /* This swaps and transposes the singular matrices if A was transposed. */
   if (R && transpose) {
     DMat T;
-    svdFreeSMat(A);
+    A->free(A);
     T = R->Ut;
     R->Ut = R->Vt;
     R->Vt = T;
@@ -538,7 +538,7 @@ void rotateArray(double *a, int size, int x) {
   }
 }
 
-long ritvec(long n, SMat A, SVDRec R, double kappa, double *ritz, double *bnd, 
+long ritvec(long n, Matrix A, SVDRec R, double kappa, double *ritz, double *bnd, 
             double *alf, double *bet, double *w2, long steps, long neig) {
   long js, jsq, i, k, /*size,*/ id2, tmp, nsig, x;
   double *s, *xv2, tmp0, tmp1, xnorm, *w1 = R->Vt->value[0];
@@ -600,19 +600,19 @@ long ritvec(long n, SMat A, SVDRec R, double kappa, double *ritz, double *bnd,
 
   /* Rotate the singular vectors and values. */
   /* x is now the location of the highest singular value. */
-  rotateArray(R->Vt->value[0], R->Vt->rows * R->Vt->cols, 
-              x * R->Vt->cols);
+  rotateArray(R->Vt->value[0], R->Vt->h.rows * R->Vt->h.cols, 
+              x * R->Vt->h.cols);
   R->d = svd_imin(R->d, nsig);
   for (x = 0; x < R->d; x++) {
     /* multiply by matrix B first */
-    svd_opb(A, R->Vt->value[x], xv2, OPBTemp);
+    ATransposeA_by_vec(A, R->Vt->value[x], xv2, OPBTemp);
     tmp0 = svd_ddot(n, R->Vt->value[x], 1, xv2, 1);
     svd_daxpy(n, -tmp0, R->Vt->value[x], 1, xv2, 1);
     tmp0 = sqrt(tmp0);
     xnorm = sqrt(svd_ddot(n, xv2, 1, xv2, 1));
       
     /* multiply by matrix A to get (scaled) left s-vector */
-    svd_opa(A, R->Vt->value[x], R->Ut->value[x]);
+    A->mat_by_vec(A, R->Vt->value[x], R->Ut->value[x]);
     tmp1 = 1.0 / tmp0;
     svd_dscal(A->rows, tmp1, R->Ut->value[x], 1);
     xnorm *= tmp1;
@@ -678,7 +678,7 @@ long ritvec(long n, SMat A, SVDRec R, double kappa, double *ritz, double *bnd,
 
  ***********************************************************************/
 
-int lanso(SMat A, long iterations, long dimensions, double endl,
+int lanso(Matrix A, long iterations, long dimensions, double endl,
           double endr, double *ritz, double *bnd, double *wptr[], 
           long *neigp, long n) {
   double *alf, *eta, *oldeta, *bet, *wrk, rnm, tol;
@@ -803,7 +803,7 @@ int lanso(SMat A, long iterations, long dimensions, double endl,
 
  ***********************************************************************/
 
-long lanczos_step(SMat A, long first, long last, double *wptr[],
+long lanczos_step(Matrix A, long first, long last, double *wptr[],
 		  double *alf, double *eta, double *oldeta,
 		  double *bet, long *ll, long *enough, double *rnmp, 
                   double *tolp, long n) {
@@ -842,7 +842,7 @@ long lanczos_step(SMat A, long first, long last, double *wptr[],
       t = 1.0 / rnm;
       svd_datx(n, t, wptr[0], 1, wptr[1], 1);
       svd_dscal(n, t, wptr[3], 1);
-      svd_opb(A, wptr[3], wptr[0], OPBTemp);
+      ATransposeA_by_vec(A, wptr[3], wptr[0], OPBTemp);
       svd_daxpy(n, -rnm, wptr[2], 1, wptr[0], 1);
       alf[j] = svd_ddot(n, wptr[0], 1, wptr[3], 1);
       svd_daxpy(n, -alf[j], wptr[1], 1, wptr[0], 1);
@@ -1072,7 +1072,7 @@ void purge(long n, long ll, double *r, double *q, double *ra,
 
  ***********************************************************************/
 
-void stpone(SMat A, double *wrkptr[], double *rnmp, double *tolp, long n) {
+void stpone(Matrix A, double *wrkptr[], double *rnmp, double *tolp, long n) {
    double t, *alf, rnm, anorm;
    alf = wrkptr[6];
 
@@ -1086,7 +1086,7 @@ void stpone(SMat A, double *wrkptr[], double *rnmp, double *tolp, long n) {
    svd_dscal(n, t, wrkptr[3], 1);
 
    /* take the first step */
-   svd_opb(A, wrkptr[3], wrkptr[0], OPBTemp);
+   ATransposeA_by_vec(A, wrkptr[3], wrkptr[0], OPBTemp);
    alf[0] = svd_ddot(n, wrkptr[0], 1, wrkptr[3], 1);
    svd_daxpy(n, -alf[0], wrkptr[1], 1, wrkptr[0], 1);
    t = svd_ddot(n, wrkptr[0], 1, wrkptr[3], 1);
@@ -1138,7 +1138,7 @@ void stpone(SMat A, double *wrkptr[], double *rnmp, double *tolp, long n) {
 
  ***********************************************************************/
 
-double startv(SMat A, double *wptr[], long step, long n) {
+double startv(Matrix A, double *wptr[], long step, long n) {
    double rnm2, *r, t;
    long irand;
    long id, i;
@@ -1153,7 +1153,7 @@ double startv(SMat A, double *wptr[], long step, long n) {
       svd_dcopy(n, wptr[0], 1, wptr[3], 1);
 
       /* apply operator to put r in range (essential if m singular) */
-      svd_opb(A, wptr[3], wptr[0], OPBTemp);
+      ATransposeA_by_vec(A, wptr[3], wptr[0], OPBTemp);
       svd_dcopy(n, wptr[0], 1, wptr[3], 1);
       rnm2 = svd_ddot(n, wptr[0], 1, wptr[3], 1);
       if (rnm2 > 0.0) break;

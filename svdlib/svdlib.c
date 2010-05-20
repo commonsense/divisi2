@@ -22,8 +22,14 @@ DMat svdNewDMat(int rows, int cols) {
   int i;
   DMat D = (DMat) malloc(sizeof(struct dmat));
   if (!D) {perror("svdNewDMat"); return NULL;}
-  D->rows = rows;
-  D->cols = cols;
+  D->h.transposed = svdTransposeD;
+  D->h.free = svdFreeDMat;
+  D->h.mat_by_vec = dense_mat_by_vec;
+  D->h.mat_transposed_by_vec = dense_mat_transposed_by_vec;
+
+  D->h.rows = rows;
+  D->h.cols = cols;
+  D->h.vals = rows*cols;
 
   D->value = (double **) malloc(rows * sizeof(double *));
   if (!D->value) {SAFE_FREE(D); return NULL;}
@@ -46,9 +52,13 @@ void svdFreeDMat(DMat D) {
 SMat svdNewSMat(int rows, int cols, int vals) {
   SMat S = (SMat) calloc(1, sizeof(struct smat));
   if (!S) {perror("svdNewSMat"); return NULL;}
-  S->rows = rows;
-  S->cols = cols;
-  S->vals = vals;
+  S->h.transposed = svdTransposeS;
+  S->h.free = svdFreeSMat;
+  S->h.mat_by_vec = sparse_mat_by_vec;
+  S->h.mat_transposed_by_vec = sparse_mat_transposed_by_vec;
+  S->h.rows = rows;
+  S->h.cols = cols;
+  S->h.vals = vals;
   S->pointr = svd_longArray(cols + 1, TRUE, "svdNewSMat: pointr");
   if (!S->pointr) {svdFreeSMat(S); return NULL;}
   S->rowind = svd_longArray(vals, FALSE, "svdNewSMat: rowind");
@@ -93,12 +103,12 @@ void svdFreeSVDRec(SVDRec R) {
 /* Converts a sparse matrix to a dense one (without affecting the former) */
 DMat svdConvertStoD(SMat S) {
   int i, c;
-  DMat D = svdNewDMat(S->rows, S->cols);
+  DMat D = svdNewDMat(S->h.rows, S->h.cols);
   if (!D) {
     svd_error("svdConvertStoD: failed to allocate D");
     return NULL;
   }
-  for (i = 0, c = 0; i < S->vals; i++) {
+  for (i = 0, c = 0; i < S->h.vals; i++) {
     while (S->pointr[c + 1] <= i) c++;
     D->value[S->rowind[i]][c] = S->value[i];
   }
@@ -109,34 +119,34 @@ DMat svdConvertStoD(SMat S) {
 SMat svdConvertDtoS(DMat D) {
   SMat S;
   int i, j, n;
-  for (i = 0, n = 0; i < D->rows; i++)
-    for (j = 0; j < D->cols; j++)
+  for (i = 0, n = 0; i < D->h.rows; i++)
+    for (j = 0; j < D->h.cols; j++)
       if (D->value[i][j] != 0) n++;
   
-  S = svdNewSMat(D->rows, D->cols, n);
+  S = svdNewSMat(D->h.rows, D->h.cols, n);
   if (!S) {
     svd_error("svdConvertDtoS: failed to allocate S");
     return NULL;
   }
-  for (j = 0, n = 0; j < D->cols; j++) {
+  for (j = 0, n = 0; j < D->h.cols; j++) {
     S->pointr[j] = n;
-    for (i = 0; i < D->rows; i++)
+    for (i = 0; i < D->h.rows; i++)
       if (D->value[i][j] != 0) {
         S->rowind[n] = i;
         S->value[n] = D->value[i][j];
         n++;
       }
   }
-  S->pointr[S->cols] = S->vals;
+  S->pointr[S->h.cols] = S->h.vals;
   return S;
 }
 
 /* Transposes a dense matrix. */
 DMat svdTransposeD(DMat D) {
   int r, c;
-  DMat N = svdNewDMat(D->cols, D->rows);
-  for (r = 0; r < D->rows; r++)
-    for (c = 0; c < D->cols; c++)
+  DMat N = svdNewDMat(D->h.cols, D->h.rows);
+  for (r = 0; r < D->h.rows; r++)
+    for (c = 0; c < D->h.cols; c++)
       N->value[c][r] = D->value[r][c];
   return N;
 }
@@ -144,17 +154,17 @@ DMat svdTransposeD(DMat D) {
 /* Efficiently transposes a sparse matrix. */
 SMat svdTransposeS(SMat S) {
   int r, c, i, j;
-  SMat N = svdNewSMat(S->cols, S->rows, S->vals);
+  SMat N = svdNewSMat(S->h.cols, S->h.rows, S->h.vals);
   /* Count number nz in each row. */
-  for (i = 0; i < S->vals; i++)
+  for (i = 0; i < S->h.vals; i++)
     N->pointr[S->rowind[i]]++;
   /* Fill each cell with the starting point of the previous row. */
-  N->pointr[S->rows] = S->vals - N->pointr[S->rows - 1];
-  for (r = S->rows - 1; r > 0; r--)
+  N->pointr[S->h.rows] = S->h.vals - N->pointr[S->h.rows - 1];
+  for (r = S->h.rows - 1; r > 0; r--)
     N->pointr[r] = N->pointr[r+1] - N->pointr[r-1];
   N->pointr[0] = 0;
   /* Assign the new columns and values. */
-  for (c = 0, i = 0; c < S->cols; c++) {
+  for (c = 0, i = 0; c < S->h.cols; c++) {
     for (; i < S->pointr[c+1]; i++) {
       r = S->rowind[i];
       j = N->pointr[r+1]++;
@@ -164,9 +174,9 @@ SMat svdTransposeS(SMat S) {
   }
   /* Transpose the row and column offsets also. */
   if (S->offset_for_col)
-    N->offset_for_row = copyVector(S->offset_for_col, S->cols, "svdTransposeS: offset_for_row");
+    N->offset_for_row = copyVector(S->offset_for_col, S->h.cols, "svdTransposeS: offset_for_row");
   if (S->offset_for_row)
-    N->offset_for_col = copyVector(S->offset_for_row, S->rows, "svdTransposeS: offset_for_row");
+    N->offset_for_col = copyVector(S->offset_for_row, S->h.rows, "svdTransposeS: offset_for_row");
 
   return N;
 }
@@ -188,11 +198,11 @@ double *mulDMatSlice(DMat D1, DMat D2, int index, double *weight) {
     int col, row;
     double *result;
     
-    result = (double *) malloc(sizeof(double) * D2->cols);
+    result = (double *) malloc(sizeof(double) * D2->h.cols);
     
-    for (col=0; col < D2->cols; col++) {
+    for (col=0; col < D2->h.cols; col++) {
         result[col] = 0.0;
-        for (row=0; row < D2->rows; row++) {
+        for (row=0; row < D2->h.rows; row++) {
             result[col] += D2->value[row][col] * D1->value[row][index] * weight[row];
         }
     }
@@ -203,11 +213,11 @@ double *dMatNorms(DMat D) {
     int col, row;
     double *result;
     
-    result = (double *) malloc(sizeof(double) * D->cols);
+    result = (double *) malloc(sizeof(double) * D->h.cols);
     
-    for (col=0; col < D->cols; col++) {
+    for (col=0; col < D->h.cols; col++) {
         result[col] = 0.0;
-        for (row=0; row < D->rows; row++) {
+        for (row=0; row < D->h.rows; row++) {
             result[col] += D->value[row][col] * D->value[row][col];
         }
         result[col] = sqrt(result[col]);

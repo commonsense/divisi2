@@ -297,24 +297,25 @@ long svd_idamax(long n, double *dx, long incx) {
 }
 
 /**************************************************************
- * multiplication of matrix B by vector x, where B = A'A,     *
+ * multiplication of matrix B by vector vec, where B = A'A,     *
  * and A is nrow by ncol (nrow >> ncol). Hence, B is of order *
- * n = ncol (y stores product vector).		              *
+ * n = ncol (out stores product vector).		              *
  **************************************************************/
-void svd_opb(SMat A, double *x, double *y, double *temp) {
-  svd_opa(A, x, temp);
-  mat_transposed_by_vec(A, temp, y);
+void ATransposeA_by_vec(Matrix A, double *vec, double *out, double *temp) {
+  A->mat_by_vec(A, vec, temp);
+  A->mat_transposed_by_vec(A, temp, out);
 }
 
 /***********************************************************
  * multiplication of matrix A by vector x, where A is 	   *
  * nrow by ncol (nrow >> ncol).  y stores product vector.  *
  ***********************************************************/
-void svd_opa(SMat A, double *x, double *y) {
+void sparse_mat_by_vec(Matrix A_, double *x, double *y) {
+  SMat A = (SMat) A_;
   long end, i, j;
   long *pointr = A->pointr, *rowind = A->rowind;
   double *value = A->value;
-  long rows = A->rows, cols = A->cols;
+  long rows = A->h.rows, cols = A->h.cols;
    
   SVDCount[SVD_MXV]++;
   memset(y, 0, rows * sizeof(double));
@@ -345,11 +346,41 @@ void svd_opa(SMat A, double *x, double *y) {
   }
 }
 
-void mat_transposed_by_vec(SMat A, double *x, double *out) {
+void dense_mat_by_vec(Matrix A_, double *x, double *y) {
+  DMat A = (DMat) A_;
+  long row, col;
+  double **value = A->value;
+  long rows = A->h.rows, cols = A->h.cols;
+   
+  SVDCount[SVD_MXV]++;
+  memset(y, 0, rows * sizeof(double));
+  
+  for (row = 0; row < rows; row++) 
+    for (col = 0; col < cols; col++)
+      y[row] += value[row][col] * x[col];
+}
+
+void dense_mat_transposed_by_vec(Matrix A_, double *vec, double *out) {
+  DMat A = (DMat) A_;
+  long row, col;
+  double ** value = A->value;
+  long rows = A->h.rows, cols = A->h.cols;
+  /* vec in rows; out in columns */
+  
+  SVDCount[SVD_MXV]++;
+  memset(out, 0, cols * sizeof(double));
+
+  for (row = 0; row < rows; row++) 
+    for (col = 0; col < cols; col++)
+      out[col] += value[row][col] * vec[row];
+}
+
+void sparse_mat_transposed_by_vec(Matrix A_, double *x, double *out) {
+  SMat A = (SMat) A_;
   long i, j, end;
   long *pointr = A->pointr, *rowind = A->rowind;
   double *value = A->value;
-  long rows = A->rows, cols = A->cols;
+  long rows = A->h.rows, cols = A->h.cols;
   /* x in rows, out in columns */
 
   SVDCount[SVD_MXV]++;
