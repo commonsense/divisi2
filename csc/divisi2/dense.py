@@ -234,9 +234,8 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
 
         # Skip checking for zero rows, though it could still be a problem.
         
-        from csc.divisi2 import operators
         from csc.divisi2._svdlib import svd_ndarray
-        Ut, S, Vt = svd_ndarray(self, k)
+        Ut, S, Vt = svd_ndarray(np.asarray(self), k)
         U = DenseMatrix(Ut.T, self.row_labels, None)
         V = DenseMatrix(Vt.T, self.col_labels, None)
         return U, S, V
