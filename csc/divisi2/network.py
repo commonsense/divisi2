@@ -16,7 +16,6 @@ def set_conceptnet_weights(graph):
         score = edgedata['score']
         freq = edgedata['freq']
         edgedata['weight'] = conceptnet_weight(score, freq)
-        weight = log(edgedata['score'])/log(2)
 
     data_foreach(graph, set_weight)
 
@@ -47,10 +46,23 @@ def _extract_target_only(source, target, data):
     return (target, target)
 
 def prune(graph, cutoff=1):
-    ugraph = graph.to_undirected()
+    '''
+    Only keep nodes with a connectivity >= cutoff.
+    '''
+    # The to_undirected function is tempting, but it copies all the
+    # data, which is unnecessary for this algorithm.
+    ugraph = nx.Graph()
+    ugraph.add_nodes_from(graph)
+    ugraph.add_edges_from(graph.edges_iter())
     cores = nx.find_cores(ugraph)
     core_nodes = [n for n in graph.nodes() if cores[n] >= cutoff]
     return graph.subgraph(core_nodes)
+
+def relation_filter(relation):
+    if isinstance(relation, basestring): relation = [relation]
+    def filter(source, target, data):
+        return data['rel'] in relation
+    return filter
 
 LABELERS = {
     'nodes': _extract_nodes,
@@ -62,7 +74,7 @@ LABELERS = {
     'target_only': _extract_target_only,
 }
 
-def sparse_triples(graph, row_labeler, col_labeler, cutoff=1):
+def sparse_triples(graph, row_labeler, col_labeler, cutoff=1, filter=None):
     """
     A generator of sparse triples to put into a matrix, given a NetworkX graph.
     It is assumed that each edge of the graph yields two entries of the matrix.
@@ -112,10 +124,12 @@ def sparse_triples(graph, row_labeler, col_labeler, cutoff=1):
           % sorted(LABELERS.keys()))
     subgraph = prune(graph, cutoff=cutoff)
     for edge in subgraph.edges_iter(data=True):
+        if filter is not None and not filter(*edge): continue
         rows = row_labeler(*edge)
         cols = col_labeler(*edge)
-        yield (edge[2].get('weight', 1), rows[0], cols[1])
-        yield (edge[2].get('weight', 1), rows[1], cols[0])
+        weight = edge[2].get('weight', 1)
+        yield (weight, rows[0], cols[1])
+        yield (weight, rows[1], cols[0])
 
 def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
     """
@@ -129,6 +143,18 @@ def sparse_matrix(graph, row_labeler, col_labeler, cutoff=1):
     return matrix_builder(
       list(sparse_triples(graph, row_labeler, col_labeler, cutoff))
     )
+
+def filter_by_relation(concept_feature_matrix, relation):
+    '''
+    Returns only the part of the matrix about the given relation.
+
+    Be aware that empty rows may remain.
+    '''
+    from csc.divisi2.operators import filter_labels
+    all_features = concept_feature_matrix.col_labels
+    features_to_keep = [feature for feature in all_features
+                        if feature[1] == relation]
+    return filter_labels(concept_feature_matrix, cols=features_to_keep)
 
 def conceptnet_matrix(lang):
     # load from the included pickle file

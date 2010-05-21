@@ -74,6 +74,9 @@ class AbstractDenseArray(np.ndarray):
         """
         return (self.same_labels_as(other) and np.allclose(self, other))
 
+    def to_dense(self):
+        return self
+
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
@@ -233,6 +236,16 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     def T(self):
         return self.transpose()
     
+    def extend(self, other):
+        """
+        Concatenate two dense labeled matrices by rows.
+
+        The matrices should have disjoint row labels and the same column labels.
+        """
+        assert self.same_col_labels_as(other)
+        newlabels = list(self.row_labels) + list(other.row_labels)
+        return DenseMatrix(np.concatenate([self, other]), newlabels, self.col_labels)
+
     ### eigenproblems
     def svd(self, k):
         U, S, Vh = np.linalg.svd(self)
@@ -280,7 +293,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         # alternately "being really cheap".
         
         sparse_version = self[:21, :6].to_sparse()
-        before, after = str(sparse_version).split('\n', 1)
+        before, after = unicode(sparse_version).split('\n', 1)
         header = "DenseMatrix (%d by %d)" % (self.shape[0], self.shape[1])
         return header+'\n'+after
 

@@ -11,7 +11,7 @@ the results can include relationships not expressed in the original
 data but related by common sense. See http://divisi.media.mit.edu/ for
 more info."""
 
-VERSION = "2.0b1"
+VERSION = "2.0b2"
 
 try:
     from setuptools import setup, Extension
@@ -71,6 +71,7 @@ try:
             print >>sys.stderr, 'Warning: Skipped building the Cython file.'
             print >>sys.stderr, ' The svdlib source file is more recent than the Cython output file, but'
             print >>sys.stderr, ' you seem to lack Cython, so skipping rebuilding it.'
+            raw_input('Press Enter to acknowledge. ')
 except OSError:
     print >>sys.stderr, 'Warning: Skipped building the Cython file.'
 

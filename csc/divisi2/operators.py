@@ -4,6 +4,7 @@ Mathematical operators that support various kinds of Divisi matrices.
 import numpy as np
 from csc.divisi2.sparse import SparseMatrix, SparseVector, AbstractSparseArray
 from csc.divisi2.dense import DenseMatrix, DenseVector, AbstractDenseArray, from_ndarray
+from csc.divisi2.ordered_set import OrderedSet
 
 def multiply(arg1, arg2):
     """
@@ -90,6 +91,8 @@ def dot(arg1, arg2):
             return arg1._dot_sparse(arg2)
         elif isinstance(arg2, (AbstractDenseArray, np.ndarray)):
             return arg1._dot_dense(arg2)
+        elif hasattr(arg2, 'matvec_transpose'):
+            return arg2.matvec_transpose(arg1.T)
         elif np.isscalar(arg2):
             return arg1.cmul(arg2)
         else:
@@ -103,6 +106,8 @@ def dot(arg1, arg2):
         elif isinstance(arg2, np.ndarray):
             # ignore labels so that operations like .matvec work
             return np.dot(arg1, arg2)
+        elif hasattr(arg2, 'matvec_transpose'):
+            return arg2.matvec_transpose(arg1.T)
         elif isscalar(arg2):
             return np.multiply(arg1, arg2)
         else:
@@ -114,11 +119,48 @@ def dot(arg1, arg2):
         else:
             return np.dot(arg1, arg2)
 
+    elif hasattr(arg1, 'matvec'):
+        # allows multiplying ReconstructedMatrices by ad-hoc categories
+        return arg1.matvec(arg2)
+
     elif np.isscalar(arg1):
         return multiply(arg1, arg2)
 
     else:
         return np.dot(arg1, arg2)
+
+matrixmultiply = dot
+
+def match_inner_labels(left, right):
+    """
+    Return (left2, right2), so that the inner labels of left2 and right2
+    line up. This allows for matrix multiplication.
+
+    See also SparseMatrix.match_labels.
+    """
+    left_inner = left.all_labels()[-1]
+    right_inner = right.all_labels()[0]
+    if left_inner is None or right_inner is None: return (left, right)
+    if left_inner == right_inner: return (left, right)
+    intersection = OrderedSet(set(left_inner) & set(right_inner))
+    left_indices = [left_inner.index(x) for x in intersection]
+    right_indices = [right_inner.index(x) for x in intersection]
+    return left[..., left_indices], right[right_indices, ...]
+
+def filter_labels(matrix, rows=None, cols=None):
+    all_rows, all_cols = matrix.row_labels, matrix.col_labels
+    if rows is not None:
+        # Slice rows first
+        row_indices = [all_rows.index(row) for row in rows]
+        matrix = matrix[row_indices, ...]
+    if cols is not None:
+        col_indices = [all_cols.index(col) for col in cols]
+        matrix = matrix[..., col_indices]
+    return matrix
+
+def aligned_matrix_multiply(arg1, arg2):
+    arg1m, arg2m = match_inner_labels(arg1, arg2)
+    return dot(arg1m, arg2m)
 
 def transpose_dot(arg1, arg2):
     """

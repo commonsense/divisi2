@@ -13,6 +13,12 @@ class LabeledVectorMixin(object):
         return self[self.index(label)]
     
     def all_labels(self):
+        """
+        Returns a one-element list containing `self.labels`.
+        
+        This is useful when mapping lists of indices one-to-one with lists
+        of labels.
+        """
         return [self.labels]
 
     def same_labels_as(self, other):
@@ -81,6 +87,12 @@ class LabeledMatrixMixin(object):
         return self.same_row_labels_as(other) and self.same_col_labels_as(other)
     
     def all_labels(self):
+        """
+        Returns the two-element list of `[self.row_labels, self.col_labels]`.
+
+        This is useful when mapping lists of indices one-to-one with lists
+        of labels.
+        """
         return [self.row_labels, self.col_labels]
 
     def unlabeled(self):

@@ -13,9 +13,22 @@ Building a common sense matrix
 The first thing we'll need to do is to import Divisi, and then load its graph
 representation of ConceptNet.
 
-This file is packaged with Divisi and stored in the csc/divisi2/data directory,
-so we can use a special path beginning with `data:` to get at it. You could
-give a normal path as well to load a different file.
+.. note::
+
+    **This is going to be slow.** We're building the matrix from nothing, and
+    in most cases, you'd want to load a pickle file where you've already done
+    this. In fact, this particular pickle file is already included in Divisi.
+
+    If you want to get to the point faster, you can type::
+
+        >>> A = divisi2.load('data:matrices/conceptnet_en')
+
+    and jump to :ref:`aspace_svd`. But if you keep reading this section,
+    we'll show you how to *make* that matrix.
+
+The graph file is packaged with Divisi and stored in the csc/divisi2/data
+directory, so we can use a special path beginning with `data:` to get at it.
+You could give a normal path as well to load a different file.
 
 >>> from csc import divisi2
 >>> conceptnet = divisi2.load('data:graphs/conceptnet_en.graph')
@@ -54,7 +67,21 @@ columns are labeled with *features* that describe them.
    distinguishes "baseball is a sport" from "sport is a baseball". When
    printed as labels, however, these tuples are abbreviated:
    `('right', 'IsA', 'sport')` looks like `IsA/sport`, and
-   `('left', 'IsA', 'sport')` looks like `sport\IsA`.
+   `('left', 'IsA', 'sport')` looks like `sport\\IsA`.
+
+Now that you've spent all this time constructing a matrix, you might want to
+save a copy of it in the current directory::
+
+    >>> divisi2.save(A, 'conceptnet_en.pickle')
+
+Then you could load it again with::
+
+    >>> A = divisi2.load('conceptnet_en.pickle')
+
+.. _aspace_svd:
+
+Singular value decomposition
+----------------------------
 
 Given this matrix, we can factor it using SVD and ask for 100
 principal components, and then reconstruct its approximation from the factors.
@@ -166,7 +193,7 @@ at this particular step, so Divisi has a shorthand for this:
 -0.031207494261339251
 
 Varations on normalization
---------------------------
+..........................
 
 In many applications, we want to rank similarities or predictions and choose
 the best ones. If we don't normalize anything, the concepts and features that
@@ -215,4 +242,60 @@ become unit vectors, but they all become closer to unit vectors, at least.
 [('table', 1.718), ('desk', 1.195), ('kitchen', 0.988), ('chair', 0.873),
 ('restaurant', 0.850), ('plate', 0.822), ('bed', 0.772), ('cabinet', 0.678), 
 ('refrigerator', 0.652), ('cupboard', 0.617)]
+
+Spreading activation
+--------------------
+
+With the similarity measure, we have been able to tell whether two concepts
+have similar common-sense properties to each other. In applications such as
+sentiment analysis or topic detection, however, we are looking for something
+more general: whether two concepts are *related* in any way by common sense.
+
+For example, the concepts "sad" and "cry" are only a bit similar, but they are
+very related.
+
+Spreading activation works by assigning values, or *activations*, to nodes in a
+network. Then, those nodes spread some of their activation to their neighboring
+nodes. This process can be iterated many times. The result is that, given a
+starting node or set of nodes, it associates every node with a quantity of
+activation.
+
+Divisi2 provides the *reconstruct_activation* function, which takes in SVD
+results and constructs an operator that simulates an infinite number of steps
+of spreading activation (with diminishing effects).
+
+.. note::
+
+    We do not include the `conceptnet_assoc_en` matrix with Divisi2, so the
+    first time you run this, it will have to build it. This takes some time.
+
+>>> assoc = divisi2.network.conceptnet_assoc('en')
+>>> U, S, _ = assoc.svd(k=100)
+>>> spread = divisi2.reconstruct_activation(U, S)
+
+Each entry of the matrix says how much activation would spread from one concept
+to another, with a maximum of 1.0.
+
+>>> spread.entry_named('cat', 'cat')
+1.0000000000000007
+>>> spread.entry_named('cat', 'dog')
+0.80290202113709208
+>>> spread.entry_named('cat', 'tree')
+0.2546597941841342
+>>> spread.entry_named('cat', 'buddhism')
+0.092909665436672548
+
+We can examine the rows of this matrix like other Divisi2 results. For example,
+what are the concepts most related to thinking?
+
+>>> spread.row_named('think').top_items()
+[(u'think', 1.0), (u'create idea', 0.920), (u'brain activity', 0.919), (u'contemplate', 0.911), (u'cogitate', 0.906), (u'solve problem', 0.892), (u'insight', 0.886), (u'cognition', 0.883), (u'mind', 0.882), (u'answer question', 0.880)]
+
+What are the concepts most related to sadness? (This could be useful in
+determining the emotional affect of things!)
+
+>>> spread.row_named('sad').top_items()
+[(u'sad', 1.0), (u'sob', 0.910), (u'wipe eye', 0.900), (u'watery eye', 0.896), (u'weep tear', 0.895), (u'shed tear', 0.894), (u'weep', 0.894), (u'sad emotion', 0.894), (u'produce tear', 0.893), (u'sob tear', 0.893)]
+
+This operation becomes even more powerful when used together with :ref:`categories`.
 

@@ -1,5 +1,6 @@
 from csc.divisi2.network import conceptnet_matrix, conceptnet_assoc
 from csc.divisi2.reconstructed import reconstruct, reconstruct_similarity, reconstruct_activation
+from csc import divisi2
 import numpy as np
 
 def analogyspace_predictions():
@@ -14,6 +15,11 @@ def analogyspace_similarity():
 
 def spreading_activation():
     assoc = conceptnet_assoc('en')
-    Q, S, _ = assoc.svd(k=100)
-    L = np.sqrt(S)
-    return reconstruct_activation(Q, L)
+    U, S, _ = assoc.normalize_all().svd(k=100)
+    return reconstruct_activation(U, S, post_normalize=True)
+
+def spreading_activation_weighted():
+    assoc = conceptnet_assoc('en')
+    U, S, _ = assoc.normalize_all().svd(k=100)
+    return reconstruct_activation(U, S, post_normalize=False)
+

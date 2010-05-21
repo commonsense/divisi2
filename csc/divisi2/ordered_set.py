@@ -1,6 +1,8 @@
 from itertools import izip
 from priodict import priorityDictionary
 
+SLICE_ALL = slice(None)
+
 class OrderedSet(object):
     """
     An OrderedSet acts very much like a list. There are two important
@@ -33,6 +35,9 @@ class OrderedSet(object):
     def __getitem__(self, index):
         if index is None:
             raise TypeError("Can't index an OrderedSet with None")
+        elif index == SLICE_ALL:
+            # an optimization. use .copy() to make a copy.
+            return self
         elif hasattr(index, '__index__') or isinstance(index, slice):
             result = self.items[index]
             if isinstance(result, list):
