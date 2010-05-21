@@ -94,6 +94,8 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         obj = ndarray.view(cls)
         if labels is None:
             obj.labels = None
+        elif isinstance(labels, OrderedSet):
+            obj.labels = labels
         else:
             obj.labels = OrderedSet(labels)
         return obj
@@ -170,10 +172,14 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         obj = ndarray.view(cls)
         if row_labels is None:
             obj.row_labels = None
+        elif isinstance(row_labels, OrderedSet):
+            obj.row_labels = row_labels
         else:
             obj.row_labels = OrderedSet(row_labels)
         if col_labels is None:
             obj.col_labels = None
+        elif isinstance(row_labels, OrderedSet):
+            obj.col_labels = col_labels
         else:
             obj.col_labels = OrderedSet(col_labels)
         return obj
@@ -217,6 +223,16 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     def T(self):
         return self.transpose()
     
+    def extend(self, other):
+        """
+        Concatenate two dense labeled matrices by rows.
+
+        The matrices should have disjoint row labels and the same column labels.
+        """
+        assert self.same_col_labels_as(other)
+        newlabels = list(self.row_labels) + list(other.row_labels)
+        return DenseMatrix(np.concatenate([self, other]), newlabels, self.col_labels)
+
     ### eigenproblems
     def svd(self, k):
         """

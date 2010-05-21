@@ -141,4 +141,3 @@ def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
     svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeDMat(packed)
     return wrapSVDrec(svdrec, 0)
-
