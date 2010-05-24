@@ -130,8 +130,9 @@ class CCIPCA(object):
 
     def compute_attractor(self, index, vec):
         """
-        Compute the attractor vector for the eigenvector with index `index`
-        with the new vector `vec`.
+        Compute the attractor vector for the eigenvector with index
+        `index` with the new vector `vec`: the projection of the
+        eigenvector onto `vec`.
         """
         if index == 0:
             # special case for the mean vector
@@ -196,9 +197,14 @@ class CCIPCA(object):
         return self.eigenvector_residue(index, vec)
 
     def sort_vectors(self):
+        """
+        Sorts the eigenvector table in decreasing order, in place,
+        keeping the special eigenvector 0 first. Returns the mapping
+        from old to new eigenvectors.
+        """
         eigs = self.eigenvalues()
         
-        # keep eigenvector 0 in front
+        # keep eigenvector 0 in front (eigs was a new list)
         eigs[0] = np.inf
         sort_order = np.asarray(np.argsort(-eigs))
 
@@ -206,6 +212,10 @@ class CCIPCA(object):
         return sort_order
     
     def match_labels(self, vec, touch=False):
+        """
+        Returns a new vector with the data of `vec` but aligned to the
+        current labels.
+        """
         result = self.zero_column()
         for (key, value) in vec.named_items():
             if touch:
@@ -216,6 +226,11 @@ class CCIPCA(object):
         return result
 
     def learn_vector(self, vec):
+        """
+        Updates the eigenvectors to account for a new vector. Returns
+        the magnitudes of each eigenvector that would (approximately)
+        reconstruct the given vector.
+        """
         if vec.labels is not self.matrix.row_labels:
             current_vec = self.match_labels(vec, touch=True)
         else:
@@ -234,7 +249,9 @@ class CCIPCA(object):
 
     def project_vector(self, vec):
         """
-        Like learn_vector, but doesn't change the state.
+        Projects `vec` onto each eigenvector in succession. Returns
+        the magnitude of each eigenvector.  (Like learn_vector, but
+        doesn't change the state.)
         """
         if vec.labels is not self.matrix.row_labels:
             current_vec = self.match_labels(vec, touch=False)
@@ -261,6 +278,10 @@ class CCIPCA(object):
         return self.reconstruct(mags)
     
     def forget_row(self, slot, label):
+        """
+        Called by RecyclingSet when an index gets reused. Clears the
+        old data out of the eigenvector table.
+        """
         logger.debug("forgetting row %d" % slot)
         self.matrix[slot,:] = 0
 
