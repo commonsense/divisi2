@@ -227,10 +227,12 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         return self / np.sqrt(row_norms + EPSILON) / np.sqrt(col_norms + EPSILON)
     
     def row_norms(self):
-        return np.sqrt(np.sum(self*self, axis=1))
+        as_array = np.asarray(self)
+        return np.sqrt(np.sum(as_array*as_array, axis=1))
     
     def col_norms(self):
-        return np.sqrt(np.sum(self*self, axis=0))
+        as_array = np.asarray(self)
+        return np.sqrt(np.sum(as_array*as_array, axis=0))
 
     @property
     def T(self):
