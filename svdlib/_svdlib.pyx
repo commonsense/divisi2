@@ -134,26 +134,68 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping):
     its rows into the compressed sparse columns. This has the effect of
     transposing the matrix at the same time.
 
-    row_mapping and col_mapping specify the output indices for each input row.
-    TODO: Be careful with transposing!
+    row_mapping and col_mapping specify the output indices for each
+    input row and column (before transposing).
+    
+    Implementation notes: we need to build the output in order of
+    columns, so we iterate through source rows in sorted order, given
+    by np.argsort(row_mapping). We then need to build each output row
+    in sorted order, which requires a bit more care.
     """
-    # TODO!!!
     cdef smat *output 
-    cdef int i, j, k, r
+    cdef int out_ptr, prev_out_column, cur_out_column, i, k, col_len, output_index
+    cdef np.ndarray[long, ndim=1] row_order, col_order
 
-    # np.argsort.
+    row_order = np.argsort(row_mapping)
 
-    r = 0
-    output = svdNewSMat(llmat.dim[1], llmat.dim[0], llmat.nnz)
+    # Create the (transposed) output matrix.
+    output = svdNewSMat(np.max(col_mapping)+1, np.max(row_mapping)+1, llmat.nnz)
     output.pointr[0] = 0
-    for i from 0 <= i < llmat.dim[0]:
-        k = llmat.root[i]
-        while (k != -1):
-            output.value[r] = llmat.val[k]
-            output.rowind[r] = llmat.col[k]
-            r += 1
+
+    # Iterate through rows in the order they appear as output columns.
+    # Note importantly that this may yield empty output columns.
+    out_ptr = 0
+    prev_out_column = 0
+    for row_index from 0 <= row_index < len(row_order):
+        cur_out_column = row_mapping[row_index]
+        # Fill in start pointers for skipped columns.
+        for i from prev_out_column + 1 <= i <= cur_out_column:
+            output.pointr[i] = output.pointr[prev_out_column + 1]
+        prev_out_column = cur_out_column
+
+        # Iterate through columns in the source row, placing them in
+        # the proper places in the output column.
+
+        # First, determine the length of the column
+        col_len = 0
+        k = llmat.root[cur_out_column]
+        while k != -1: # signifies end of the source row
+            col_len += 1
             k = llmat.link[k]
-        output.pointr[i+1] = r
+
+        # Now get the column of each entry as an array.
+        column_indices = np.zeros(col_len)
+        i = 0
+        k = llmat.root[cur_out_column]
+        while k != -1:
+            column_indices[i] = llmat.col[k]
+            i += 1
+            k = llmat.link[k]
+
+        # Find the index each column goes in.
+        col_order = np.argsort(column_indices)
+
+        # Put each value in the appropriate column.
+        i = 0
+        k = llmat.root[cur_out_column]
+        while k != -1:
+            output_index = out_ptr + col_order[i]
+            output.value[output_index] = llmat.val[k]
+            output.rowind[output_index] = llmat.col[k]
+            i += 1
+            k = llmat.link[k]
+        
+        output.pointr[cur_out_column+1] = output.pointr[cur_out_column] + col_len
     return output
 
 
@@ -179,13 +221,15 @@ def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
     svdFreeDMat(packed)
     return wrapSVDrec(svdrec, 0)
 
-def svd_sum(mats, int k):
+def svd_sum(mats, int k, row_mappings, col_mappings):
     cdef summing_mat *sum_mat = summing_mat_new(len(mats))
     cdef svdrec *svdrec
     cdef smat *tmp
     for i in range(len(mats)):
         # Go ahead and let it transpose.
-        summing_mat_set(sum_mat, i, <matrix *>llmat_to_smat(<LLMatObject *> mats[i]))
+        mat = mats[i].llmatrix
+        mat.compress()
+        summing_mat_set(sum_mat, i, <matrix *>llmat_to_smat_remapped(<LLMatObject *>mat, row_mappings[i], col_mappings[i]))
     svdrec = svdLAS2A(<matrix *>sum_mat, k)
     summing_mat_free(sum_mat)
     return wrapSVDrec(svdrec, 1) # transposed.

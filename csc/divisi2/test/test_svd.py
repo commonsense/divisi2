@@ -50,4 +50,10 @@ def test_k_too_large():
     assert len(S) == 3
 
 def test_blend():
-    U, S, V = blend_svd([mat_4x3, second_mat_4x3])
+    from csc.divisi2.blending import blend, blend_svd
+    Uref, Sref, Vref = blend([mat_4x3, second_mat_4x3]).svd(k=2)
+    U, S, V = blend_svd([mat_4x3, second_mat_4x3], k=2)
+    rec_ref = dot(Uref * Sref, Vref.T)
+    rec_opt = dot(U * S, V.T)
+    assert np.allclose(rec_ref, rec_opt)
+    
