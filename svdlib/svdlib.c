@@ -80,6 +80,44 @@ void svdFreeSMat(SMat S) {
   free(S);
 }
 
+SummingMat summing_mat_new(int n) {
+  SummingMat  mat = (SummingMat ) calloc(1, sizeof(struct summing_mat));
+  mat->h.transposed = summing_mat_transposed;
+  mat->h.free = summing_mat_free;
+  mat->h.mat_by_vec = summing_mat_by_vec;
+  mat->h.mat_transposed_by_vec = summing_mat_transposed_by_vec;
+  mat->h.rows = mat->h.cols = mat->h.vals = 0;
+  mat->n = n;
+  mat->mats = (Matrix*) calloc(n, sizeof(Matrix));
+  return mat;
+}
+
+void summing_mat_set(SummingMat mat, int i, Matrix m) {
+  mat->mats[i] = m;
+  if (m->rows > mat->h.rows) mat->h.rows = m->rows;
+  if (m->cols > mat->h.cols) mat->h.cols = m->cols;
+  mat->h.vals += m->vals; /* vals is the number of specified entries (for sparse matrices) */
+}
+
+void summing_mat_free(SummingMat mat) {
+  int i;
+  for (i = 0; i<mat->n; i++) {
+    Matrix m = mat->mats[i];
+    m->free(m);
+  }
+  free(mat->mats);
+  free(mat);
+}
+
+SummingMat summing_mat_transposed(SummingMat mat) {
+  SummingMat t = summing_mat_new(mat->n);
+  int i;
+  for (i=0; i<mat->n; i++) {
+    Matrix m = mat->mats[i];;
+    summing_mat_set(t, i, m->transposed(m));
+  }
+  return t;
+}
 
 /* Creates an empty SVD record */
 SVDRec svdNewSVDRec(void) {

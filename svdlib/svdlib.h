@@ -12,6 +12,7 @@
 typedef struct smat *SMat;
 typedef struct dmat *DMat;
 typedef struct matrix *Matrix;
+typedef struct summing_mat *SummingMat;
 typedef struct svdrec *SVDRec;
 
 /* Abstract matrix class */
@@ -39,6 +40,13 @@ struct smat {
 struct dmat {
   struct matrix h;
   double **value; /* Accessed by [row][col]. Free value[0] and value to free.*/
+};
+
+/* summing matrix */
+struct summing_mat {
+  struct matrix h;
+  int n;
+  Matrix *mats;
 };
 
 struct svdrec {
@@ -89,6 +97,13 @@ extern void svdFreeDMat(DMat D);
 SMat svdNewSMat(int rows, int cols, int vals);
 /* Frees a sparse matrix. */
 void svdFreeSMat(SMat S);
+
+/* Summing matrix operations */
+SummingMat summing_mat_new(int n);
+void summing_mat_set(SummingMat mat, int i, Matrix m);
+void summing_mat_free(SummingMat m);
+SummingMat summing_mat_transposed(SummingMat m);
+
 
 /* Creates an empty SVD record. */
 SVDRec svdNewSVDRec(void);

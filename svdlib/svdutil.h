@@ -94,15 +94,18 @@ extern long svd_idamax(long n, double *dx, long incx);
  * n = ncol (out stores product vector).		              *
  **************************************************************/
 void ATransposeA_by_vec(Matrix A, double *vec, double *out, double *temp);
+void mat_by_vec(Matrix A, double *vec, double *out);
 
 /***********************************************************
  * multiplication of matrix A by vector x, where A is 	   *
  * nrow by ncol (nrow >> ncol).  y stores product vector.  *
  ***********************************************************/
-void sparse_mat_by_vec(Matrix A_, double *x, double *y);
-void dense_mat_by_vec(Matrix A_, double *x, double *y);
+void sparse_mat_by_vec(Matrix A_, double *x, double *out);
+void dense_mat_by_vec(Matrix A_, double *x, double *out);
 void dense_mat_transposed_by_vec(Matrix A_, double *vec, double *out);
 void sparse_mat_transposed_by_vec(Matrix A_, double *x, double *out);
+void summing_mat_by_vec(Matrix A_, double *vec, double *out);
+void summing_mat_transposed_by_vec(Matrix A_, double *vec, double *out);
 
 /***********************************************************************
  *                                                                     *

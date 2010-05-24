@@ -612,7 +612,7 @@ long ritvec(long n, Matrix A, SVDRec R, double kappa, double *ritz, double *bnd,
     xnorm = sqrt(svd_ddot(n, xv2, 1, xv2, 1));
       
     /* multiply by matrix A to get (scaled) left s-vector */
-    A->mat_by_vec(A, R->Vt->value[x], R->Ut->value[x]);
+    mat_by_vec(A, R->Vt->value[x], R->Ut->value[x]);
     tmp1 = 1.0 / tmp0;
     svd_dscal(A->rows, tmp1, R->Ut->value[x], 1);
     xnorm *= tmp1;

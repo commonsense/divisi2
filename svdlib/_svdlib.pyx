@@ -33,6 +33,10 @@ cdef extern from "svdlib.h":
         matrix h
         double **value # /* Accessed by [row][col]. Free value[0] and value to free.*/
 
+    cdef struct summing_mat:
+        matrix h
+        # Cython doesn't need to know anything beyond that.
+
     cdef struct svdrec:
         int d       #  /* Dimensionality (rank) */
         dmat *Ut    #  /* Transpose of left singular vectors. (d by m)
@@ -51,6 +55,10 @@ cdef extern from "svdlib.h":
     cdef extern dmat *svdNewDMat(int rows, int cols)
     # Frees a dense matrix.
     cdef extern void svdFreeDMat(dmat *D)
+
+    cdef extern summing_mat *summing_mat_new(int n)
+    cdef extern void summing_mat_set(summing_mat *m, int i, matrix *m)
+    cdef extern void summing_mat_free(summing_mat *m)
 
     
     #/* Creates an empty SVD record. */
@@ -102,6 +110,7 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
     Transform a Pysparse ll_mat object into an svdlib SMat by packing 
     its rows into the compressed sparse columns. This has the effect of
     transposing the matrix at the same time.
+
     """
     cdef smat *output 
     cdef int i, j, k, r
@@ -117,7 +126,36 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
             r += 1
             k = llmat.link[k]
         output.pointr[i+1] = r
-    return output;
+    return output
+
+cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping):
+    """
+    Transform a Pysparse ll_mat object into an svdlib SMat by packing 
+    its rows into the compressed sparse columns. This has the effect of
+    transposing the matrix at the same time.
+
+    row_mapping and col_mapping specify the output indices for each input row.
+    TODO: Be careful with transposing!
+    """
+    # TODO!!!
+    cdef smat *output 
+    cdef int i, j, k, r
+
+    # np.argsort.
+
+    r = 0
+    output = svdNewSMat(llmat.dim[1], llmat.dim[0], llmat.nnz)
+    output.pointr[0] = 0
+    for i from 0 <= i < llmat.dim[0]:
+        k = llmat.root[i]
+        while (k != -1):
+            output.value[r] = llmat.val[k]
+            output.rowind[r] = llmat.col[k]
+            r += 1
+            k = llmat.link[k]
+        output.pointr[i+1] = r
+    return output
+
 
 def svd_llmat(llmat, int k):
     cdef smat *packed
@@ -133,7 +171,6 @@ def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
     cdef svdrec *svdrec
     cdef int rows = mat.shape[0]
     cdef int cols = mat.shape[1]
-    cdef dmat *output
     packed = svdNewDMat(rows, cols)
     for row from 0 <= row < rows:
         for col from 0 <= col < cols:
@@ -141,3 +178,14 @@ def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
     svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeDMat(packed)
     return wrapSVDrec(svdrec, 0)
+
+def svd_sum(mats, int k):
+    cdef summing_mat *sum_mat = summing_mat_new(len(mats))
+    cdef svdrec *svdrec
+    cdef smat *tmp
+    for i in range(len(mats)):
+        # Go ahead and let it transpose.
+        summing_mat_set(sum_mat, i, <matrix *>llmat_to_smat(<LLMatObject *> mats[i]))
+    svdrec = svdLAS2A(<matrix *>sum_mat, k)
+    summing_mat_free(sum_mat)
+    return wrapSVDrec(svdrec, 1) # transposed.
