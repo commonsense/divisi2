@@ -2,8 +2,7 @@ import logging
 import numpy as np
 logger = logging.getLogger(__name__)
 
-from csc.divisi2.ordered_set import OrderedSet
-from csc.divisi2.recycling_set import RecyclingSet
+from csc.divisi2.ordered_set import OrderedSet, RecyclingSet
 from csc.divisi2.dense import DenseMatrix, DenseVector
 from csc.divisi2.operators import projection, dot
 
