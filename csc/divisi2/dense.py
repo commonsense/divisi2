@@ -199,6 +199,26 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         from csc.divisi2.sparse import SparseMatrix
         return SparseMatrix(self, self.row_labels, self.col_labels)
 
+    # Optimize row and column retrieval
+    def get_row(self, row_idx):
+        return DenseArray(np.ndarray.__getitem__(row_idx), self.col_labels)
+
+    def get_col(self, col_idx):
+        return DenseArray(np.ndarray.__getitem__(col_idx), self.row_labels)
+
+    def row_named(self, label):
+        "Get the row with a given label as a vector."
+        return self.get_row(self.row_index(label))
+
+    def col_named(self, label):
+        "Get the column with a given label as a vector."
+        return self.get_col(self.col_index(label))
+    
+    def entry_named(self, row_label, col_label):
+        "Get the entry with a given row and column label."
+        return np.ndarray.__getitem__((self.row_index(row_label), self.col_index(col_label)))
+
+    # Other operations.
     def transpose(self):
         result = np.ndarray.transpose(self)
         result.col_labels = copy(self.row_labels)
