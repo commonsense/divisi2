@@ -178,7 +178,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
             obj.row_labels = OrderedSet(row_labels)
         if col_labels is None:
             obj.col_labels = None
-        elif isinstance(row_labels, OrderedSet):
+        elif isinstance(col_labels, OrderedSet):
             obj.col_labels = col_labels
         else:
             obj.col_labels = OrderedSet(col_labels)
