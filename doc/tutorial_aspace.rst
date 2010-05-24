@@ -21,7 +21,7 @@ representation of ConceptNet.
 
     If you want to get to the point faster, you can type::
 
-        >>> A = divisi2.load('data:matrices/conceptnet_en')
+        >>> A = divisi2.network.conceptnet_matrix('en')
 
     and jump to :ref:`aspace_svd`. But if you keep reading this section,
     we'll show you how to *make* that matrix.
