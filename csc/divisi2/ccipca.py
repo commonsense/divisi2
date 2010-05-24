@@ -217,7 +217,7 @@ class CCIPCA(object):
         current labels.
         """
         result = self.zero_column()
-        for (key, value) in vec.named_items():
+        for key, value in vec.named_items():
             if touch:
                 index = result.labels.add(key)
             else:
@@ -234,7 +234,7 @@ class CCIPCA(object):
         if vec.labels is not self.matrix.row_labels:
             current_vec = self.match_labels(vec, touch=True)
         else:
-            current_vec = vec[:]
+            current_vec = vec
 
         self.iteration += 1
         magnitudes = np.zeros((self.shape[1],))
@@ -256,7 +256,7 @@ class CCIPCA(object):
         if vec.labels is not self.matrix.row_labels:
             current_vec = self.match_labels(vec, touch=False)
         else:
-            current_vec = vec.copy()
+            current_vec = vec
         magnitudes = np.zeros((self.shape[1],))
         for index in xrange(min(self.shape[1], self.iteration+1)):
             mag, new_vec = self.eigenvector_residue(index, current_vec)
