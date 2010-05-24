@@ -214,7 +214,7 @@ SMat svdTransposeS(SMat S) {
   if (S->offset_for_col)
     N->offset_for_row = copyVector(S->offset_for_col, S->h.cols, "svdTransposeS: offset_for_row");
   if (S->offset_for_row)
-    N->offset_for_col = copyVector(S->offset_for_row, S->h.rows, "svdTransposeS: offset_for_row");
+    N->offset_for_col = copyVector(S->offset_for_row, S->h.rows, "svdTransposeS: offset_for_col");
 
   return N;
 }

@@ -68,8 +68,9 @@ def blend_svd(mats, factors=None, k=50):
     # Elide zero row tests, etc.
 
     from csc.divisi2._svdlib import svd_sum
-    Ut, S, Vt = svd_sum(mats, k, row_mappings, col_mappings)
-    U = DenseMatrix(Ut.T, self.row_labels, None)
-    V = DenseMatrix(Vt.T, self.col_labels, None)
-    return (U, S, V)
+    from csc.divisi2 import DenseMatrix
+    Ut, S, Vt = svd_sum(mats, k, factors, row_mappings, col_mappings)
+    U = DenseMatrix(Ut.T, row_labels, None)
+    V = DenseMatrix(Vt.T, col_labels, None)
+    return U, S, V
 
