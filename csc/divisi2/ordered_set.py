@@ -154,8 +154,8 @@ class OrderedSet(object):
             True
         '''
         if self is other: return True
-        if len(self) != len(other): return False
         if not isinstance(other, OrderedSet): return False
+        if len(self) != len(other): return False
 
         for (s, o) in izip(self, other):
             if s != o: return False

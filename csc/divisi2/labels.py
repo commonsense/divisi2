@@ -73,11 +73,11 @@ class LabeledMatrixMixin(object):
 
     def same_row_labels_as(self, other):
         return (self.shape[0] == other.shape[0] and
-                self.row_labels == other.row_labels)
+                self.row_labels == getattr(other, 'row_labels', None))
     
     def same_col_labels_as(self, other):
         return (self.shape[1] == other.shape[1] and
-                self.col_labels == other.col_labels)
+                self.col_labels == getattr(other, 'col_labels', None))
     
     def same_labels_as(self, other):
         """
