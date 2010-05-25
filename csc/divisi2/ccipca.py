@@ -54,9 +54,7 @@ class CCIPCA(object):
         rememberance parameter remembrance.
         
         """
-        self.eigenvalues = np.asarray(matrix.col_norms())
-        self.matrix = matrix.normalize_cols()
-        self.shape = matrix.shape
+        self.matrix = matrix
         self.iteration = iteration
         self.bootstrap = bootstrap
         self.amnesia = amnesia
@@ -85,12 +83,16 @@ class CCIPCA(object):
         matrix = DenseMatrix(np.zeros((m, k)), labels)
         return CCIPCA(matrix, 0, k*2, amnesia, remembrance, True)
 
+    @property
+    def shape(self):
+        return self.matrix.shape
+
     def zero_column(self):
         """
         Get a vector labeled like a column of the CCIPCA matrix, all of whose
         entries are zero.
         """
-        return DenseVector(np.zeros(self.shape[0]), self.matrix.row_labels)
+        return DenseVector(np.zeros((self.shape[0],)), self.matrix.row_labels)
 
     def get_weighted_eigenvector(self, index):
         """
@@ -100,7 +102,7 @@ class CCIPCA(object):
         Real eigenvectors start counting at 1. The 0th eigenvector represents
         the moving average of the input data.
         """
-        return self.matrix[:,index] * self.eigenvalues[index]
+        return self.matrix[:,index]
 
     def get_unit_eigenvector(self, index):
         """
@@ -109,23 +111,23 @@ class CCIPCA(object):
         Real eigenvectors start counting at 1. The 0th eigenvector represents
         the moving average of the input data.
         """
-        return self.matrix[:,index]
+        return self.get_weighted_eigenvector(index).hat()
 
     def set_eigenvector(self, index, vec):
         """
-        Sets eigenvector number `index` to the specified vector. This
-        updates the eigenvalue in the process. Returns the eigenvalue.
+        Sets eigenvector number `index` to the specified vector.
         """
-        self.eigenvalues[index] = eigval = np.linalg.norm(vec)
-        self.matrix[:,index] = vec / eigval
-        return eigval
+        self.matrix[:,index] = vec
 
     def eigenvectors(self):
-        return self.matrix
+        return self.matrix.normalize_cols()
 
     def get_eigenvalue(self, index):
-        return self.eigenvalues[index]
+        return np.linalg.norm(self.get_weighted_eigenvector(index))
     
+    def eigenvalues(self):
+        return self.matrix.col_norms()
+
     def compute_attractor(self, index, vec):
         """
         Compute the attractor vector for the eigenvector with index
@@ -175,8 +177,8 @@ class CCIPCA(object):
 
         if self.iteration == index:
             # create a new eigenvector
-            eigval = self.set_eigenvector(index, vec)
-            return eigval, self.zero_column()
+            self.set_eigenvector(index, vec)
+            return np.linalg.norm(vec), self.zero_column()
 
         n = min(self.iteration, self.remembrance)
         if n < self.bootstrap:
@@ -200,12 +202,11 @@ class CCIPCA(object):
         keeping the special eigenvector 0 first. Returns the mapping
         from old to new eigenvectors.
         """
-        # keep eigenvector 0 in front
-        eig = self.eigenvalues
-        old_eig0 = eig[0]
-        eig[0] = np.inf
-        sort_order = np.asarray(np.argsort(-eig))
-        eig[0] = old_eig0
+        eigs = self.eigenvalues()
+        
+        # keep eigenvector 0 in front (eigs was a new list)
+        eigs[0] = np.inf
+        sort_order = np.asarray(np.argsort(-eigs))
 
         self.matrix[:] = self.matrix[:,sort_order]
         return sort_order
@@ -283,18 +284,11 @@ class CCIPCA(object):
         """
         logger.debug("forgetting row %d" % slot)
         self.matrix[slot,:] = 0
-        self.matrix = self.matrix.normalize_cols()
 
     def train_matrix(self, matrix):
         for col in xrange(matrix.shape[1]):
             print col, '/', matrix.shape[1]
             self.learn_vector(matrix[:,col])
-
-def for_profiling(A, n):
-    c = CCIPCA.make(100, A.row_labels, amnesia=1.0)
-    for col in xrange(n):
-        c.learn_vector(A[:,col])
-        
 
 def evaluate_assertions(input_data, test_filename):
     """
