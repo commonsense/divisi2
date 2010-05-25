@@ -201,10 +201,10 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
 
     # Optimize row and column retrieval
     def get_row(self, row_idx):
-        return DenseArray(np.ndarray.__getitem__(row_idx), self.col_labels)
+        return DenseVector(np.ndarray.__getitem__(self, row_idx), self.col_labels)
 
     def get_col(self, col_idx):
-        return DenseArray(np.ndarray.__getitem__(col_idx), self.row_labels)
+        return DenseVector(np.ndarray.__getitem__(self, (slice(None), col_idx)), self.row_labels)
 
     def row_named(self, label):
         "Get the row with a given label as a vector."
@@ -216,7 +216,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     
     def entry_named(self, row_label, col_label):
         "Get the entry with a given row and column label."
-        return np.ndarray.__getitem__((self.row_index(row_label), self.col_index(col_label)))
+        return np.ndarray.__getitem__(self, (self.row_index(row_label), self.col_index(col_label)))
 
     # Other operations.
     def transpose(self):

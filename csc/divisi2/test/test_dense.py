@@ -7,9 +7,25 @@ def test_arithmetic():
     assert np.allclose(mat1+mat1, 2*mat1)
 
 def test_vector_slice():
-    assert isinstance(mat1[0], DenseVector)
-    assert isinstance(mat1[0,:], DenseVector)
-    assert isinstance(mat1[:,0], DenseVector)
+    row0 = DenseVector([0, 1], ['C', 'D'])
+    col0 = DenseVector([0, 2], ['A', 'B'])
+    assert mat1[0].equals(row0)
+    assert mat1[0,:].equals(row0)
+    assert mat1[:,0].equals(col0)
+    assert mat1.get_row(0).equals(row0)
+    assert mat1.get_col(0).equals(col0)
+    
+def test_equality():
+    same = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], ['C', 'D'])
+    different_data = DenseMatrix([[0, 1], [2, 4]], ['A', 'B'], ['C', 'D'])
+    different_row_labels = DenseMatrix([[0, 1], [2, 3]], ['A', 'b'], ['C', 'D'])
+    different_col_labels = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], ['C', 'd'])
+    not_dense_matrix = np.asarray(mat1)
+    assert mat1.equals(same)
+    assert not mat1.equals(different_data)
+    assert not mat1.equals(different_row_labels)
+    assert not mat1.equals(different_col_labels)
+    assert not mat1.equals(not_dense_matrix)
 
 def test_normalize():
     assert mat1.normalize_rows().equals( mat1.to_sparse().normalize_rows().to_dense())
