@@ -102,7 +102,7 @@ class CCIPCA(object):
         Real eigenvectors start counting at 1. The 0th eigenvector represents
         the moving average of the input data.
         """
-        return self.matrix[:,index]
+        return self.matrix.get_col(index)
 
     def get_unit_eigenvector(self, index):
         """
