@@ -95,6 +95,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         obj = ndarray.view(cls)
         if labels is None:
             obj.labels = None
+            obj.__getitem__ = super(DenseVector, obj).__getitem__
         elif isinstance(labels, OrderedSet):
             obj.labels = labels
         else:
@@ -185,6 +186,8 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         else:
             print "converting cols to orderedset"
             obj.col_labels = OrderedSet(col_labels)
+        if row_labels is None and col_labels is None:
+            obj.__getitem__ = super(DenseMatrix, obj).__getitem__
         return obj
     
     def __array_finalize__(self, obj):
