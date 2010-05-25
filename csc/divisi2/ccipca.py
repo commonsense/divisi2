@@ -290,6 +290,12 @@ class CCIPCA(object):
             print col, '/', matrix.shape[1]
             self.learn_vector(matrix[:,col])
 
+def for_profiling(A, n):
+    c = CCIPCA.make(100, A.row_labels, amnesia=1.0)
+    for col in xrange(n):
+        c.learn_vector(A[:,col])
+
+
 def evaluate_assertions(input_data, test_filename):
     """
     Evaluate the predictions that this matrix makes against a matrix of
