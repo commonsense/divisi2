@@ -208,7 +208,8 @@ class CCIPCA(object):
         eigs[0] = np.inf
         sort_order = np.asarray(np.argsort(-eigs))
 
-        self.matrix[:] = self.matrix[:,sort_order]
+        #self.matrix[:] = self.matrix[:,sort_order]
+        self.matrix = DenseMatrix(np.asarray(self.matrix)[:,sort_order], self.matrix.row_labels, None)
         return sort_order
     
     def match_labels(self, vec, touch=False):
