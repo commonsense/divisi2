@@ -304,6 +304,9 @@ def apply_indices(indices, indexables):
     >>> apply_indices((ALL, np.array([0,1,2])), [OrderedSet('abcd'), None])
     [OrderedSet(['a', 'b', 'c', 'd']), None]
     """
+    # Check a few common cases first
+    if isinstance(indices, int): return indexables[1:]
+    # TODO: check more.
     
     # Make indices into a list
     if isinstance(indices, tuple):
