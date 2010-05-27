@@ -11,7 +11,7 @@ the results can include relationships not expressed in the original
 data but related by common sense. See http://divisi.media.mit.edu/ for
 more info."""
 
-VERSION = "2.0b2"
+VERSION = "2.0b3"
 
 try:
     from setuptools import setup, Extension
