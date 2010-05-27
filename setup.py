@@ -16,7 +16,7 @@ VERSION = "2.0b2"
 try:
     from setuptools import setup, Extension
 except ImportError:
-    from distutils import setup, Extension
+    from distutils.core import setup, Extension
 import os.path, sys
 from stat import ST_MTIME
 
