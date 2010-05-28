@@ -3,6 +3,7 @@ from csc.divisi2.operators import *
 from csc.divisi2.sparse import *
 from csc.divisi2.dense import *
 from nose.tools import *
+from nose.plugins.attrib import attr
 
 mat_4x3 = SparseMatrix.from_named_entries([
     (2, "apple", "red"),
@@ -55,5 +56,17 @@ def test_blend():
     U, S, V = blend_svd([mat_4x3, second_mat_4x3], k=2)
     rec_ref = dot(Uref * Sref, Vref.T)
     rec_opt = dot(U * S, V.T)
+    assert np.allclose(rec_ref, rec_opt)
+    
+@attr('slow')
+def test_cnet_blend():
+    from csc.divisi2.blending import blend, blend_svd
+    matrix = divisi2.network.conceptnet_matrix('en')
+    isa = divisi2.network.filter_by_relation(matrix, 'IsA').squish().normalize_all()
+    atloc = divisi2.network.filter_by_relation(matrix, 'AtLocation').squish().normalize_all()
+    Uref, Sref, Vref = blend([isa, atloc]).svd(k=3)
+    U, S, V = blend_svd([isa, atloc], k=3)
+    rec_ref = divisi2.reconstruct(Uref, Sref, Vref)
+    rec_opt = divisi2.reconstruct(U, S, V)
     assert np.allclose(rec_ref, rec_opt)
     
