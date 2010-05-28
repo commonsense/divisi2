@@ -98,7 +98,9 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
             obj.labels = labels
         else:
             obj.labels = OrderedSet(labels)
-        return obj
+        if labels is not None:
+            assert len(labels) == len(ndarray)
+	return obj
     
     def __array_finalize__(self, obj):
         if obj is None: return
@@ -176,12 +178,16 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
             obj.row_labels = row_labels
         else:
             obj.row_labels = OrderedSet(row_labels)
-        if col_labels is None:
+        if obj.row_labels is not None:
+            assert len(obj.row_labels) == obj.shape[0]
+	if col_labels is None:
             obj.col_labels = None
         elif isinstance(col_labels, OrderedSet):
             obj.col_labels = col_labels
         else:
             obj.col_labels = OrderedSet(col_labels)
+        if obj.col_labels is not None:
+            assert len(obj.col_labels) == obj.shape[1]
         return obj
     
     def __array_finalize__(self, obj):
