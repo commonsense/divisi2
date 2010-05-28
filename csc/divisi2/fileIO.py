@@ -8,7 +8,7 @@ Easy functions for loading and saving Divisi matrices and semantic networks.
 New in Divisi2.
 """
 
-def _meta_open(filename, mode='r'):
+def _meta_open(filename, mode='rb'):
     if filename.startswith('data:'):
         filename = resource_filename(__name__, 'data/'+filename[5:])
     
