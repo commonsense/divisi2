@@ -128,7 +128,7 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
         output.pointr[i+1] = r
     return output
 
-cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, double weight):
+cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, double weight) except? NULL:
     """
     Transform a Pysparse ll_mat object into an svdlib SMat by packing 
     its rows into the compressed sparse columns. This has the effect of
@@ -142,8 +142,8 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
     by np.argsort(row_mapping). We then need to build each output row
     in sorted order, which requires a bit more care.
     """
-    cdef smat *output 
-    cdef int prev_out_column, cur_out_column, i, k, col_len, output_index, start_of_column
+    cdef smat *output
+    cdef int prev_out_column, cur_out_column, i, k, col_len, output_index, start_of_column, row_index
     cdef np.ndarray[long, ndim=1] row_order, col_order
 
     print row_mapping
@@ -173,7 +173,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
 
         # First, determine the length of the column
         col_len = 0
-        k = llmat.root[cur_out_column]
+        k = llmat.root[row_index]
         while k != -1: # signifies end of the source row
             col_len += 1
             k = llmat.link[k]
@@ -181,7 +181,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
         # Now get the column of each entry as an array.
         column_indices = np.zeros(col_len)
         i = 0
-        k = llmat.root[cur_out_column]
+        k = llmat.root[row_index]
         while k != -1:
             column_indices[i] = llmat.col[k]
             i += 1
@@ -192,7 +192,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
 
         # Put each value in the appropriate column.
         i = 0
-        k = llmat.root[cur_out_column]
+        k = llmat.root[row_index]
         while k != -1:
             output_index = start_of_column + col_order[i]
             output.value[output_index] = llmat.val[k] * weight
