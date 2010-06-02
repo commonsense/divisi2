@@ -24,6 +24,15 @@ second_mat_4x3 = SparseMatrix.from_named_entries([
     (-1, "banana", "Orange")
 ])
 
+# A third matrix, differing only in concepts, to test blending.
+third_mat_4x3 = SparseMatrix.from_named_entries([
+    (2, "Apple", "red"),
+    (2, "Orange", "orange"),
+    (1, "Apple", "green"),
+    (1, "Celery", "green"),
+    (-1, "Apple", "orange"),
+    (-1, "Banana", "orange")
+])
 
 def test_full_svd():
     U_sparse, S_sparse, V_sparse = mat_4x3.svd(3)
@@ -54,6 +63,14 @@ def test_blend():
     from csc.divisi2.blending import blend, blend_svd
     Uref, Sref, Vref = blend([mat_4x3, second_mat_4x3]).svd(k=2)
     U, S, V = blend_svd([mat_4x3, second_mat_4x3], k=2)
+    rec_ref = dot(Uref * Sref, Vref.T)
+    rec_opt = dot(U * S, V.T)
+    assert np.allclose(rec_ref, rec_opt)
+
+def test_blend_2():
+    from csc.divisi2.blending import blend, blend_svd
+    Uref, Sref, Vref = blend([mat_4x3, third_mat_4x3]).svd(k=2)
+    U, S, V = blend_svd([mat_4x3, third_mat_4x3], k=2)
     rec_ref = dot(Uref * Sref, Vref.T)
     rec_opt = dot(U * S, V.T)
     assert np.allclose(rec_ref, rec_opt)
