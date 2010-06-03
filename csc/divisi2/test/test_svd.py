@@ -85,5 +85,11 @@ def test_cnet_blend():
     U, S, V = blend_svd([isa, atloc], k=3)
     rec_ref = divisi2.reconstruct(Uref, Sref, Vref)
     rec_opt = divisi2.reconstruct(U, S, V)
-    assert np.allclose(rec_ref, rec_opt)
+
+    # Check a random sampling of the items.
+    import random
+    for row in random.sample(rec_ref.row_labels, 50):
+        for col in random.sample(rec_ref.col_labels, 50):
+            assert np.allclose(rec_ref.entry_named(row, col),
+                               rec_opt.entry_named(row, col))
     

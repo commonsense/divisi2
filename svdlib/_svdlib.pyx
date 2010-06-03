@@ -143,13 +143,8 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
     in sorted order, which requires a bit more care.
     """
     cdef smat *output
-    cdef int prev_out_column, cur_out_column, i, k, col_len, output_index, start_of_column, row_index
+    cdef int prev_out_column, cur_input_row, cur_out_column, i, k, col_len, output_index, start_of_column, row_index
     cdef np.ndarray[long, ndim=1] row_order, col_order
-
-    print row_mapping
-    print col_mapping
-
-    row_order = np.argsort(row_mapping)
 
     # Create the (transposed) output matrix.
     output = svdNewSMat(np.max(col_mapping)+1, np.max(row_mapping)+1, llmat.nnz)
@@ -157,9 +152,11 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
 
     # Iterate through rows in the order they appear as output columns.
     # Note importantly that this may yield empty output columns.
+    row_order = np.argsort(row_mapping)
     prev_out_column = 0
     for row_index from 0 <= row_index < len(row_order):
-        cur_out_column = row_mapping[row_index]
+        cur_input_row = row_order[row_index]
+        cur_out_column = row_mapping[cur_input_row]
 
         # Find where the column starts
         start_of_column = output.pointr[prev_out_column + 1]
@@ -173,7 +170,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
 
         # First, determine the length of the column
         col_len = 0
-        k = llmat.root[row_index]
+        k = llmat.root[cur_input_row]
         while k != -1: # signifies end of the source row
             col_len += 1
             k = llmat.link[k]
@@ -181,7 +178,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
         # Now get the column of each entry as an array.
         column_indices = np.zeros(col_len)
         i = 0
-        k = llmat.root[row_index]
+        k = llmat.root[cur_input_row]
         while k != -1:
             column_indices[i] = llmat.col[k]
             i += 1
@@ -192,7 +189,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
 
         # Put each value in the appropriate column.
         i = 0
-        k = llmat.root[row_index]
+        k = llmat.root[cur_input_row]
         while k != -1:
             output_index = start_of_column + col_order[i]
             output.value[output_index] = llmat.val[k] * weight
