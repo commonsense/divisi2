@@ -128,7 +128,7 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
         output.pointr[i+1] = r
     return output
 
-cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, double weight) except? NULL:
+cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping_, col_mapping_, double weight) except? NULL:
     """
     Transform a Pysparse ll_mat object into an svdlib SMat by packing 
     its rows into the compressed sparse columns. This has the effect of
@@ -144,7 +144,9 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
     """
     cdef smat *output
     cdef int prev_out_column, cur_input_row, cur_out_column, i, k, col_len, output_index, start_of_column, row_index
-    cdef np.ndarray[long, ndim=1] row_order, col_order
+    cdef np.ndarray[unsigned long, ndim=1] row_mapping = row_mapping_
+    cdef np.ndarray[unsigned long, ndim=1] col_mapping = col_mapping_
+    cdef np.ndarray[long, ndim=1] row_order, col_order, column_indices
 
     # Create the (transposed) output matrix.
     output = svdNewSMat(np.max(col_mapping)+1, np.max(row_mapping)+1, llmat.nnz)
@@ -176,7 +178,7 @@ cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping, col_mapping, 
             k = llmat.link[k]
 
         # Now get the column of each entry as an array.
-        column_indices = np.zeros(col_len)
+        column_indices = np.zeros(col_len, dtype=np.int64)
         i = 0
         k = llmat.root[cur_input_row]
         while k != -1:
