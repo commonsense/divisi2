@@ -862,7 +862,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
     ### eigenproblems
 
-    def svd(self, k=50):
+    def svd(self, k=50, zero_mean_input=False, zero_mean_output=False):
         """
         Calculate the singular value decomposition A = U * Sigma * V^T.
         Returns a triple of:
@@ -871,20 +871,38 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         - S, a dense vector representing the diagonal of Sigma
         - V as a dense labeled matrix
         """
+        if zero_mean_output and not zero_mean_input:
+            raise NotImplementedError(
+                "zero_mean_output only works after zero_mean_input"
+            )
         if self.shape[1] >= self.shape[0] * 1.2:
             # transpose the matrix for speed
             V, S, U = self.T.svd(k)
             return U, S, V
 
-        # weird shit happens when there are zero rows in the matrix
+        # weird shit happens when there are all-zero rows in the matrix
         self.check_zero_rows()
         
         from csc.divisi2 import operators
         from csc.divisi2.reconstructed import ReconstructedMatrix
-        from csc.divisi2._svdlib import svd_llmat
-        Ut, S, Vt = svd_llmat(self.llmatrix, k)
+        from csc.divisi2._svdlib import svd_llmat, svd_llmat_shifted
+        if zero_mean_input:
+            row_means = self.row_op(np.mean)
+            col_means = self.col_op(np.mean)
+            total_mean = np.mean(row_means)
+            assert np.allclose(total_mean, np.mean(col_means))
+            row_shift = (total_mean/2) - row_means
+            col_shift = (total_mean/2) - col_means
+            Ut, S, Vt = svd_llmat_shifted(self.llmatrix, row_shift, col_shift)
+        else:
+            Ut, S, Vt = svd_llmat(self.llmatrix, k)
         U = DenseMatrix(Ut.T, self.row_labels, None)
         V = DenseMatrix(Vt.T, self.col_labels, None)
+
+        if zero_mean_input and not zero_mean_output:
+            U -= row_shift[:, np.newaxis]
+            V -= col_shift[:, np.newaxis]
+                
         return (U, S, V)
     
     def spectral(self, k=50, tau=100, verbosity=0):
