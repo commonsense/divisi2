@@ -709,6 +709,52 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         newmat.row_scale(self.row_op(_inv_root_norm))
         newmat.col_scale(self.col_op(_inv_root_norm))
         return newmat
+
+    def normalize_tfidf(self, cols_are_terms=False):
+        '''
+        Return a copy of the this matrix, normalized using tfidf.
+
+        By default, treats the matrix as terms-by-documents; pass
+        ``cols_are_terms=True`` if the matrix is instead
+        documents-by-terms.
+
+        Details:
+        Normalizes by document length (the "term frequency"/tf part)
+        and by term importance, measured by what fraction of the documents
+        the term appears in (the "inverse document frequency"/idf part).
+        
+        In the resulting matrix, the entry ``(term, document)`` is given
+        by: ``tf(term, document) * idf(term)``, where ``tf(term, document)
+        = occurrances(term, document) / occurrances(*, document)`` and
+        ``idf(term) = log(num_documents / num_docs_that_contain_term(term)``.
+        '''
+        from itertools import izip
+        from math import log
+
+        values, rows, cols = self.find()
+        num_terms, num_documents = self.shape
+        if cols_are_terms:
+            rows, cols = cols, rows
+            num_terms, num_documents = num_documents, num_terms
+
+        # Compute aggregate counts
+        counts_for_document = np.zeros((num_documents,))
+        num_docs_that_contain_term = np.zeros((num_terms,), dtype=np.uint32)
+        for term, document, value in izip(rows, cols, values):
+            counts_for_document[document] += value
+            num_docs_that_contain_term[term] += 1        
+
+        normalized_values = [term_count / counts_for_document[document] # tf
+                             * log(num_documents / num_docs_that_contain_term[term]) # idf
+                             for term_count, term, document in izip(values, rows, cols)]
+
+        if cols_are_terms: rows, cols = cols, rows
+        result = SparseMatrix.from_lists(normalized_values,
+                                         rows, cols,
+                                         nrows=self.shape[0], ncols=self.shape[1])
+        result.row_labels = self.row_labels.copy()
+        result.col_labels = self.col_labels.copy()
+        return result
     
     ### specific implementations of arithmetic operators
 
