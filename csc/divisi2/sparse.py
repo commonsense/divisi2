@@ -709,6 +709,22 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         newmat.row_scale(self.row_op(_inv_root_norm))
         newmat.col_scale(self.col_op(_inv_root_norm))
         return newmat
+
+    def mean_center(self):
+        """
+        Shift the rows and columns of the matrix so that their means are 0.
+
+        Return the new matrix, plus the lists of row and column offsets,
+        plus the global offset, that can be added to undo the shift.
+        """
+        row_means = self.row_op(np.mean)
+        col_means = self.col_op(np.mean)
+        total_mean = np.mean(self.values())
+
+        shifted = self.copy()
+        for row, col in shifted.keys():
+            shifted[row, col] += (total_mean - row_means[row] - col_means[col])
+        return (shifted, row_means, col_means, total_mean)
     
     ### specific implementations of arithmetic operators
 

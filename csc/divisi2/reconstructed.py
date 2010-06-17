@@ -19,7 +19,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     """
     ndim = 2
 
-    def __init__(self, left, right):
+    def __init__(self, left, right, shifts=None):
         if not isinstance(left, (SparseMatrix, DenseMatrix)):
             left = DenseMatrix(left)
         if not isinstance(right, (SparseMatrix, DenseMatrix)):
@@ -36,6 +36,14 @@ class ReconstructedMatrix(LabeledMatrixMixin):
 
         self.row_labels = left.row_labels
         self.col_labels = right.col_labels
+        self.shifts = shifts
+        if shifts:
+            self.row_shift = np.zeros((self.shape[0],))
+            self.col_shift = np.zeros((self.shape[1],))
+            self.total_shift = 0.0
+        else:
+            assert len(shifts) == 3
+            self.row_shift, self.col_shift, self.total_shift = shifts
 
     @property
     def shape(self):
@@ -64,10 +72,13 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         if (not np.isscalar(indices[0])) and (not np.isscalar(indices[1])):
             # slice by slice. Reconstruct a new matrix to avoid huge
             # computations.
-            return ReconstructedMatrix(leftpart, rightpart)
+            return ReconstructedMatrix(leftpart, rightpart, self.shifts)
         else:
             # in any other case, just return the dense result
-            return dot(leftpart, rightpart)
+            row_shift = self.row_shift[indices[0]]
+            col_shift = self.col_shift[indices[1]]
+            return (dot(leftpart, rightpart) + row_shift + col_shift
+                    - self.total_shift)
 
     def matvec(self, vec):
         return dot(self.left, dot(self.right, vec))
@@ -129,12 +140,12 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     def __repr__(self):
         return "<ReconstructedMatrix: %d by %d>" % (self.shape[0], self.shape[1])
 
-def reconstruct(u, s, v):
+def reconstruct(u, s, v, shifts=None):
     """
     Reconstruct an approximation to the original matrix A from the SVD result
     (U, S, V).
     """
-    return ReconstructedMatrix(u*s, v.T)
+    return ReconstructedMatrix(u*s, v.T, shifts)
 
 def reconstruct_symmetric(u):
     """
