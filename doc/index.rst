@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   install
    intro
    tutorial_aspace
    tutorial_category
