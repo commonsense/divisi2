@@ -717,13 +717,20 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         Return the new matrix, plus the lists of row and column offsets,
         plus the global offset, that can be added to undo the shift.
         """
-        row_means = self.row_op(np.mean)
-        col_means = self.col_op(np.mean)
         total_mean = np.mean(self.values())
+        row_means = self.row_op(np.mean) - total_mean
+        col_means = self.col_op(np.mean) - total_mean
+        row_lengths = self.row_op(len)
+        col_lengths = self.col_op(len)
 
         shifted = self.copy()
         for row, col in shifted.keys():
-            shifted[row, col] += (total_mean - row_means[row] - col_means[col])
+            shifted[row, col] -= (
+                (row_means[row]*row_lengths[row]
+                 + col_means[col]*col_lengths[col]
+                ) / (row_lengths[row] + col_lengths[col])
+            ) + total_mean
+            #shifted[row, col] -= (row_means[row] + col_means[col] + total_mean)
         return (shifted, row_means, col_means, total_mean)
     
     ### specific implementations of arithmetic operators
@@ -878,7 +885,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
     ### eigenproblems
 
-    def svd(self, k=50, zero_mean_input=False, zero_mean_output=False):
+    def svd(self, k=50):
         """
         Calculate the singular value decomposition A = U * Sigma * V^T.
         Returns a triple of:
@@ -887,10 +894,6 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         - S, a dense vector representing the diagonal of Sigma
         - V as a dense labeled matrix
         """
-        if zero_mean_output and not zero_mean_input:
-            raise NotImplementedError(
-                "zero_mean_output only works after zero_mean_input"
-            )
         if self.shape[1] >= self.shape[0] * 1.2:
             # transpose the matrix for speed
             V, S, U = self.T.svd(k)
@@ -901,24 +904,11 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         
         from csc.divisi2 import operators
         from csc.divisi2.reconstructed import ReconstructedMatrix
-        from csc.divisi2._svdlib import svd_llmat, svd_llmat_shifted
-        if zero_mean_input:
-            row_means = self.row_op(np.mean)
-            col_means = self.col_op(np.mean)
-            total_mean = np.mean(row_means)
-            assert np.allclose(total_mean, np.mean(col_means))
-            row_shift = (total_mean/2) - row_means
-            col_shift = (total_mean/2) - col_means
-            Ut, S, Vt = svd_llmat_shifted(self.llmatrix, row_shift, col_shift)
-        else:
-            Ut, S, Vt = svd_llmat(self.llmatrix, k)
+        from csc.divisi2._svdlib import svd_llmat
+        Ut, S, Vt = svd_llmat(self.llmatrix, k)
         U = DenseMatrix(Ut.T, self.row_labels, None)
         V = DenseMatrix(Vt.T, self.col_labels, None)
 
-        if zero_mean_input and not zero_mean_output:
-            U -= row_shift[:, np.newaxis]
-            V -= col_shift[:, np.newaxis]
-                
         return (U, S, V)
     
     def spectral(self, k=50, tau=100, verbosity=0):
