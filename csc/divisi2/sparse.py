@@ -1325,7 +1325,20 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         Get the content as this vector as a list of (label, value) items.
         """
         return [(key, value) for (value, key) in self.named_entries()]
-    
+
+    def keys(self):
+        """
+        The indices of non-zero entries.
+        """
+        return list(self.find()[2])
+    nonzero_entries = keys
+
+    def zero_entries(self):
+        """
+        The indices of zero (unspecified) entries.
+        """
+        return list(set(xrange(len(self))) - set(self.keys()))
+
     def to_dict(self):
         """
         Represent this vector as a dictionary from labels to values.
@@ -1515,12 +1528,12 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
 
     ### dictionary-like operations
 
-    def keys(self):
-        """
-        Returns a list of tuples, giving the indices of non-zero entries.
-        """
-        # psmatrix.matrix.keys() doesn't do what you expect
-        return zip(*self.psmatrix.matrix.keys())
+    #def keys(self):
+    #    """
+    #    Returns a list of tuples, giving the indices of non-zero entries.
+    #    """
+    #    # psmatrix.matrix.keys() doesn't do what you expect
+    #    return zip(*self.psmatrix.matrix.keys())
     
     def keylists(self):
         """
