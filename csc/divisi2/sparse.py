@@ -756,6 +756,29 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         result.col_labels = self.col_labels.copy()
         return result
     
+    def mean_center(self):
+        """
+        Shift the rows and columns of the matrix so that their means are 0.
+
+        Return the new matrix, plus the lists of row and column offsets,
+        plus the global offset, that can be added to undo the shift.
+        """
+        total_mean = np.mean(self.values())
+        row_means = self.row_op(np.mean) - total_mean
+        col_means = self.col_op(np.mean) - total_mean
+        row_lengths = self.row_op(len)
+        col_lengths = self.col_op(len)
+
+        shifted = self.copy()
+        for row, col in shifted.keys():
+            shifted[row, col] -= (
+                (row_means[row]*row_lengths[row]
+                 + col_means[col]*col_lengths[col]
+                ) / (row_lengths[row] + col_lengths[col])
+            ) + total_mean
+            #shifted[row, col] -= (row_means[row] + col_means[col] + total_mean)
+        return (shifted, row_means, col_means, total_mean)
+    
     ### specific implementations of arithmetic operators
 
     def _add_sparse(self, other):
@@ -922,7 +945,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
             V, S, U = self.T.svd(k)
             return U, S, V
 
-        # weird shit happens when there are zero rows in the matrix
+        # weird shit happens when there are all-zero rows in the matrix
         self.check_zero_rows()
         
         from csc.divisi2 import operators
@@ -931,6 +954,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         Ut, S, Vt = svd_llmat(self.llmatrix, k)
         U = DenseMatrix(Ut.T, self.row_labels, None)
         V = DenseMatrix(Vt.T, self.col_labels, None)
+
         return (U, S, V)
     
     def spectral(self, k=50, tau=100, verbosity=0):
