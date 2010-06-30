@@ -109,6 +109,26 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
         output.pointr[i+1] = r
     return output;
 
+cdef smat *llmat_to_smat_shifted(LLMatObject *llmat, row_mapping_, col_mapping_):
+    """
+    Transform a Pysparse ll_mat object into an svdlib SMat by packing 
+    its rows into the compressed sparse columns. This has the effect of
+    transposing the matrix at the same time.
+
+    Also, set a shift on each row and each column of the SMat, to allow mean
+    centering.
+    """
+    cdef smat *output 
+    cdef np.ndarray[double, ndim=1] row_mapping = row_mapping_
+    cdef np.ndarray[double, ndim=1] col_mapping = col_mapping_
+    cdef double *row_array = <double *> row_mapping.data
+    cdef double *col_array = <double *> col_mapping.data
+
+    output = llmat_to_smat(llmat)
+    output.offset_for_row = col_array    # remember, it's transposed
+    output.offset_for_col = row_array
+    return output
+
 def svd_llmat(llmat, int k):
     cdef smat *packed
     cdef svdrec *svdrec
@@ -117,3 +137,13 @@ def svd_llmat(llmat, int k):
     svdrec = svdLAS2A(packed, k)
     svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
+
+def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
+    cdef smat *packed
+    cdef svdrec *svdrec
+    llmat.compress()
+    packed = llmat_to_smat_shifted(<LLMatObject *> llmat, row_shift, col_shift)
+    svdrec = svdLAS2A(packed, k)
+    svdFreeSMat(packed)
+    return wrapSVDrec(svdrec, 1)
+    

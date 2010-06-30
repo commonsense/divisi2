@@ -19,7 +19,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     """
     ndim = 2
 
-    def __init__(self, left, right):
+    def __init__(self, left, right, shifts=None):
         if not isinstance(left, (SparseMatrix, DenseMatrix)):
             left = DenseMatrix(left)
         if not isinstance(right, (SparseMatrix, DenseMatrix)):
@@ -36,6 +36,14 @@ class ReconstructedMatrix(LabeledMatrixMixin):
 
         self.row_labels = left.row_labels
         self.col_labels = right.col_labels
+        self.shifts = shifts
+        if not shifts:
+            self.row_shift = np.zeros((self.shape[0],))
+            self.col_shift = np.zeros((self.shape[1],))
+            self.total_shift = 0.0
+        else:
+            assert len(shifts) == 3
+            self.row_shift, self.col_shift, self.total_shift = shifts
 
     @property
     def shape(self):
@@ -64,10 +72,13 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         if (not np.isscalar(indices[0])) and (not np.isscalar(indices[1])):
             # slice by slice. Reconstruct a new matrix to avoid huge
             # computations.
-            return ReconstructedMatrix(leftpart, rightpart)
+            return ReconstructedMatrix(leftpart, rightpart, self.shifts)
         else:
             # in any other case, just return the dense result
-            return dot(leftpart, rightpart)
+            row_shift = self.row_shift[indices[0]]
+            col_shift = self.col_shift[indices[1]]
+            return (dot(leftpart, rightpart) + row_shift + col_shift
+                    + self.total_shift)
 
     def matvec(self, vec):
         return dot(self.left, dot(self.right, vec))
@@ -88,11 +99,45 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         # Wouldn't it be neat if this did gradient descent? Then the
         # Hebbian incremental SVD would be an amazingly simple setitem loop.
         raise TypeError("Can't assign to entries of a ReconstructedMatrix")
+    
+    def evaluate_ranking(self, testdata):
+        def order_compare(s1, s2):
+            assert len(s1) == len(s2)
+            score = 0.0
+            total = 0
+            for i in xrange(len(s1)):
+                for j in xrange(i+1, len(s1)):
+                    if s1[i] < s1[j]:
+                        if s2[i] < s2[j]: score += 1
+                        elif s2[i] > s2[j]: score -= 1
+                        total += 1
+                    elif s1[i] > s1[j]:
+                        if s2[i] < s2[j]: score -= 1
+                        elif s2[i] > s2[j]: score += 1
+                        total += 1
+            # move onto 0-1 scale
+            score += (total-score)/2.0
+            return (float(score) / total, score, total)
+        
+        values1 = []
+        values2 = []
+        row_labels = self.row_labels
+        col_labels = self.col_labels
+        for value, label1, label2 in testdata.named_entries():
+            if label1 in row_labels and label2 in col_labels:
+                values1.append(value)
+                values2.append(self.entry_named(label1, label2))
+        s1, s1s, s1t = order_compare(values1, values2)
+        s2, s2s, s2t = order_compare(values1, values1)
+        return s1s, s2s, s1/s2
 
     def evaluate_assertions(self, filename):
         """
         Evaluate the predictions that this matrix makes against a matrix of
         test data.
+
+        This is kind of deprecated in favor of evaluate_ranking(), which does
+        it more generally.
         """
         def order_compare(s1, s2):
             assert len(s1) == len(s2)
@@ -129,12 +174,12 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     def __repr__(self):
         return "<ReconstructedMatrix: %d by %d>" % (self.shape[0], self.shape[1])
 
-def reconstruct(u, s, v):
+def reconstruct(u, s, v, shifts=None):
     """
     Reconstruct an approximation to the original matrix A from the SVD result
     (U, S, V).
     """
-    return ReconstructedMatrix(u*s, v.T)
+    return ReconstructedMatrix(u*s, v.T, shifts)
 
 def reconstruct_symmetric(u):
     """
