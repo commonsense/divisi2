@@ -18,6 +18,10 @@ mat2 = SparseMatrix.from_named_entries([
     (2, "celery", "vegetable"),
 ])
 
+def test_vector_entries():
+    assert mat1[0].keys() == [0,2]
+    assert mat1[0].zero_entries() == [1]
+
 def test_matrix_identities():
     "Test that various operations cancel out to give the same matrix or vector."
     for mat in (mat1, mat2):

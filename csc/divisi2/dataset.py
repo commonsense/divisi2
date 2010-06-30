@@ -1,3 +1,5 @@
+from csc.divisi2.sparse import SparseMatrix
+
 def movielens_titles(filebase):
     d = {}
     with open(filebase+'.item') as f:
