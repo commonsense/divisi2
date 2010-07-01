@@ -188,11 +188,32 @@ class AbstractSparseArray(object):
 
     @property
     def llmatrix(self):
+        """
+        Get the PySparse list-of-lists matrix, which is the lowest-level C
+        representation of this matrix or vector.
+        """
         return self.psmatrix.matrix
 
 class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     """
-    TODO: brief docs
+    A SparseMatrix is a matrix (a 2-D array) in which only the non-zero values
+    are represented.
+
+    If you take a single row or column of a SparseMatrix, you get a
+    :class:`SparseVector`. In this way, the behavior of a SparseMatrix is more
+    like NumPy's ``ndarray`` than its ``matrix`` class.
+
+    ``ndarray`` and ``matrix`` are infamously inconsistent about what the ``*``
+    operator means. To an ``ndarray``, ``*`` means scalar or elementwise
+    multiplication.  To a ``matrix``, ``*`` means scalar or matrix
+    multiplication. The way that SparseMatrix resolves this is to take
+    *neither* side: ``*`` is only used for scalar multiplication. To multiply
+    elementwise, use :func:`divisi2.multiply`, and to multiply matrices,
+    use :func:`divisi2.dot`.
+
+    Divisi2 currently uses PysparseMatrix as its underlying sparse
+    representation. This allows sparse matrices to be indexed and sliced just
+    like NumPy's dense matrices.
     """
 
     def __init__(self, arg1, row_labels=None, col_labels=None):
@@ -276,10 +297,12 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
     @property
     def shape(self):
+        """Returns the height and width of this matrix."""
         return self.psmatrix.shape
 
     @property
     def nnz(self):
+        """Returns the number of non-zero entries in this matrix."""
         return self.psmatrix.nnz
 
     ndim = 2
@@ -313,7 +336,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         of the form (value, row, col), expressing a value and where it goes
         in the matrix.
 
-        If possible, use ``from_lists`` since it's faster.
+        If possible, use ``from_lists``, because it's faster.
         """
         return SparseMatrix.from_lists(*zip(*tuples))
 
@@ -352,6 +375,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         Constructs a SparseMatrix similarly to :meth:`from_named_lists`,
         but ensures that the resulting matrix is square and has the same
         row and column labels.
+
+        The ``row_labels`` and ``col_labels`` properties of the resulting
+        matrix will actually end up aliased to each other.
         """
         if labels is None: labels = OrderedSet()
         # Ensure that the labels are indeed an OrderedSet.
@@ -377,6 +403,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         of the form (value, rowname, colname), expressing a value and the
         labels for where it goes in the matrix.
 
+        The ``row_labels`` and ``col_labels`` properties of the resulting
+        matrix will actually end up aliased to each other.
+        
         If possible, use ``from_named_lists``, because it's faster.
         """
         return SparseMatrix.from_named_lists(*zip(*tuples))
@@ -414,7 +443,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
     def data(self):
         """
-        Get the underlying data of this matrix, as a PysparseMatrix object.
+        Get the underlying data of this matrix as a PysparseMatrix object.
         """
         return self.psmatrix
 
@@ -694,17 +723,30 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
             raise ValueError("Row %d of this matrix is all zeros. Use .squish() first." % min_index)
 
     def normalize_rows(self):
+        """
+        Rescale the rows of this matrix so that they all have unit Euclidean
+        magnitude. This can be used as the first step of a scaled PCA.
+        """
         self.check_zero_rows()
         newmat = self.copy()
         newmat.row_scale(self.row_op(_inv_norm))
         return newmat
 
     def normalize_cols(self):
+        """
+        Rescale the columns of this matrix so that they all have unit Euclidean
+        magnitude. This can be used as the first step of a scaled PCA.
+        """
         newmat = self.copy()
         newmat.col_scale(self.col_op(_inv_norm))
         return newmat
 
     def normalize_all(self):
+        """
+        Rescale the rows and columns of this matrix, by dividing both the rows
+        and the columns by the square root of their Euclidean norm. Thisc
+        This can be used as the first step of a scaled PCA.
+        """
         newmat = self.copy()
         newmat.row_scale(self.row_op(_inv_root_norm))
         newmat.col_scale(self.col_op(_inv_root_norm))
@@ -784,9 +826,6 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     def _add_sparse(self, other):
         """
         Add another SparseMatrix to this one.
-
-        In the interest of avoiding black magic, this does not coerce
-        other types of objects.
         """
         assert isinstance(other, SparseMatrix)
         if self.same_labels_as(other):
@@ -800,6 +839,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
             return newself
 
     def _iadd_sparse(self, other):
+        """
+        Add another SparseMatrix to this one in place.
+        """
         assert isinstance(other, SparseMatrix)
         if not self.same_labels_as(other):
             raise LabelError("In-place operations require matching labels.")
@@ -863,6 +905,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         return SparseMatrix(newmat, self.col_labels, other.col_labels)
     
     def _dot_dense(self, other):
+        """
+        Multiply this SparseMatrix by a dense vector or matrix.
+        """
         if other.ndim == 1:
             return self._dot_dense_vector(other)
         if not isinstance(other, DenseMatrix):
@@ -913,7 +958,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
     def squish(self, cutoff=1):
         """
         Discard all rows and columns that do not have at least
-        `cutoff` entries.
+        `cutoff` entries. The default, `cutoff=1`, discards empty
+        rows and columns.
         """
         row_entries = self.row_op(len)
         col_entries = self.col_op(len)
@@ -933,12 +979,17 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
     def svd(self, k=50):
         """
-        Calculate the singular value decomposition A = U * Sigma * V^T.
+        Calculate the truncated singular value decomposition
+        :math:`A = U * Sigma * V^T` using SVDLIBC.
+
         Returns a triple of:
         
         - U as a dense labeled matrix
         - S, a dense vector representing the diagonal of Sigma
         - V as a dense labeled matrix
+        
+        This matrix must not contain any empty rows or columns. If it does,
+        use the .squish() method first.
         """
         if self.shape[1] >= self.shape[0] * 1.2:
             # transpose the matrix for speed
@@ -957,46 +1008,13 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
         return (U, S, V)
     
-    def spectral(self, k=50, tau=100, verbosity=0):
-        from pysparse import precon, itsolvers
-        from pysparse.eigen import jdsym
-        """
-        Calculate the spectral decomposition A = Q * Lambda * Q^T.
-        This matrix, A, *must be symmetric* for the result to make any sense.
-
-        Returns a pair of:
-        
-        - Q as a dense labeled matrix
-        - L, a dense vector representing the diagonal of Lambda
-        """
-        # Pysparse will hang if it encounters a zero row. Prevent this.
-        self.check_zero_rows()
-
-        # Pysparse will also hang if asked for singular values that don't
-        # exist. This can be prevented in many cases by making sure that
-        # k is no larger than the matrix size.
-        if k > self.shape[0]: k = self.shape[0]
-
-        # Represent this in Pysparse's low-level symmetric format called `sss`
-        sss = self.llmatrix.to_sss()
-        preconditioner = precon.ssor(sss)
-        result = jdsym.jdsym(
-            A=sss,            # the matrix whose eigenvalues to find
-            M=None,           # no generalized eigenproblem
-            K=preconditioner, # the preconditioner
-            kmax=k,           # how many eigenpairs to find
-            tau=tau,          # where to look for the eigenvalues
-                              # (big number so we get the largest)
-            jdtol=1e-10,      # tolerance
-            itmax=150,        # maximum number of iterations
-            linsolver=itsolvers.qmrs, # solver for linear system of equations
-            clvl=verbosity    # whether to be chatty
-        )
-        kconv, L, Q, it, it_inner = result
-        return DenseMatrix(Q, self.row_labels, None), L
 
     # Pickling and unpickling
     def to_state(self):
+        """
+        Express this matrix as a dictionary of pure-Python objects that can be
+        pickled.
+        """
         return {
             'version': 1,
             'lists': self.lists(),
@@ -1008,6 +1026,10 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
     @staticmethod
     def from_state(d):
+        """
+        Load a SparseMatrix from a pure-Python dictionary, of the form output
+        by :meth:`to_state`.
+        """
         assert d['version'] == 1
         mat = SparseMatrix.from_lists(*d['lists'],
                                       nrows=d['nrows'],
@@ -1035,8 +1057,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         self.find = self.psmatrix.find
         self.addAt = self.psmatrix.addAt
         self.addAtDiagonal = self.psmatrix.addAtDiagonal
-        # psmatrix.matvec and llmatrix.matvec disagree! NumPy and jdsym have
-        # the same disagreement, it turns out.
+
+        # Watch out: psmatrix.matvec and llmatrix.matvec disagree on what
+        # arguments they take!
         self.matvec = self.psmatrix.matvec
     
     ### string representations
@@ -1088,7 +1111,12 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
 
 class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     """
-    TODO: docs
+    A SparseVector is a vector (a 1-D array) in which only the non-zero values
+    are represented. Sparse vectors can be indexed and sliced as if they were
+    dense NumPy vectors.
+
+    The underlying representation of a SparseVector is a one-row
+    PysparseMatrix.
     """
     def __init__(self, arg1, labels=None):
         if isinstance(arg1, PysparseMatrix):
