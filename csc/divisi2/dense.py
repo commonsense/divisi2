@@ -220,6 +220,10 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         return self / norms
 
+    def normalize_cols(self):
+        norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
+        return self / norms
+
     def normalize_all(self):
         row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
