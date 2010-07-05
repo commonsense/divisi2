@@ -268,8 +268,10 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         # a PysparseMatrix as the input data.
         assert isinstance(psmatrix, PysparseMatrix)
         self.psmatrix = psmatrix
-        self.row_labels = OrderedSet(row_labels)
-        self.col_labels = OrderedSet(col_labels)
+        if row_labels is None: self.row_labels = None
+        else: self.row_labels = OrderedSet(row_labels)
+        if col_labels is None: self.col_labels = None
+        else: self.col_labels = OrderedSet(col_labels)
         self._setup_wrapped_methods()
     
     ### numpy-like properties
@@ -752,8 +754,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
         result = SparseMatrix.from_lists(normalized_values,
                                          rows, cols,
                                          nrows=self.shape[0], ncols=self.shape[1])
-        result.row_labels = self.row_labels.copy()
-        result.col_labels = self.col_labels.copy()
+        result.row_labels = copy(self.row_labels)
+        result.col_labels = copy(self.col_labels)
         return result
     
     def mean_center(self):
