@@ -52,6 +52,10 @@ def test_vector_identities():
         assert vec == vec.T
         assert vec == vec.to_dense().to_sparse()
 
+def test_ellipsis():
+	assert mat1[..., 0] == mat1[:, 0]
+	assert mat1[0, ...] == mat1[0]
+
 def test_sparse_vs_dense():
     assert np.allclose(mat1.T.dot(mat2).to_dense(), mat1.T.to_dense().dot(mat2))
     assert np.allclose(mat1.T.dot(mat2).to_dense(), mat1.T.dot(mat2.to_dense()))
