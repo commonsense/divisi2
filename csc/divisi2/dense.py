@@ -233,7 +233,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     def T(self):
         return self.transpose()
     
-    def extend(self, other):
+    def concatenate(self, other):
         """
         Concatenate two dense labeled matrices by rows.
 
@@ -242,6 +242,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         assert self.same_col_labels_as(other)
         newlabels = list(self.row_labels) + list(other.row_labels)
         return DenseMatrix(np.concatenate([self, other]), newlabels, self.col_labels)
+    extend = concatenate # this was the wrong name, but other things use it.
 
     ### eigenproblems
     def svd(self, k):
