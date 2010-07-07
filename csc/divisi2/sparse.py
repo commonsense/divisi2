@@ -983,6 +983,15 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
                       for (val, row, col) in entries
                       if row in rows and col in cols]
         return SparseMatrix.from_named_entries(newentries).squish()
+    
+    # adds compatibility with SciPy-based methods
+    def to_scipy_csr(self):
+        """
+        Convert this matrix to a SciPy csr_matrix.
+        """
+        from scipy.sparse import csr_matrix
+        data, row, col = self.find()
+        return csr_matrix( (data,(row,col)), shape=self.shape )
 
     # Pickling and unpickling
     def to_state(self):
