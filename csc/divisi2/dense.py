@@ -1,5 +1,6 @@
 from csc.divisi2.ordered_set import OrderedSet, apply_indices
 from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
+from csc.divisi2.algorithms import LearningMixin
 from copy import copy
 import numpy as np
 import sys
@@ -156,7 +157,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return unicode(self).encode('utf-8')
 
 
-class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
+class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
     __array_priority__ = 3.0
     def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
@@ -244,16 +245,6 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         return DenseMatrix(np.concatenate([self, other]), newlabels, self.col_labels)
     extend = concatenate # this was the wrong name, but other things use it.
 
-    ### eigenproblems
-    def svd(self, k):
-        U, S, Vh = np.linalg.svd(self)
-        U = DenseMatrix(U, self.row_labels, None)
-        V = DenseMatrix(Vh.T, self.col_labels, None)
-        return (U[:,:k], S[:k], V[:,:k])
-
-    def spectral(self):
-        raise NotImplementedError
-    
     ### SVD summary
     def summarize_axis(self, axis, output=sys.stdout):
         if isinstance(axis, int):

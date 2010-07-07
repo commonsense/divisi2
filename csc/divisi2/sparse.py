@@ -3,6 +3,7 @@ from csc.divisi2.dense import DenseVector, DenseMatrix
 from csc.divisi2.ordered_set import OrderedSet, indexable_set, apply_indices
 from csc.divisi2.exceptions import LabelError, DimensionMismatch
 from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
+from csc.divisi2.algorithms import LearningMixin
 from pysparse.sparse import spmatrix
 from pysparse.sparse.pysparseMatrix import PysparseMatrix
 from copy import copy
@@ -193,8 +194,14 @@ class AbstractSparseArray(object):
         representation of this matrix or vector.
         """
         return self.psmatrix.matrix
+    
+    def to_sparse(self):
+        """
+        :meth:`to_sparse` on a sparse array is the identity.
+        """
+        return self
 
-class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
+class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
     """
     A SparseMatrix is a matrix (a 2-D array) in which only the non-zero values
     are represented.
@@ -976,40 +983,6 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin):
                       for (val, row, col) in entries
                       if row in rows and col in cols]
         return SparseMatrix.from_named_entries(newentries).squish()
-
-    ### eigenproblems
-
-    def svd(self, k=50):
-        """
-        Calculate the truncated singular value decomposition
-        :math:`A = U * Sigma * V^T` using SVDLIBC.
-
-        Returns a triple of:
-        
-        - U as a dense labeled matrix
-        - S, a dense vector representing the diagonal of Sigma
-        - V as a dense labeled matrix
-        
-        This matrix must not contain any empty rows or columns. If it does,
-        use the .squish() method first.
-        """
-        if self.shape[1] >= self.shape[0] * 1.2:
-            # transpose the matrix for speed
-            V, S, U = self.T.svd(k)
-            return U, S, V
-
-        # weird shit happens when there are all-zero rows in the matrix
-        self.check_zero_rows()
-        
-        from csc.divisi2 import operators
-        from csc.divisi2.reconstructed import ReconstructedMatrix
-        from csc.divisi2._svdlib import svd_llmat
-        Ut, S, Vt = svd_llmat(self.llmatrix, k)
-        U = DenseMatrix(Ut.T, self.row_labels, None)
-        V = DenseMatrix(Vt.T, self.col_labels, None)
-
-        return (U, S, V)
-    
 
     # Pickling and unpickling
     def to_state(self):
