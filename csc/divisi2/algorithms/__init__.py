@@ -32,7 +32,7 @@ class LearningMixin(object):
     _methods = []
     svd = delayed_plugin('svd', 'svd')
     mds = delayed_plugin('mds', 'mds')
-    fnmai = delayed_plugin('nmf', 'fnmai')
+    nmf = delayed_plugin('nmf', 'fnmai')
 
     @classmethod
     def available_methods(cls):
