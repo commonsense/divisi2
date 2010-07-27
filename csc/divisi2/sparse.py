@@ -807,6 +807,22 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         result.col_labels = copy(self.col_labels)
         return result
     
+    def row_mean_center(self):
+        row_means = self.row_op(np.mean)
+
+        shifted = self.copy()
+        for row, col in shifted.keys():
+            shifted[row, col] -= row_means[row]
+        return (shifted, row_means)
+    
+    def col_mean_center(self):
+        col_means = self.col_op(np.mean)
+
+        shifted = self.copy()
+        for row, col in shifted.keys():
+            shifted[row, col] -= col_means[col]
+        return (shifted, col_means)
+    
     def mean_center(self):
         """
         Shift the rows and columns of the matrix so that their means are 0.
