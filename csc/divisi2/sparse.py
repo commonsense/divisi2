@@ -1031,7 +1031,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         by :meth:`to_state`.
         """
         assert d['version'] == 1
-        mat = SparseMatrix.from_lists(*d['lists'],
+        mat = SparseMatrix.from_lists(d['lists'][0], d['lists'][1], d['lists'][2],
                                       nrows=d['nrows'],
                                       ncols=d['ncols'])
         mat.row_labels = d['row_labels']
@@ -1587,7 +1587,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     @staticmethod
     def from_state(d):
         assert d['version'] == 1
-        mat = SparseVector.from_lists(*d['lists'],
+        mat = SparseVector.from_lists(d['lists'][0], d['lists'][1], d['lists'][2],
                                       n=d['nentries'])
         mat.labels = d['labels']
         return mat
