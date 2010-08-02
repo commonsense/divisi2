@@ -229,6 +229,27 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
         return self / np.sqrt(row_norms) / np.sqrt(col_norms)
+    
+    def mean_center(self):
+        """
+        Shift the rows and columns of the matrix so that their means are 0.
+
+        Return the new matrix, plus the lists of row and column offsets,
+        plus the global offset, that can be added to undo the shift.
+
+        Unlike sparse mean centering, this alters zeros as well.
+        """
+        ndarray = np.asarray(self)
+        total_mean = np.mean(ndarray)
+        row_means = np.mean(ndarray, axis=0) - total_mean
+        col_means = np.mean(ndarray, axis=1) - total_mean
+
+        shifted = DenseMatrix(
+          ndarray - row_means - col_means[:,np.newaxis] - total_mean,
+          row_labels=self.row_labels,
+          col_labels=self.col_labels
+        )
+        return (shifted, row_means, col_means, total_mean)
 
     @property
     def T(self):
