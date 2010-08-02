@@ -807,6 +807,22 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         result.col_labels = copy(self.col_labels)
         return result
     
+    def row_mean_center(self):
+        row_means = self.row_op(np.mean)
+
+        shifted = self.copy()
+        for row, col in shifted.keys():
+            shifted[row, col] -= row_means[row]
+        return (shifted, row_means)
+    
+    def col_mean_center(self):
+        col_means = self.col_op(np.mean)
+
+        shifted = self.copy()
+        for row, col in shifted.keys():
+            shifted[row, col] -= col_means[col]
+        return (shifted, col_means)
+    
     def mean_center(self):
         """
         Shift the rows and columns of the matrix so that their means are 0.
@@ -1015,7 +1031,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         by :meth:`to_state`.
         """
         assert d['version'] == 1
-        mat = SparseMatrix.from_lists(*d['lists'],
+        mat = SparseMatrix.from_lists(d['lists'][0], d['lists'][1], d['lists'][2],
                                       nrows=d['nrows'],
                                       ncols=d['ncols'])
         mat.row_labels = d['row_labels']
@@ -1571,7 +1587,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     @staticmethod
     def from_state(d):
         assert d['version'] == 1
-        mat = SparseVector.from_lists(*d['lists'],
+        mat = SparseVector.from_lists(d['lists'][0], d['lists'][1], d['lists'][2],
                                       n=d['nentries'])
         mat.labels = d['labels']
         return mat

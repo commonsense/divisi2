@@ -23,7 +23,7 @@ def compute_distances(matrix1, matrix2):
     assert distances.same_row_labels_as(nmatrix1)
     return multiply(distances, distances)
 
-def mds(matrix, k=2):
+def lmds(matrix, k=2):
     # Find Landmark points
     N = matrix.shape[0]
     landmarks = _getLandmarkPoints(N)
@@ -47,9 +47,9 @@ def mds(matrix, k=2):
     mdsarray = multiply(mdsarray_sharp, np.sqrt(Lambda)[np.newaxis,:k])  # called L transpose in the paper
 
     # Make Triangulation Object
-    return MDSProjection(landmark_matrix, mdsarray_sharp, means)
+    return LMDSProjection(landmark_matrix, mdsarray_sharp, means)
 
-class MDSProjection(object):
+class LMDSProjection(object):
     def __init__(self, landmarks, mdsarray_sharp, means):
         self.landmarks = landmarks
         self.mdsarray_sharp = mdsarray_sharp

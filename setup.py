@@ -11,7 +11,7 @@ the results can include relationships not expressed in the original
 data but related by common sense. See http://divisi.media.mit.edu/ for
 more info."""
 
-VERSION = "2.0.2"
+VERSION = "2.0.4"
 
 try:
     from setuptools import setup, Extension
@@ -103,7 +103,7 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     ext_modules = [svdlibc],
-    packages=['csc', 'csc.divisi2'],
+    packages=['csc', 'csc.divisi2', 'csc.divisi2.algorithms'],
     package_data = {'csc.divisi2': ['data/graphs/*.graph', 'data/eval/*.pickle']},
     namespace_packages = ['csc'],
     install_requires=['csc-utils >= 0.4.1', 'networkx', 'csc-pysparse'],
