@@ -232,15 +232,15 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
     
     def row_mean_center(self):
         ndarray = np.asarray(self)
-        row_means = np.mean(ndarray, axis=0)
-        shifted = self - row_means
+        row_means = np.mean(ndarray, axis=1)
+        shifted = self - row_means[:,np.newaxis]
         return (shifted, row_means)
 
     def col_mean_center(self):
         ndarray = np.asarray(self)
-        row_means = np.mean(ndarray, axis=0)
-        shifted = self - row_means
-        return (shifted, row_means)
+        col_means = np.mean(ndarray, axis=0)
+        shifted = self - col_means
+        return (shifted, col_means)
     
     def mean_center(self):
         """
