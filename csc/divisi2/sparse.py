@@ -1008,6 +1008,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         from scipy.sparse import csr_matrix
         data, row, col = self.find()
         return csr_matrix( (data,(row,col)), shape=self.shape )
+    to_scipy = to_scipy_csr
 
     # Pickling and unpickling
     def to_state(self):

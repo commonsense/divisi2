@@ -203,6 +203,9 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         from csc.divisi2.sparse import SparseMatrix
         return SparseMatrix(self, self.row_labels, self.col_labels)
 
+    def to_scipy(self):
+        return np.asarray(self)
+
     def transpose(self):
         result = np.ndarray.transpose(self)
         result.col_labels = copy(self.row_labels)
