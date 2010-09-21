@@ -3,7 +3,7 @@ from csc.divisi2.dense import DenseMatrix
 import numpy as np
 
 def fnmai(matrix, k, U=None, V=None, **params):
-    Y = matrix.to_scipy_csr()
+    Y = matrix.to_scipy()
     init_A = U
     if V is not None: init_X = V.T
     else: init_X = None

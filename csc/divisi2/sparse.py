@@ -792,7 +792,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         counts_for_document = np.zeros((num_documents,))
         num_docs_that_contain_term = np.zeros((num_terms,), dtype=np.uint32)
         for term, document, value in izip(rows, cols, values):
-            counts_for_document[document] += value
+            counts_for_document[document] += abs(value)
             num_docs_that_contain_term[term] += 1        
 
         normalized_values = [term_count / counts_for_document[document] # tf
@@ -1008,6 +1008,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         from scipy.sparse import csr_matrix
         data, row, col = self.find()
         return csr_matrix( (data,(row,col)), shape=self.shape )
+    to_scipy = to_scipy_csr
 
     # Pickling and unpickling
     def to_state(self):
@@ -1587,7 +1588,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     @staticmethod
     def from_state(d):
         assert d['version'] == 1
-        mat = SparseVector.from_lists(d['lists'][0], d['lists'][1], d['lists'][2],
+        mat = SparseVector.from_lists(d['lists'][0], d['lists'][1],
                                       n=d['nentries'])
         mat.labels = d['labels']
         return mat

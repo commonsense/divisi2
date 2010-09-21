@@ -26,9 +26,6 @@ def svd(matrix, k=50):
         V, S, U = matrix.T.svd(k)
         return U, S, V
 
-    # weird shit happens when there are all-zero rows in the matrix
-    matrix.check_zero_rows()
-    
     Ut, S, Vt = svd_llmat(matrix.llmatrix, k)
     U = DenseMatrix(Ut.T, matrix.row_labels, None)
     V = DenseMatrix(Vt.T, matrix.col_labels, None)

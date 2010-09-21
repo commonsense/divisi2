@@ -113,4 +113,8 @@ def test_ambiguous_multiply():
 def test_abstract():
     AbstractSparseArray(mat1)
 
+def test_normalize_tfidf():
+    m = divisi2.SparseMatrix([[1,-1],[0,1]])
+    tfidf = m.normalize_tfidf().to_dense()
+    assert np.allclose(np.exp(tfidf*2), divisi2.DenseMatrix([[1,1],[1,2]]))
 

@@ -3,8 +3,8 @@ from csc.divisi2.dense import *
 import numpy as np
 mat1 = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], ['C', 'D'])
 mat2 = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], None)
-mat3 = DenseMatrix([[0, 1], [2, 5]], ['A', 'B'], None)
-mat4 = DenseMatrix([[0.5, -0.5], [-0.5, 0.5]], ['A', 'B'], None)
+mat3 = DenseMatrix([[0, 1], [2, 5], [0, 1], [2, 5]], ['A', 'B', 'C', 'D'], None)
+mat4 = DenseMatrix([[0.5, -0.5], [-0.5, 0.5], [0.5, -0.5], [-0.5, 0.5]], ['A', 'B', 'C', 'D'], None)
 
 def test_arithmetic():
     assert np.allclose(mat1+mat1, 2*mat1)
@@ -26,7 +26,7 @@ def test_unlabeled_convert():
 def test_mean_center():
     centered, row_means, col_means, total_mean = mat3.mean_center()
     assert centered.equals(mat4)
-    rec = centered + row_means + col_means[:,np.newaxis] + total_mean
+    rec = centered + row_means[:,np.newaxis] + col_means + total_mean
     assert rec.equals(mat3)
 
 def test_lookups():

@@ -203,6 +203,9 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         from csc.divisi2.sparse import SparseMatrix
         return SparseMatrix(self, self.row_labels, self.col_labels)
 
+    def to_scipy(self):
+        return np.asarray(self)
+
     def transpose(self):
         result = np.ndarray.transpose(self)
         result.col_labels = copy(self.row_labels)
@@ -230,6 +233,18 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
         return self / np.sqrt(row_norms) / np.sqrt(col_norms)
     
+    def row_mean_center(self):
+        ndarray = np.asarray(self)
+        row_means = np.mean(ndarray, axis=1)
+        shifted = self - row_means[:,np.newaxis]
+        return (shifted, row_means)
+
+    def col_mean_center(self):
+        ndarray = np.asarray(self)
+        col_means = np.mean(ndarray, axis=0)
+        shifted = self - col_means
+        return (shifted, col_means)
+    
     def mean_center(self):
         """
         Shift the rows and columns of the matrix so that their means are 0.
@@ -241,11 +256,11 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         """
         ndarray = np.asarray(self)
         total_mean = np.mean(ndarray)
-        row_means = np.mean(ndarray, axis=0) - total_mean
-        col_means = np.mean(ndarray, axis=1) - total_mean
+        col_means = np.mean(ndarray, axis=0) - total_mean
+        row_means = np.mean(ndarray, axis=1) - total_mean
 
         shifted = DenseMatrix(
-          ndarray - row_means - col_means[:,np.newaxis] - total_mean,
+          ndarray - row_means[:,np.newaxis] - col_means - total_mean,
           row_labels=self.row_labels,
           col_labels=self.col_labels
         )
