@@ -1,5 +1,6 @@
 from csc.divisi2.ordered_set import OrderedSet, apply_indices
 from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
+from csc.divisi2.algorithms import LearningMixin
 from copy import copy
 import numpy as np
 import sys
@@ -156,7 +157,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return unicode(self).encode('utf-8')
 
 
-class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
+class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
     __array_priority__ = 3.0
     def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
@@ -202,6 +203,9 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         from csc.divisi2.sparse import SparseMatrix
         return SparseMatrix(self, self.row_labels, self.col_labels)
 
+    def to_scipy(self):
+        return np.asarray(self)
+
     def transpose(self):
         result = np.ndarray.transpose(self)
         result.col_labels = copy(self.row_labels)
@@ -220,16 +224,53 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         return self / norms
 
+    def normalize_cols(self):
+        norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
+        return self / norms
+
     def normalize_all(self):
         row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
         col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
         return self / np.sqrt(row_norms) / np.sqrt(col_norms)
+    
+    def row_mean_center(self):
+        ndarray = np.asarray(self)
+        row_means = np.mean(ndarray, axis=1)
+        shifted = self - row_means[:,np.newaxis]
+        return (shifted, row_means)
+
+    def col_mean_center(self):
+        ndarray = np.asarray(self)
+        col_means = np.mean(ndarray, axis=0)
+        shifted = self - col_means
+        return (shifted, col_means)
+    
+    def mean_center(self):
+        """
+        Shift the rows and columns of the matrix so that their means are 0.
+
+        Return the new matrix, plus the lists of row and column offsets,
+        plus the global offset, that can be added to undo the shift.
+
+        Unlike sparse mean centering, this alters zeros as well.
+        """
+        ndarray = np.asarray(self)
+        total_mean = np.mean(ndarray)
+        col_means = np.mean(ndarray, axis=0) - total_mean
+        row_means = np.mean(ndarray, axis=1) - total_mean
+
+        shifted = DenseMatrix(
+          ndarray - row_means[:,np.newaxis] - col_means - total_mean,
+          row_labels=self.row_labels,
+          col_labels=self.col_labels
+        )
+        return (shifted, row_means, col_means, total_mean)
 
     @property
     def T(self):
         return self.transpose()
     
-    def extend(self, other):
+    def concatenate(self, other):
         """
         Concatenate two dense labeled matrices by rows.
 
@@ -238,17 +279,8 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         assert self.same_col_labels_as(other)
         newlabels = list(self.row_labels) + list(other.row_labels)
         return DenseMatrix(np.concatenate([self, other]), newlabels, self.col_labels)
+    extend = concatenate # this was the wrong name, but other things use it.
 
-    ### eigenproblems
-    def svd(self, k):
-        U, S, Vh = np.linalg.svd(self)
-        U = DenseMatrix(U, self.row_labels, None)
-        V = DenseMatrix(Vh.T, self.col_labels, None)
-        return (U[:,:k], S[:k], V[:,:k])
-
-    def spectral(self):
-        raise NotImplementedError
-    
     ### SVD summary
     def summarize_axis(self, axis, output=sys.stdout):
         if isinstance(axis, int):

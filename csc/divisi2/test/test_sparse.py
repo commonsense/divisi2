@@ -52,6 +52,10 @@ def test_vector_identities():
         assert vec == vec.T
         assert vec == vec.to_dense().to_sparse()
 
+def test_ellipsis():
+	assert mat1[..., 0] == mat1[:, 0]
+	assert mat1[0, ...] == mat1[0]
+
 def test_sparse_vs_dense():
     assert np.allclose(mat1.T.dot(mat2).to_dense(), mat1.T.to_dense().dot(mat2))
     assert np.allclose(mat1.T.dot(mat2).to_dense(), mat1.T.dot(mat2.to_dense()))
@@ -109,4 +113,8 @@ def test_ambiguous_multiply():
 def test_abstract():
     AbstractSparseArray(mat1)
 
+def test_normalize_tfidf():
+    m = divisi2.SparseMatrix([[1,-1],[0,1]])
+    tfidf = m.normalize_tfidf().to_dense()
+    assert np.allclose(np.exp(tfidf*2), divisi2.DenseMatrix([[1,1],[1,2]]))
 

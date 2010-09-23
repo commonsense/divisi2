@@ -48,10 +48,12 @@ class LabeledMatrixMixin(object):
 
     def row_index(self, label):
         "Get the numeric index for the row with a given label."
+        if self.row_labels is None: return label
         return self.row_labels.index(label)
 
     def col_index(self, label):
         "Get the numeric index for the column with a given label."
+        if self.col_labels is None: return label
         return self.col_labels.index(label)
 
     def row_named(self, label):

@@ -1,3 +1,4 @@
+from __future__ import with_statement
 from csc.divisi2.sparse import SparseMatrix
 
 def movielens_titles(filebase):

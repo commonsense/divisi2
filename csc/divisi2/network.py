@@ -180,5 +180,3 @@ def conceptnet_assoc(lang):
         return matrix
 
 analogyspace_matrix = conceptnet_matrix   # synonym
-
-
