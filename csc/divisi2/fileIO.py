@@ -34,12 +34,10 @@ def load_pickle(filename):
     file = _meta_open(filename)
     return pickle.load(file)
 
-def load_graph(filename):
+def load_graph(filename, encoding='utf-8'):
     import networkx as nx
-    file = _meta_open(filename)
-    file_decoder = codecs.getreader("utf-8")(file)
-    return nx.read_edgelist(file_decoder, data=True, delimiter='\t',
-                            create_using=nx.MultiDiGraph())
+    return nx.read_edgelist(_meta_open(filename), data=True, delimiter='\t',
+                            encoding=encoding, create_using=nx.MultiDiGraph())
 
 def save(obj, filename):
     """
