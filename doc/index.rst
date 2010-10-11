@@ -23,4 +23,5 @@ from our `SciPy 2010 slides`_.
    tutorial_category
    labels
    sparse
+   dense
 
