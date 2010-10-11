@@ -417,7 +417,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         
         If possible, use ``from_named_lists``, because it's faster.
         """
-        return SparseMatrix.from_named_lists(*zip(*tuples))
+        lists = zip(*tuples)
+        if not lists: return SparseMatrix((0,0))
+        return SparseMatrix.from_named_lists(*lists)
     
     @staticmethod
     def square_from_named_entries(tuples):
@@ -446,7 +448,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         red         ---        ---        ---        ---        ---
         green       ---        ---        ---        ---        ---
         """
-        return SparseMatrix.square_from_named_lists(*zip(*tuples))
+        lists = zip(*tuples)
+        if not lists: return SparseMatrix((0,0))
+        return SparseMatrix.square_from_named_lists(*lists)
     
     ### basic operations
 

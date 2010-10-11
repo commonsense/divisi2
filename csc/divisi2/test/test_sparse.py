@@ -118,3 +118,12 @@ def test_normalize_tfidf():
     tfidf = m.normalize_tfidf().to_dense()
     assert np.allclose(np.exp(tfidf*2), divisi2.DenseMatrix([[1,1],[1,2]]))
 
+def test_empty_entries():
+    '''Empty entry lists should yield empty matrices.'''
+    m = SparseMatrix.from_named_entries(())
+    eq_(m.shape, (0, 0))
+
+def test_empty_square_entries():
+    '''Empty entry lists should yield empty square matrices.'''
+    m = SparseMatrix.square_from_named_entries(())
+    eq_(m.shape, (0, 0))
