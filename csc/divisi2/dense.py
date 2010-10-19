@@ -95,6 +95,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         obj = ndarray.view(cls)
         if labels is None:
             obj.labels = None
+            obj.__getitem__ = super(DenseVector, obj).__getitem__
         elif isinstance(labels, OrderedSet):
             obj.labels = labels
         else:
@@ -185,6 +186,8 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         else:
             print "converting cols to orderedset"
             obj.col_labels = OrderedSet(col_labels)
+        if row_labels is None and col_labels is None:
+            obj.__getitem__ = super(DenseMatrix, obj).__getitem__
         return obj
     
     def __array_finalize__(self, obj):
@@ -199,6 +202,26 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         from csc.divisi2.sparse import SparseMatrix
         return SparseMatrix(self, self.row_labels, self.col_labels)
 
+    # Optimize row and column retrieval
+    def get_row(self, row_idx):
+        return DenseVector(np.ndarray.__getitem__(self, row_idx), self.col_labels)
+
+    def get_col(self, col_idx):
+        return DenseVector(np.ndarray.__getitem__(self, (slice(None), col_idx)), self.row_labels)
+
+    def row_named(self, label):
+        "Get the row with a given label as a vector."
+        return self.get_row(self.row_index(label))
+
+    def col_named(self, label):
+        "Get the column with a given label as a vector."
+        return self.get_col(self.col_index(label))
+    
+    def entry_named(self, row_label, col_label):
+        "Get the entry with a given row and column label."
+        return np.ndarray.__getitem__(self, (self.row_index(row_label), self.col_index(col_label)))
+
+    # Other operations.
     def transpose(self):
         result = np.ndarray.transpose(self)
         result.col_labels = copy(self.row_labels)
@@ -227,10 +250,12 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         return self / np.sqrt(row_norms + EPSILON) / np.sqrt(col_norms + EPSILON)
     
     def row_norms(self):
-        return np.sqrt(np.sum(self*self, axis=1))
+        as_array = np.asarray(self)
+        return np.sqrt(np.sum(as_array*as_array, axis=1))
     
     def col_norms(self):
-        return np.sqrt(np.sum(self*self, axis=0))
+        as_array = np.asarray(self)
+        return np.sqrt(np.sum(as_array*as_array, axis=0))
 
     @property
     def T(self):

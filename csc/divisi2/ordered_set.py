@@ -154,8 +154,8 @@ class OrderedSet(object):
             True
         '''
         if self is other: return True
-        if len(self) != len(other): return False
         if not isinstance(other, OrderedSet): return False
+        if len(self) != len(other): return False
 
         for (s, o) in izip(self, other):
             if s != o: return False
@@ -304,6 +304,9 @@ def apply_indices(indices, indexables):
     >>> apply_indices((ALL, np.array([0,1,2])), [OrderedSet('abcd'), None])
     [OrderedSet(['a', 'b', 'c', 'd']), None]
     """
+    # Check a few common cases first
+    if isinstance(indices, int): return indexables[1:]
+    # TODO: check more.
     
     # Make indices into a list
     if isinstance(indices, tuple):

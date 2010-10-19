@@ -2,8 +2,7 @@ import logging
 import numpy as np
 logger = logging.getLogger(__name__)
 
-from csc.divisi2.ordered_set import OrderedSet
-from csc.divisi2.recycling_set import RecyclingSet
+from csc.divisi2.ordered_set import OrderedSet, RecyclingSet
 from csc.divisi2.dense import DenseMatrix, DenseVector
 from csc.divisi2.operators import projection, dot
 
@@ -103,7 +102,7 @@ class CCIPCA(object):
         Real eigenvectors start counting at 1. The 0th eigenvector represents
         the moving average of the input data.
         """
-        return self.matrix[:,index]
+        return self.matrix.get_col(index)
 
     def get_unit_eigenvector(self, index):
         """
@@ -131,8 +130,9 @@ class CCIPCA(object):
 
     def compute_attractor(self, index, vec):
         """
-        Compute the attractor vector for the eigenvector with index `index`
-        with the new vector `vec`.
+        Compute the attractor vector for the eigenvector with index
+        `index` with the new vector `vec`: the projection of the
+        eigenvector onto `vec`.
         """
         if index == 0:
             # special case for the mean vector
@@ -197,18 +197,28 @@ class CCIPCA(object):
         return self.eigenvector_residue(index, vec)
 
     def sort_vectors(self):
+        """
+        Sorts the eigenvector table in decreasing order, in place,
+        keeping the special eigenvector 0 first. Returns the mapping
+        from old to new eigenvectors.
+        """
         eigs = self.eigenvalues()
         
-        # keep eigenvector 0 in front
+        # keep eigenvector 0 in front (eigs was a new list)
         eigs[0] = np.inf
         sort_order = np.asarray(np.argsort(-eigs))
 
-        self.matrix[:] = self.matrix[:,sort_order]
+        #self.matrix[:] = self.matrix[:,sort_order]
+        self.matrix = DenseMatrix(np.asarray(self.matrix)[:,sort_order], self.matrix.row_labels, None)
         return sort_order
     
     def match_labels(self, vec, touch=False):
+        """
+        Returns a new vector with the data of `vec` but aligned to the
+        current labels.
+        """
         result = self.zero_column()
-        for (key, value) in vec.named_items():
+        for key, value in vec.named_items():
             if touch:
                 index = result.labels.add(key)
             else:
@@ -217,10 +227,15 @@ class CCIPCA(object):
         return result
 
     def learn_vector(self, vec):
+        """
+        Updates the eigenvectors to account for a new vector. Returns
+        the magnitudes of each eigenvector that would (approximately)
+        reconstruct the given vector.
+        """
         if vec.labels is not self.matrix.row_labels:
             current_vec = self.match_labels(vec, touch=True)
         else:
-            current_vec = vec[:]
+            current_vec = vec
 
         self.iteration += 1
         magnitudes = np.zeros((self.shape[1],))
@@ -235,12 +250,14 @@ class CCIPCA(object):
 
     def project_vector(self, vec):
         """
-        Like learn_vector, but doesn't change the state.
+        Projects `vec` onto each eigenvector in succession. Returns
+        the magnitude of each eigenvector.  (Like learn_vector, but
+        doesn't change the state.)
         """
         if vec.labels is not self.matrix.row_labels:
             current_vec = self.match_labels(vec, touch=False)
         else:
-            current_vec = vec.copy()
+            current_vec = vec
         magnitudes = np.zeros((self.shape[1],))
         for index in xrange(min(self.shape[1], self.iteration+1)):
             mag, new_vec = self.eigenvector_residue(index, current_vec)
@@ -262,6 +279,10 @@ class CCIPCA(object):
         return self.reconstruct(mags)
     
     def forget_row(self, slot, label):
+        """
+        Called by RecyclingSet when an index gets reused. Clears the
+        old data out of the eigenvector table.
+        """
         logger.debug("forgetting row %d" % slot)
         self.matrix[slot,:] = 0
 
@@ -269,6 +290,12 @@ class CCIPCA(object):
         for col in xrange(matrix.shape[1]):
             print col, '/', matrix.shape[1]
             self.learn_vector(matrix[:,col])
+
+def for_profiling(A, n):
+    c = CCIPCA.make(100, A.row_labels, amnesia=1.0)
+    for col in xrange(n):
+        c.learn_vector(A[:,col])
+
 
 def evaluate_assertions(input_data, test_filename):
     """
