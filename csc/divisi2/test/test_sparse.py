@@ -18,6 +18,10 @@ mat2 = SparseMatrix.from_named_entries([
     (2, "celery", "vegetable"),
 ])
 
+def test_vector_entries():
+    assert mat1[0].keys() == [0,2]
+    assert mat1[0].zero_entries() == [1]
+
 def test_matrix_identities():
     "Test that various operations cancel out to give the same matrix or vector."
     for mat in (mat1, mat2):
@@ -47,6 +51,10 @@ def test_vector_identities():
         assert vec == 1*vec
         assert vec == vec.T
         assert vec == vec.to_dense().to_sparse()
+
+def test_ellipsis():
+	assert mat1[..., 0] == mat1[:, 0]
+	assert mat1[0, ...] == mat1[0]
 
 def test_sparse_vs_dense():
     assert np.allclose(mat1.T.dot(mat2).to_dense(), mat1.T.to_dense().dot(mat2))
@@ -105,4 +113,17 @@ def test_ambiguous_multiply():
 def test_abstract():
     AbstractSparseArray(mat1)
 
+def test_normalize_tfidf():
+    m = divisi2.SparseMatrix([[1,-1],[0,1]])
+    tfidf = m.normalize_tfidf().to_dense()
+    assert np.allclose(np.exp(tfidf*2), divisi2.DenseMatrix([[1,1],[1,2]]))
 
+def test_empty_entries():
+    '''Empty entry lists should yield empty matrices.'''
+    m = SparseMatrix.from_named_entries(())
+    eq_(m.shape, (0, 0))
+
+def test_empty_square_entries():
+    '''Empty entry lists should yield empty square matrices.'''
+    m = SparseMatrix.square_from_named_entries(())
+    eq_(m.shape, (0, 0))

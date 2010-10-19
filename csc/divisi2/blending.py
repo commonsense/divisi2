@@ -14,7 +14,9 @@ def blend(mats, factors=None, symmetric=False):
     all the matrices.
     """
     assert len(mats) > 0
-    if len(mats) == 1: return mats[0] * factors[0]
+    if len(mats) == 1:
+        if factors is None: return mats[0]
+        else: return mats[0] * factors[0]
     
     b_values = []
     b_row_labels = []

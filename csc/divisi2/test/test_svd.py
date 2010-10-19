@@ -26,11 +26,12 @@ def test_truncated_svd():
     rec_dense = dot(U_dense * S_dense, V_dense.T)
     assert np.allclose(rec_sparse, rec_dense)
 
-@raises(ValueError)
 def test_zero_row():
     matcopy = mat_4x3.copy()
     matcopy[2,2] = 0
-    matcopy.svd(3)
+    U, S, V = matcopy.svd(2)
+    rec = dot(U*S, V.T)
+    assert np.allclose(matcopy.to_dense(), rec)
 
 def test_k_too_large():
     U, S, V = mat_4x3.svd(50)

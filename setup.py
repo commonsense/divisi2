@@ -11,12 +11,12 @@ the results can include relationships not expressed in the original
 data but related by common sense. See http://divisi.media.mit.edu/ for
 more info."""
 
-VERSION = "2.0b2"
+VERSION = "2.1.1"
 
 try:
     from setuptools import setup, Extension
 except ImportError:
-    from distutils import setup, Extension
+    from distutils.core import setup, Extension
 import os.path, sys
 from stat import ST_MTIME
 
@@ -103,8 +103,8 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     ext_modules = [svdlibc],
-    packages=['csc', 'csc.divisi2'],
-    package_data = {'csc.divisi2': ['data/graphs/*.graph', 'data/eval/*.pickle']},
+    packages=['csc', 'csc.divisi2', 'csc.divisi2.algorithms'],
+    package_data = {'csc.divisi2': ['data/graphs/*.graph', 'data/eval/*.pickle', 'data/matrices/*']},
     namespace_packages = ['csc'],
-    install_requires=['csc-utils >= 0.4.1', 'networkx'],
+    install_requires=['csc-utils >= 0.4.1', 'networkx', 'csc-pysparse'],
 )

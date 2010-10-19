@@ -1,5 +1,6 @@
 from csc.divisi2.ordered_set import OrderedSet, apply_indices
 from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
+from csc.divisi2.algorithms import LearningMixin
 from copy import copy
 import numpy as np
 import sys
@@ -100,7 +101,9 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
             obj.labels = labels
         else:
             obj.labels = OrderedSet(labels)
-        return obj
+        if labels is not None:
+            assert len(labels) == len(ndarray)
+	return obj
     
     def __array_finalize__(self, obj):
         if obj is None: return
@@ -156,7 +159,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         return unicode(self).encode('utf-8')
 
 
-class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
+class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
     __array_priority__ = 3.0
     def __new__(cls, input_array=None, row_labels=None, col_labels=None):
         # add cases for compatibility with SparseMatrix's constructor
@@ -179,7 +182,9 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         else:
             print "converting rows to orderedset"
             obj.row_labels = OrderedSet(row_labels)
-        if col_labels is None:
+        if obj.row_labels is not None:
+            assert len(obj.row_labels) == obj.shape[0]
+	if col_labels is None:
             obj.col_labels = None
         elif isinstance(col_labels, OrderedSet):
             obj.col_labels = col_labels
@@ -188,6 +193,8 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
             obj.col_labels = OrderedSet(col_labels)
         if row_labels is None and col_labels is None:
             obj.__getitem__ = super(DenseMatrix, obj).__getitem__
+        if obj.col_labels is not None:
+            assert len(obj.col_labels) == obj.shape[1]
         return obj
     
     def __array_finalize__(self, obj):
@@ -222,6 +229,9 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         return np.ndarray.__getitem__(self, (self.row_index(row_label), self.col_index(col_label)))
 
     # Other operations.
+    def to_scipy(self):
+        return np.asarray(self)
+
     def transpose(self):
         result = np.ndarray.transpose(self)
         result.col_labels = copy(self.row_labels)
@@ -244,6 +254,10 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         col_norms = self.col_norms()[np.newaxis, :]
         return self / (col_norms + EPSILON)
 
+    def normalize_cols(self):
+        norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
+        return self / norms
+
     def normalize_all(self):
         row_norms = self.row_norms()[:, np.newaxis]
         col_norms = self.col_norms()[np.newaxis, :]
@@ -256,12 +270,45 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
     def col_norms(self):
         as_array = np.asarray(self)
         return np.sqrt(np.sum(as_array*as_array, axis=0))
+    
+    def row_mean_center(self):
+        ndarray = np.asarray(self)
+        row_means = np.mean(ndarray, axis=1)
+        shifted = self - row_means[:,np.newaxis]
+        return (shifted, row_means)
+
+    def col_mean_center(self):
+        ndarray = np.asarray(self)
+        col_means = np.mean(ndarray, axis=0)
+        shifted = self - col_means
+        return (shifted, col_means)
+    
+    def mean_center(self):
+        """
+        Shift the rows and columns of the matrix so that their means are 0.
+
+        Return the new matrix, plus the lists of row and column offsets,
+        plus the global offset, that can be added to undo the shift.
+
+        Unlike sparse mean centering, this alters zeros as well.
+        """
+        ndarray = np.asarray(self)
+        total_mean = np.mean(ndarray)
+        col_means = np.mean(ndarray, axis=0) - total_mean
+        row_means = np.mean(ndarray, axis=1) - total_mean
+
+        shifted = DenseMatrix(
+          ndarray - row_means[:,np.newaxis] - col_means - total_mean,
+          row_labels=self.row_labels,
+          col_labels=self.col_labels
+        )
+        return (shifted, row_means, col_means, total_mean)
 
     @property
     def T(self):
         return self.transpose()
     
-    def extend(self, other):
+    def concatenate(self, other):
         """
         Concatenate two dense labeled matrices by rows.
 
@@ -270,17 +317,8 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin):
         assert self.same_col_labels_as(other)
         newlabels = list(self.row_labels) + list(other.row_labels)
         return DenseMatrix(np.concatenate([self, other]), newlabels, self.col_labels)
+    extend = concatenate # this was the wrong name, but other things use it.
 
-    ### eigenproblems
-    def svd(self, k):
-        U, S, Vh = np.linalg.svd(self)
-        U = DenseMatrix(U, self.row_labels, None)
-        V = DenseMatrix(Vh.T, self.col_labels, None)
-        return (U[:,:k], S[:k], V[:,:k])
-
-    def spectral(self):
-        raise NotImplementedError
-    
     ### SVD summary
     def summarize_axis(self, axis, output=sys.stdout):
         if isinstance(axis, int):

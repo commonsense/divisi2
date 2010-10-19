@@ -108,7 +108,7 @@ def dot(arg1, arg2):
             return np.dot(arg1, arg2)
         elif hasattr(arg2, 'matvec_transpose'):
             return arg2.matvec_transpose(arg1.T)
-        elif isscalar(arg2):
+        elif np.isscalar(arg2):
             return np.multiply(arg1, arg2)
         else:
             raise NotImplementedError
