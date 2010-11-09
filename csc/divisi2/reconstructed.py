@@ -217,4 +217,4 @@ def reconstruct_activation(V, S, post_normalize=True):
     mat = (V * np.exp(Lambda/2))
     if post_normalize: mat = mat.normalize_rows()
     return reconstruct_symmetric(mat)
-    
+

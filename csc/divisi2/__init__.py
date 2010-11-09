@@ -5,7 +5,7 @@ functions and classes.
 
 from csc.divisi2.exceptions import Error, LabelError, DimensionMismatch
 from csc.divisi2.fileIO import load, save
-from csc.divisi2.sparse import SparseMatrix, SparseVector
+from csc.divisi2.sparse import SparseMatrix, SparseVector, category
 from csc.divisi2.dense import DenseMatrix, DenseVector
 from csc.divisi2.blending import blend
 from csc.divisi2.operators import *

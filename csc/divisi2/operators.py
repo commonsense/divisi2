@@ -209,7 +209,7 @@ def projection(u, v):
         raise ValueError("I don't know how to project something with %d dimensions" % v.ndim)
 
 def _vector_projection(u, v):
-    return u * dot(u, v)
+    return u * dot(u.conj(), v)
 
 def projection_residue(u, v):
     """
