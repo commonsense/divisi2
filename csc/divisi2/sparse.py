@@ -1237,7 +1237,10 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         You may want from_named_items, which takes input in the more
         Pythonic (key, value) order.
         """
-        return SparseVector.from_named_lists(*zip(*tuples))
+        if tuples:
+            return SparseVector.from_named_lists(*zip(*tuples))
+        else:
+            return SparseVector(0)
     
     @staticmethod
     def from_named_items(items):
@@ -1643,3 +1646,12 @@ def _vector_from_state(state):
     return SparseVector.from_state(state)
 _vector_from_state.__safe_for_unpickling__ = True
 
+def category(*entries, **dict):
+    """
+    A helper for making ad-hoc categories. Positional arguments turn into
+    entries in the category with value 1. Keyword arguments turn into
+    entries in the category with the given values.
+    """
+    vec1 = SparseVector.from_counts(entries)
+    vec2 = SparseVector.from_dict(dict)
+    return vec1 + vec2

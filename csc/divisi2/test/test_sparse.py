@@ -127,3 +127,14 @@ def test_empty_square_entries():
     '''Empty entry lists should yield empty square matrices.'''
     m = SparseMatrix.square_from_named_entries(())
     eq_(m.shape, (0, 0))
+
+def test_category():
+    vec = category('cat', 'dog')
+    assert vec.entry_named('cat') == 1
+    assert vec.entry_named('dog') == 1
+    assert len(vec) == 2
+
+    vec2 = category(happy=1, sad=-1)
+    assert vec2.entry_named('happy') == 1
+    assert vec2.entry_named('sad') == -1
+    assert len(vec2) == 2
