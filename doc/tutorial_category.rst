@@ -19,12 +19,22 @@ the set.
 
 Making a category
 -----------------
-A category is a SparseVector, generally having only a few entries. It is often
-convenient to construct a category using :func:`divisi2.SparseVector.from_dict`, which takes in a dictionary, or :func:`divisi2.SparseVector.from_counts`, which takes in a list of labels. Here are some examples using both:
+A category is a SparseVector, generally having only a few entries. Divisi
+provides a few ways to make a category:
+
+- :func:`divisi2.SparseVector.from_dict` takes in a dictionary, mapping entry
+  names to their values.
+- :func:`divisi2.SparseVector.from_counts` counts the number of times each
+  entry appears in a list to get the values.
+- :func:`divisi2.category` is a wrapper around both of the above, which is
+  convenient to use at the Python prompt: it sends its positional arguments to
+  `from_counts`, and its keyword arguments to `from_dict`.
+
+Here are some examples:
 
 >>> from csc import divisi2
->>> happy = divisi2.SparseVector.from_dict({'happy': 1, 'sad': -1})
->>> transport = divisi2.SparseVector.from_counts(['car', 'bus', 'train', 'bicycle'])
+>>> happy = divisi2.category(happy=1, sad=-1)
+>>> transport = divisi2.category('car', 'bus', 'train', 'bicycle')
 
 Applying a matrix to a category
 -------------------------------

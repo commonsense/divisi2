@@ -26,6 +26,10 @@ representation of ConceptNet.
     and jump to :ref:`aspace_svd`. But if you keep reading this section,
     we'll show you how to *make* that matrix.
 
+    The exact results you get, of course, may depend on which release of the
+    ConceptNet matrix you use, or which release of the ConceptNet graph you
+    built it from.
+
 The graph file is packaged with Divisi and stored in the csc/divisi2/data
 directory, so we can use a special path beginning with `data:` to get at it.
 You could give a normal path as well to load a different file.
@@ -82,6 +86,9 @@ Then you could load it again with::
 
 Singular value decomposition
 ----------------------------
+
+By now, you've either built a ConceptNet matrix, or you've loaded a
+pre-built matrix.
 
 Given this matrix, we can factor it using SVD and ask for 100
 principal components, and then reconstruct its approximation from the factors.
@@ -169,7 +176,7 @@ But if we do this alone, the results we get are on no meaningful numerical
 scale. Consider this example where we look up the similarity between "horse"
 and "cow":
 
->>> sim = divisi2.reconstruct_similarity(U, S)
+>>> sim = divisi2.reconstruct_similarity(U, S, post_normalize=False)
 >>> sim.entry_named('horse', 'cow')
 36.693964805281276
 
@@ -225,23 +232,29 @@ way, all concepts are created equal, but after the SVD, the ones that are
 poorly represented are reduced in magnitude, and will not rank highly in queries
 such as this one.
 
-This presents a bit of a mathematical conundrum: the input matrix has both
-concepts and features we would need to normalize, and if we normalize just one
-direction, we let the other direction distort the results. But it's impossible
-to normalize an arbitrary matrix so that all its rows and columns are unit
-vectors.
-
-The compromise that Divisi2 provides is to divide each entry by the *geometric
-mean* of its row norm and its column norm. The rows and columns don't actually
-become unit vectors, but they all become closer to unit vectors, at least.
+Because we already did the normalization we wanted before the SVD, we set
+`post_normalize` back to False. 
 
 >>> A_pre = A.normalize_all()
 >>> U_pre, S_pre, V_pre = A_pre.svd(k=100)
->>> sim_pre = divisi2.reconstruct_similarity(U_pre, S_pre)
+>>> sim_pre = divisi2.reconstruct_similarity(U_pre, S_pre, post_normalize=False)
 >>> sim_pre.row_named('table').top_items()
 [('table', 1.718), ('desk', 1.195), ('kitchen', 0.988), ('chair', 0.873),
 ('restaurant', 0.850), ('plate', 0.822), ('bed', 0.772), ('cabinet', 0.678), 
 ('refrigerator', 0.652), ('cupboard', 0.617)]
+
+.. note::
+
+    Normalizing the rows and columns of a matrix presents a bit of a
+    mathematical conundrum: the input matrix has both concepts and features we
+    would need to normalize, and if we normalize just one direction, we let the
+    other direction distort the results. But it's impossible to normalize an
+    arbitrary matrix so that all its rows and columns are unit vectors.
+
+    The compromise that Divisi2 provides is to divide each entry by the
+    *geometric mean* of its row norm and its column norm. The rows and columns
+    don't actually become unit vectors, but they all become closer to unit
+    vectors, at least.
 
 Spreading activation
 --------------------
