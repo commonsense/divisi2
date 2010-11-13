@@ -217,3 +217,16 @@ def isvd_llmat(llmat, int k, int niter=100, double lrate=.001):
     v, s, u = isvd(packed, k, niter, lrate)
     svdFreeSMat(packed)
     return u, s, v
+
+def hebbian_step(u_, vt_, int row, int col, double value, double lrate):
+    cdef np.ndarray[double, ndim=2] u = u_
+    cdef np.ndarray[double, ndim=2] vt = vt_
+    cdef double predicted = 0
+    for axis in range(u.shape[1]):
+        err = value - (predicted + u[row, axis] * vt[axis, col])
+
+        u_value = u[row, axis]
+        u[row, axis] += lrate * err * vt[axis, col]
+        vt[axis, col] += lrate * err * u_value
+
+        predicted += u[row, axis] * vt[axis, col]
