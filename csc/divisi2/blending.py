@@ -8,10 +8,18 @@ def blend_factor(mat):
     U, S, V = mat.svd(1)
     return 1.0/S[0]
 
-def blend(mats, factors=None, symmetric=False):
+def blend(mats, factors=None, symmetric=False, post_weights=None):
     """
     Combine multiple labeled matrices into one, with weighted data from
     all the matrices.
+
+    mats: a list of matrices to blend.
+    factors: List of scaling factor for each matrix.
+      If None, the reciprocal of the first singular value is used.
+    post_weights: List of weights to apply to each scaled matrix.
+      You can use this to, for example, say that one matrix is twice as
+      important as another. If None, no post-weighting is performed.
+    symmetric: Use square_from_named_lists.
     """
     assert len(mats) > 0
     if len(mats) == 1:
@@ -24,6 +32,9 @@ def blend(mats, factors=None, symmetric=False):
     
     if factors is None:
         factors = [blend_factor(mat) for mat in mats]
+
+    if post_weights is not None:
+        factors = [factor*post_weight for factor, post_weight in zip(factors, post_weights)]
     
     for mat, factor in zip(mats, factors):
         # FIXME: using bare find(), multiplying in numpy form, and
@@ -34,9 +45,7 @@ def blend(mats, factors=None, symmetric=False):
         b_col_labels.extend(col_labels)
     
     if symmetric:
-        return SparseMatrix.square_from_named_lists(b_values, b_row_labels,
-        b_col_labels)
+        return SparseMatrix.square_from_named_lists(b_values, b_row_labels, b_col_labels)
     else:
-        return SparseMatrix.from_named_lists(b_values, b_row_labels,
-        b_col_labels)
+        return SparseMatrix.from_named_lists(b_values, b_row_labels, b_col_labels)
 
