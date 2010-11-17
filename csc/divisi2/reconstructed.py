@@ -57,6 +57,36 @@ class ReconstructedMatrix(LabeledMatrixMixin):
             self.row_shift, self.col_shift, self.total_shift = shifts
 
         self.learning_rate = learning_rate
+    
+    @staticmethod
+    def make_random(rows, cols, k, learning_rate=0.001):
+        """
+        Generate a random ReconstructedMatrix that multiplies an (m x k)
+        factor by a (k x n) factor. `rows` can either be an OrderedSet
+        (in which case `m` is its length), or the integer `m` itself
+        (in which case there are no labels). Same with `cols` and `n`.
+        
+        The entries of the matrix will start
+        with a normal distribution.
+        """
+        if isinstance(rows, int):
+            m = rows
+            row_labels = None
+        else:
+            m = len(rows)
+            row_labels = rows
+        if isinstance(cols, int):
+            n = cols
+            col_labels = None
+        else:
+            n = len(cols)
+            col_labels = cols
+
+        left = DenseMatrix(np.random.normal(size=(m, k)),
+                           row_labels=row_labels)
+        right = DenseMatrix(np.random.normal(size=(k, n)),
+                            col_labels=col_labels)
+        return ReconstructedMatrix(left, right, learning_rate=learning_rate)
 
     @property
     def shape(self):
@@ -109,15 +139,27 @@ class ReconstructedMatrix(LabeledMatrixMixin):
 
     def __setitem__(self, indices, target):
         '''
-        Do a Hebbian step to update the U and V matrices to make (indices) approach target.
+        Performs a Hebbian step with the default learning rate, to make the
+        given matrix entry closer to `target`.
         '''
+        # FIXME: we're assuming single indices
+        row, col = indices
+        self.hebbian_step(row, col, target)
+    
+    def hebbian_step(self, row, col, target, lrate=None):
+        """
+        Perform a single Hebbian update on this matrix, adjusting left and right
+        to make the value at (row, col) closer to `target`.
+        """
+        if lrate is None:
+            lrate = self.learning_rate
         if not self._i_own_my_matrices:
             self.left = self.left.copy()
             self.right = self.right.copy()
             self._i_own_my_matrices = True
-        row, col = indices
-        hebbian_step(self.left, self.right, row, col, target, self.learning_rate)
-    
+        hebbian_step(self.left, self.right, row, col, target, lrate)
+
+
     def evaluate_ranking(self, testdata):
         def order_compare(s1, s2):
             assert len(s1) == len(s2)
