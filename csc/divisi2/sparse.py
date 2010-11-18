@@ -734,7 +734,8 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         if min_magnitude < epsilon:
             min_index = np.argmin(self.row_op(np.linalg.norm))
             raise ValueError("Row %d of this matrix is all zeros. Use .squish() first." % min_index)
-
+    
+    # TODO: add offset like DenseMatrix has
     def normalize_rows(self):
         """
         Rescale the rows of this matrix so that they all have unit Euclidean

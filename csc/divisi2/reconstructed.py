@@ -187,18 +187,32 @@ def reconstruct_symmetric(u):
     """
     return ReconstructedMatrix(u, u.T)
 
-def reconstruct_similarity(u, s, post_normalize=True):
+def reconstruct_similarity(u, s, post_normalize=True, offset=0.0, cutoff=0.0):
     """
     Reconstruct the symmetrical, weighted similarity matrix U * Sigma^2 * U^T.
 
     If `post_normalize` is true, then (U * Sigma) will be normalized so that
     the entries of the result are in the range [-1, 1].
+
+    If `offset` is set to a positive value, then that value will be added
+    to the magnitudes of all rows before normalizing. This can help reduce
+    spurious results. `offset` is meaningless without `post_normalize`. 
+
+    If `cutoff` is set to a positive value, then all rows with a magnitude
+    less than that (before `offset`) will be dropped entirely, eliminating
+    useless results that will never be similar to anything.
     """
     mat = u*s
-    if post_normalize: mat = mat.normalize_rows()
+    if cutoff > 0.0:
+        row_norms = np.sqrt(np.sum(np.asarray(mat) ** 2, axis=1))
+        rows_to_keep = list(np.nonzero(row_norms >= cutoff)[0])
+        mat = mat[rows_to_keep, :]
+
+    if post_normalize:
+        mat = mat.normalize_rows(offset=offset)
     return reconstruct_symmetric(mat)
 
-def reconstruct_activation(V, S, post_normalize=True):
+def reconstruct_activation(V, S, post_normalize=True, offset=0.0, cutoff=0.0):
     """
     A square matrix can be decomposed as A = V * Lambda * V^T, where Lambda
     contains the eigenvalues of the matrix and V contains the eigenvectors.
@@ -215,6 +229,7 @@ def reconstruct_activation(V, S, post_normalize=True):
     """
     Lambda = np.sqrt(S)
     mat = (V * np.exp(Lambda/2))
-    if post_normalize: mat = mat.normalize_rows()
+    if post_normalize:
+        mat = mat.normalize_rows(offset=offset)
     return reconstruct_symmetric(mat)
     

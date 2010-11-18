@@ -220,17 +220,17 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
             return DenseMatrix(result, self.row_labels, other.col_labels)
         else: raise TypeError
     
-    def normalize_rows(self):
-        norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
+    def normalize_rows(self, offset=0.0):
+        norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis] + offset
         return self / norms
 
-    def normalize_cols(self):
-        norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
+    def normalize_cols(self, offset=0.0):
+        norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :] + offset
         return self / norms
 
-    def normalize_all(self):
-        row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis]
-        col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :]
+    def normalize_all(self, offset=0.0):
+        row_norms = np.sqrt(np.sum(self*self, axis=1))[:, np.newaxis] + offset
+        col_norms = np.sqrt(np.sum(self*self, axis=0))[np.newaxis, :] + offset
         return self / np.sqrt(row_norms) / np.sqrt(col_norms)
     
     def row_mean_center(self):
