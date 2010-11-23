@@ -206,7 +206,7 @@ def reconstruct_similarity(u, s, post_normalize=True, offset=0.0, cutoff=0.0):
     if cutoff > 0.0:
         row_norms = np.sqrt(np.sum(np.asarray(mat) ** 2, axis=1))
         rows_to_keep = list(np.nonzero(row_norms >= cutoff)[0])
-        mat = mat[rows_to_keep, :]
+        mat = mat[rows_to_keep]
 
     if post_normalize:
         mat = mat.normalize_rows(offset=offset)
@@ -229,6 +229,10 @@ def reconstruct_activation(V, S, post_normalize=True, offset=0.0, cutoff=0.0):
     """
     Lambda = np.sqrt(S)
     mat = (V * np.exp(Lambda/2))
+    if cutoff > 0.0:
+        row_norms = np.sqrt(np.sum(np.asarray(mat) ** 2, axis=1))
+        rows_to_keep = list(np.nonzero(row_norms >= cutoff)[0])
+        mat = mat[rows_to_keep]
     if post_normalize:
         mat = mat.normalize_rows(offset=offset)
     return reconstruct_symmetric(mat)

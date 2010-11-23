@@ -164,7 +164,7 @@ def conceptnet_matrix(lang):
         return matrix
     except IOError:
         graph = divisi2.load('data:graphs/conceptnet_%s.graph' % lang)
-        matrix = sparse_matrix(graph, 'concepts', 'features', 5)
+        matrix = sparse_matrix(graph, 'concepts', 'features', 3)
         divisi2.save(matrix, 'data:matrices/conceptnet_%s' % lang)
         return matrix
 

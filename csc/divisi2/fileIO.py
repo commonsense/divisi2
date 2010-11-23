@@ -8,16 +8,18 @@ Easy functions for loading and saving Divisi matrices and semantic networks.
 New in Divisi2.
 """
 
-def _meta_open(filename, mode='rb'):
+def _meta_open(filename, mode='rb', encoding=None):
     if filename.startswith('data:'):
         filename = resource_filename(__name__, 'data/'+filename[5:])
     
     if filename.endswith('.gz'):
         import gzip
         opener = gzip.open
+        return opener(filename, mode)
+    elif encoding is None:
+        return open(filename, mode)
     else:
-        opener = open
-    return opener(filename, mode)
+        return codecs.open(filename, mode, encoding=encoding)
 
 def load(filename):
     """
@@ -36,8 +38,9 @@ def load_pickle(filename):
 
 def load_graph(filename, encoding='utf-8'):
     import networkx as nx
-    return nx.read_edgelist(_meta_open(filename), data=True, delimiter='\t',
-                            encoding=encoding, create_using=nx.MultiDiGraph())
+    return nx.read_edgelist(_meta_open(filename, encoding=encoding),
+                            data=True, delimiter='\t',
+                            create_using=nx.MultiDiGraph())
 
 def save(obj, filename):
     """
