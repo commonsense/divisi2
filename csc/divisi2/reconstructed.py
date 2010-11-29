@@ -5,6 +5,7 @@ from csc.divisi2.labels import LabeledMatrixMixin
 from csc.divisi2.ordered_set import apply_indices
 from csc.divisi2.sparse import SparseMatrix
 from csc.divisi2.dense import DenseMatrix
+from csc.divisi2._svdlib import hebbian_step
 
 SLICE_ALL = slice(None, None, None)
 
@@ -19,13 +20,23 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     """
     ndim = 2
 
-    def __init__(self, left, right, shifts=None):
+    def __init__(self, left, right, shifts=None, learning_rate=0.001):
+        '''
+        Create a ReconstructedMatrix.
+
+         left, right: factors; reconstructed = left * right.
+         shifts: a tuple of (row_shift, col_shift, total_shift):
+           row_shift, col_shift: vectors of shifts (offsets) for each row and column
+           total_shift: scalar to add to everything
+         learning_rate: the learning rate for the Hebbian update step used when setting an item.
+        '''
         if not isinstance(left, (SparseMatrix, DenseMatrix)):
             left = DenseMatrix(left)
         if not isinstance(right, (SparseMatrix, DenseMatrix)):
             right = left.__class__(right)
         self.left = left
         self.right = right
+        self._i_own_my_matrices = False
         if self.left.shape[1] != self.right.shape[0]:
             raise DimensionMismatch("Inner dimensions do not match.")
         if self.left.col_labels != self.right.row_labels:
@@ -44,6 +55,38 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         else:
             assert len(shifts) == 3
             self.row_shift, self.col_shift, self.total_shift = shifts
+
+        self.learning_rate = learning_rate
+    
+    @staticmethod
+    def make_random(rows, cols, k, learning_rate=0.001):
+        """
+        Generate a random ReconstructedMatrix that multiplies an (m x k)
+        factor by a (k x n) factor. `rows` can either be an OrderedSet
+        (in which case `m` is its length), or the integer `m` itself
+        (in which case there are no labels). Same with `cols` and `n`.
+        
+        The entries of the matrix will start
+        with a normal distribution.
+        """
+        if isinstance(rows, int):
+            m = rows
+            row_labels = None
+        else:
+            m = len(rows)
+            row_labels = rows
+        if isinstance(cols, int):
+            n = cols
+            col_labels = None
+        else:
+            n = len(cols)
+            col_labels = cols
+
+        left = DenseMatrix(np.random.normal(size=(m, k)),
+                           row_labels=row_labels)
+        right = DenseMatrix(np.random.normal(size=(k, n)),
+                            col_labels=col_labels)
+        return ReconstructedMatrix(left, right, learning_rate=learning_rate)
 
     @property
     def shape(self):
@@ -94,12 +137,29 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         return dot(self.left, aligned_matrix_multiply(self.right, vec))
     right_adhoc_category = right_category
 
-    def __setitem__(self, indices, targetdata):
-        # Random thought for the future:
-        # Wouldn't it be neat if this did gradient descent? Then the
-        # Hebbian incremental SVD would be an amazingly simple setitem loop.
-        raise TypeError("Can't assign to entries of a ReconstructedMatrix")
+    def __setitem__(self, indices, target):
+        '''
+        Performs a Hebbian step with the default learning rate, to make the
+        given matrix entry closer to `target`.
+        '''
+        # FIXME: we're assuming single indices
+        row, col = indices
+        self.hebbian_step(row, col, target)
     
+    def hebbian_step(self, row, col, target, lrate=None):
+        """
+        Perform a single Hebbian update on this matrix, adjusting left and right
+        to make the value at (row, col) closer to `target`.
+        """
+        if lrate is None:
+            lrate = self.learning_rate
+        if not self._i_own_my_matrices:
+            self.left = self.left.copy()
+            self.right = self.right.copy()
+            self._i_own_my_matrices = True
+        hebbian_step(self.left, self.right, row, col, target, lrate)
+
+
     def evaluate_ranking(self, testdata):
         def order_compare(s1, s2):
             assert len(s1) == len(s2)
