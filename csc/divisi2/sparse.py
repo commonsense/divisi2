@@ -422,7 +422,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         return SparseMatrix.from_named_lists(*lists)
     
     @staticmethod
-    def square_from_named_entries(tuples):
+    def square_from_named_entries(tuples, labels=None):
         """
         Create a new SparseMatrix from a list of tuples. Each tuple is
         of the form (value, rowname, colname), expressing a value and the
@@ -450,6 +450,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         """
         lists = zip(*tuples)
         if not lists: return SparseMatrix((0,0))
+        lists = lists + [labels]
         return SparseMatrix.square_from_named_lists(*lists)
     
     ### basic operations

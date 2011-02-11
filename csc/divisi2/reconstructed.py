@@ -146,7 +146,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         row, col = indices
         self.hebbian_step(row, col, target)
     
-    def hebbian_step(self, row, col, target, lrate=None):
+    def hebbian_step(self, row, col, target, normalize=True, lrate=None):
         """
         Perform a single Hebbian update on this matrix, adjusting left and right
         to make the value at (row, col) closer to `target`.
@@ -154,11 +154,27 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         if lrate is None:
             lrate = self.learning_rate
         if not self._i_own_my_matrices:
+            if (self.left.shape == self.right.T.shape and
+                np.all(self.left == self.right.T)):
+                symmetric = True
+            else:
+                symmetric = False
+                
             self.left = self.left.copy()
-            self.right = self.right.copy()
+            if symmetric:
+                self.right = self.left.T
+            else:
+                self.right = self.right.copy()
             self._i_own_my_matrices = True
-        hebbian_step(self.left, self.right, row, col, target, lrate)
 
+        hebbian_step(self.left, self.right, row, col, target, lrate)
+        if normalize:
+            nleft = np.linalg.norm(self.left[row])
+            nright = np.linalg.norm(self.right[:,col])
+            if nleft > 1.0:
+                self.left[row] /= nleft
+            if nright > 1.0:
+                self.right[:,col] /= nright
 
     def evaluate_ranking(self, testdata):
         def order_compare(s1, s2):

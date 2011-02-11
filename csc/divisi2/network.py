@@ -25,7 +25,8 @@ def data_foreach(graph, func):
     a graph. The return value of the function is not used.
     """
     for source, dest, data in graph.edges_iter(data=True):
-        func(data)
+        if data and data['score'] > 0:
+            func(data)
 
 def _extract_nodes(source, target, data):
     return (source, target)
