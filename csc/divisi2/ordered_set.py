@@ -1,4 +1,5 @@
 from itertools import izip
+from priodict import priorityDictionary
 
 SLICE_ALL = slice(None)
 
@@ -44,7 +45,8 @@ class OrderedSet(object):
             else:
                 return result
         elif isinstance(index, basestring):
-            raise TypeError("Can't use a string as an OrderedSet index -- did you mean to use .index?")
+            raise TypeError("Can't use a string as an OrderedSet index -- "
+                            "did you mean to use .index?")
         else:
             # assume it's a fancy index list
             return OrderedSet([self.items[i] for i in index])
@@ -345,7 +347,13 @@ def apply_indices(indices, indexables):
             which_indexable += 1
     return results
 
-class RecyclingSet(OrderedSet):
+class PrioritySet(OrderedSet):
+    """
+    A PrioritySet stores a fixed number of items that can be assigned
+    priority values (either manually or based on time). When the set becomes
+    full, it will drop the lowest-priority items to make room for new ones,
+    and optionally notify subscribed listeners that it is doing so.
+    """
     __slots__ = ['items', 'indices', 'index', 'indexFor', '__contains__',
                  '__getitem__', '__len__', 'count', 'maxsize',
                  'drop_listeners', 'priority']
@@ -362,29 +370,29 @@ class RecyclingSet(OrderedSet):
         items, self.priority, self.maxsize, self.count = state
         OrderedSet.__setstate__(self, items)
 
-    def add(self, key):
+    def add(self, key, priority=None):
         """
-        Add an item to the set (unless it's already there),
-        returning its index. Drop an old item if necessary.
+        Add an item to the set with a given priority, returning its index.
+        Drop an old item if necessary.
 
         ``None`` is never an element of an OrderedSet.
         """
 
         if key in self.indices:
-            self.touch(key)
+            self.update(key, priority)
             return self.indices[key]
         n = len(self.items)
         if n < self.maxsize:
             self.items.append(key)
             if key is not None:
                 self.indices[key] = n
-            self.touch(key)
+            self.update(key, priority)
             return n
         else:
-            newindex = self.drop_oldest()
+            newindex = self.drop_lowest()
             self.items[newindex] = key
             self.indices[key] = newindex
-            self.touch(key)
+            self.update(key, priority)
             return newindex
     append = add
 
@@ -397,15 +405,15 @@ class RecyclingSet(OrderedSet):
         self.items[n] = None
         self.announce_drop(n, oldkey)
 
-    def drop_oldest(self):
+    def drop_lowest(self):
         """
         Drop the least recently used item, to make room for a new one. Return
         the number of the slot that just became free.
         """
         slot = self.priority.smallest()
-        oldest = self.items[slot]
         del self[slot]
         return slot
+    drop_oldest = drop_lowest
 
     def listen_for_drops(self, callback):
         """
@@ -422,17 +430,26 @@ class RecyclingSet(OrderedSet):
         for listener in self.drop_listeners:
             listener(index, key)
 
-    def touch(self, key):
+    def update(self, key, priority=None):
         """
-        Remember that this key is useful.
-        """
-        if key not in self: raise IndexError
-        else:
-            self.count += 1
-            self.priority[self.index(key, False)] = self.count
+        Update the priority of a key.
 
-    def index(self, key, touch=True):
-        if touch: self.touch(key)
+        If the priority is not specified, it will be selected from an
+        increasing sequence as in RecyclingSet.
+        """
+        if key not in self:
+            raise IndexError
+        else:
+            if priority is None:
+                priority = self.count
+                self.count += 1
+            self.priority[self.index(key, False)] = priority
+    touch = update
+
+
+    def index(self, key, update=False, update_priority=None):
+        if update:
+            self.update(key, update_priority)
         return self.indices[key]
     indexFor = index
 
@@ -447,5 +464,16 @@ class RecyclingSet(OrderedSet):
     def __len__(self):
         return len(self.indices)
 
+    def __repr__(self):
+        if len(self) < 10:
+            return u'PrioritySet(%d, %r)' % (self.maxsize,
+                [x for x in self.items if x is not None])
+        else:
+            return u'<PrioritySet, %d/%d items like %s>' % (len(self),
+                self.maxsize, self[0])
+
     def _setup_quick_lookup_methods(self):
         pass
+
+# Allow this class to be used under its old name
+RecyclingSet = PrioritySet
