@@ -1,6 +1,6 @@
-from csc.divisi2.ordered_set import OrderedSet, apply_indices
-from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
-from csc.divisi2.algorithms import LearningMixin
+from divisi2.ordered_set import OrderedSet, apply_indices
+from divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
+from divisi2.algorithms import LearningMixin
 from copy import copy
 import numpy as np
 import sys
@@ -44,7 +44,7 @@ class AbstractDenseArray(np.ndarray):
         """
         Elementwise multiplication. Ask divisi2.operators how to do it.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.multiply(self, other)
 
     def dot(self, other):
@@ -52,7 +52,7 @@ class AbstractDenseArray(np.ndarray):
         Matrix or scalar multiplication. Delegate to divisi2.operators to
         sort it out.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.dot(self, other)
 
     matrixmultiply = dot
@@ -62,7 +62,7 @@ class AbstractDenseArray(np.ndarray):
         Multiply this matrix *transposed* by another matrix. This can save
         a lot of computation when multiplying two sparse matrices.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.transpose_dot(self, other)
     
     def equals(self, other):
@@ -111,7 +111,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         """
         Get this as a SparseVector.
         """
-        from csc.divisi2.sparse import SparseVector
+        from divisi2.sparse import SparseVector
         return SparseVector(self, self.labels)
     
     def _dot(self, other):
@@ -200,7 +200,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         """
         Get this as a SparseMatrix.
         """
-        from csc.divisi2.sparse import SparseMatrix
+        from divisi2.sparse import SparseMatrix
         return SparseMatrix(self, self.row_labels, self.col_labels)
 
     def to_scipy(self):

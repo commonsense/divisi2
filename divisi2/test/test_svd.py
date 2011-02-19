@@ -1,7 +1,7 @@
-from csc import divisi2
-from csc.divisi2.operators import *
-from csc.divisi2.sparse import *
-from csc.divisi2.dense import *
+import divisi2
+from divisi2.operators import *
+from divisi2.sparse import *
+from divisi2.dense import *
 from nose.tools import *
 
 mat_4x3 = SparseMatrix.from_named_entries([

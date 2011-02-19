@@ -1,6 +1,6 @@
-from csc.divisi2.network import conceptnet_matrix, conceptnet_assoc
-from csc.divisi2.reconstructed import reconstruct, reconstruct_similarity, reconstruct_activation
-from csc import divisi2
+from divisi2.network import conceptnet_matrix, conceptnet_assoc
+from divisi2.reconstructed import reconstruct, reconstruct_similarity, reconstruct_activation
+import divisi2
 import numpy as np
 
 def analogyspace_predictions():

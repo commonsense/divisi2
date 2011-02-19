@@ -1,11 +1,11 @@
 import numpy as np
-from csc.divisi2.operators import dot, multiply, aligned_matrix_multiply
-from csc.divisi2.exceptions import LabelError, DimensionMismatch
-from csc.divisi2.labels import LabeledMatrixMixin
-from csc.divisi2.ordered_set import apply_indices
-from csc.divisi2.sparse import SparseMatrix
-from csc.divisi2.dense import DenseMatrix
-from csc.divisi2._svdlib import hebbian_step
+from divisi2.operators import dot, multiply, aligned_matrix_multiply
+from divisi2.exceptions import LabelError, DimensionMismatch
+from divisi2.labels import LabeledMatrixMixin
+from divisi2.ordered_set import apply_indices
+from divisi2.sparse import SparseMatrix
+from divisi2.dense import DenseMatrix
+from divisi2._svdlib import hebbian_step
 
 SLICE_ALL = slice(None, None, None)
 
@@ -233,7 +233,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
             score += (total-score)/2.0
             return (float(score) / total, score, total)
         
-        from csc import divisi2
+        import divisi2
         testdata = divisi2.load(filename)
         values1 = []
         values2 = []

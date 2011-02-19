@@ -1,9 +1,9 @@
 import numpy as np
-from csc.divisi2.dense import DenseVector, DenseMatrix
-from csc.divisi2.ordered_set import OrderedSet, indexable_set, apply_indices
-from csc.divisi2.exceptions import LabelError, DimensionMismatch
-from csc.divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
-from csc.divisi2.algorithms import LearningMixin
+from divisi2.dense import DenseVector, DenseMatrix
+from divisi2.ordered_set import OrderedSet, indexable_set, apply_indices
+from divisi2.exceptions import LabelError, DimensionMismatch
+from divisi2.labels import LabeledVectorMixin, LabeledMatrixMixin, format_label
+from divisi2.algorithms import LearningMixin
 from pysparse.sparse import spmatrix
 from pysparse.sparse.pysparseMatrix import PysparseMatrix
 from copy import copy
@@ -101,7 +101,7 @@ class AbstractSparseArray(object):
         Handle the case where we're on the right side of a scalar
         multiplication, through divisi2.operators.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.multiply(other, self)
 
     def __div__(self, other):
@@ -109,7 +109,7 @@ class AbstractSparseArray(object):
         Divide by something (probably a constant). Delegate to divisi2.operators
         to figure it out.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.divide(self, other)
     
     def __rdiv__(self, other):
@@ -117,7 +117,7 @@ class AbstractSparseArray(object):
         Divide something else by self. On the off chance that this is possible,
         divisi2.operators should do the right thing.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.divide(other, self)
 
     def __imul__(self, scalefactor):
@@ -142,7 +142,7 @@ class AbstractSparseArray(object):
         """
         Elementwise multiplication. Ask divisi2.operators how to do it.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.multiply(self, other)
 
     def dot(self, other):
@@ -150,7 +150,7 @@ class AbstractSparseArray(object):
         Matrix or scalar multiplication. Delegate to divisi2.operators to
         sort it out.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.dot(self, other)
 
     matrixmultiply = dot
@@ -160,7 +160,7 @@ class AbstractSparseArray(object):
         Multiply this matrix *transposed* by another matrix. This can save
         a lot of computation when multiplying two sparse matrices.
         """
-        from csc.divisi2 import operators
+        from divisi2 import operators
         return operators.transpose_dot(self, other)
 
     def cmul(self, scalefactor):
@@ -496,7 +496,7 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         If this matrix (A) has shape m by n, the result will have shape
         m by m.
         """
-        from csc.divisi2.reconstructed import ReconstructedMatrix
+        from divisi2.reconstructed import ReconstructedMatrix
         return ReconstructedMatrix(self, self.T)
 
     def density(self):
@@ -1561,7 +1561,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
     _transpose_dot_sparse = _dot_sparse
     
     def _dot_dense(self, other):
-        from csc.divisi2.operators import dot
+        from divisi2.operators import dot
         return dot(self.to_dense(), other)
 
     ### dictionary-like operations

@@ -1,5 +1,5 @@
 from math import log
-from csc.divisi2.sparse import SparseMatrix
+from divisi2.sparse import SparseMatrix
 import networkx as nx
 log_2 = log(2)
 
@@ -151,7 +151,7 @@ def filter_by_relation(concept_feature_matrix, relation):
 
     Be aware that empty rows may remain.
     '''
-    from csc.divisi2.operators import filter_labels
+    from divisi2.operators import filter_labels
     all_features = concept_feature_matrix.col_labels
     features_to_keep = [feature for feature in all_features
                         if feature[1] == relation]
@@ -159,7 +159,7 @@ def filter_by_relation(concept_feature_matrix, relation):
 
 def conceptnet_matrix(lang):
     # load from the included pickle file
-    from csc import divisi2
+    import divisi2
     try:
         matrix = divisi2.load('data:matrices/conceptnet_%s' % lang)
         return matrix
@@ -170,7 +170,7 @@ def conceptnet_matrix(lang):
         return matrix
 
 def conceptnet_assoc(lang):
-    from csc import divisi2
+    import divisi2
     try:
         matrix = divisi2.load('data:matrices/conceptnet_assoc_%s' % lang)
         return matrix

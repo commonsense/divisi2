@@ -1,4 +1,4 @@
-from csc.divisi2.sparse import SparseMatrix
+from divisi2.sparse import SparseMatrix
 
 def blend_factor(mat):
     """

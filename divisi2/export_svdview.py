@@ -45,7 +45,7 @@ def denormalize(concept_text):
     Returns the canonical denormalized (user-visible) form of a
     concept, given its normalized text of a concept.
     '''
-    from csc.conceptnet.models import Concept
+    from conceptnet.models import Concept
 
     if isinstance(concept_text, tuple):
         text, lang = concept_text

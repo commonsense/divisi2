@@ -2,9 +2,9 @@
 Mathematical operators that support various kinds of Divisi matrices.
 """
 import numpy as np
-from csc.divisi2.sparse import SparseMatrix, SparseVector, AbstractSparseArray
-from csc.divisi2.dense import DenseMatrix, DenseVector, AbstractDenseArray, from_ndarray
-from csc.divisi2.ordered_set import OrderedSet
+from divisi2.sparse import SparseMatrix, SparseVector, AbstractSparseArray
+from divisi2.dense import DenseMatrix, DenseVector, AbstractDenseArray, from_ndarray
+from divisi2.ordered_set import OrderedSet
 
 def multiply(arg1, arg2):
     """

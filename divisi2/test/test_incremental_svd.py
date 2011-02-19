@@ -1,6 +1,6 @@
-from csc.divisi2.sparse import SparseMatrix
-from csc.divisi2.reconstructed import ReconstructedMatrix
-from csc.divisi2.operators import dot
+from divisi2.sparse import SparseMatrix
+from divisi2.reconstructed import ReconstructedMatrix
+from divisi2.operators import dot
 import numpy as np
 
 mat_4x3 = SparseMatrix.from_named_entries([
