@@ -36,7 +36,7 @@ def load_pickle(filename):
     file = _meta_open(filename)
     return pickle.load(file)
 
-def load_graph(filename, encoding='utf-8'):
+def load_graph(filename, encoding=None):
     import networkx as nx
     return nx.read_edgelist(_meta_open(filename, encoding=encoding),
                             data=True, delimiter='\t',
