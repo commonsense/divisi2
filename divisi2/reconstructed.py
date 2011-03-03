@@ -30,10 +30,6 @@ class ReconstructedMatrix(LabeledMatrixMixin):
            total_shift: scalar to add to everything
          learning_rate: the learning rate for the Hebbian update step used when setting an item.
         '''
-        if not isinstance(left, (SparseMatrix, DenseMatrix)):
-            left = DenseMatrix(left)
-        if not isinstance(right, (SparseMatrix, DenseMatrix)):
-            right = left.__class__(right)
         self.left = left
         self.right = right
         self._i_own_my_matrices = False
