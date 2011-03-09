@@ -34,7 +34,7 @@ The graph file is packaged with Divisi and stored in the csc/divisi2/data
 directory, so we can use a special path beginning with `data:` to get at it.
 You could give a normal path as well to load a different file.
 
->>> from csc import divisi2
+>>> import divisi2
 >>> conceptnet = divisi2.load('data:graphs/conceptnet_en.graph')
 
 Now we build a Divisi sparse matrix out of this data. The rows should be the

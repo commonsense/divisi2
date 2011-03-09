@@ -1,4 +1,4 @@
-.. module:: csc.divisi2.sparse
+.. module:: divisi2.sparse
 
 Sparse Matrices and Vectors
 ===========================

@@ -32,7 +32,7 @@ provides a few ways to make a category:
 
 Here are some examples:
 
->>> from csc import divisi2
+>>> import divisi2
 >>> happy = divisi2.category(happy=1, sad=-1)
 >>> transport = divisi2.category('car', 'bus', 'train', 'bicycle')
 
@@ -75,10 +75,10 @@ Suppose we use a similarity matrix from concepts to concepts. (You can read
 about how to make such a matrix in :ref:`tutorial_aspace`; here we're just
 going to load it from the module of pre-built examples).
 
->>> from csc.divisi2 import examples
+>>> from divisi2 import examples
 >>> sim = examples.analogyspace_similarity()
 >>> type(sim)
-<class 'csc.divisi2.reconstructed.ReconstructedMatrix'>
+<class 'divisi2.reconstructed.ReconstructedMatrix'>
 
 Given a :class:`ReconstructedMatrix`, we can multiply a category through it --
 either from the left side or the right side -- using the
