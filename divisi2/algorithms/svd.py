@@ -1,7 +1,7 @@
-from csc.divisi2.dense import DenseMatrix
-from csc.divisi2.reconstructed import ReconstructedMatrix
-from csc.divisi2._svdlib import svd_llmat
-from csc.divisi2 import operators
+from divisi2.dense import DenseMatrix
+from divisi2.reconstructed import ReconstructedMatrix
+from divisi2._svdlib import svd_llmat
+from divisi2 import operators
 
 def svd(matrix, k=50):
     """
