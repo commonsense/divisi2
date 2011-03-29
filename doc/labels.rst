@@ -1,7 +1,7 @@
 Labeling data
 =============
 
-.. module:: csc.divisi2.labels
+.. module:: divisi2.labels
 
 Labeling vectors and matrices
 -----------------------------
@@ -39,7 +39,7 @@ API documentation
 
 
 
-.. module:: csc.divisi2.ordered_set
+.. module:: divisi2.ordered_set
 
 The OrderedSet class
 --------------------
@@ -52,11 +52,11 @@ differences:
 
 Use it like you would use a list. All the standard operators are defined.
 
-    >>> from csc.divisi2.ordered_set import OrderedSet
+    >>> from divisi2.ordered_set import OrderedSet
 
 .. testsetup::
 
-    from csc.divisi2.ordered_set import OrderedSet
+    from divisi2.ordered_set import OrderedSet
 
 Look up the index of 'banana' in a set:
 
