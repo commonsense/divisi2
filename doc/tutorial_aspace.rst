@@ -141,10 +141,15 @@ matrices when you look at its entries.
 >>> predictions = divisi2.reconstruct(concept_axes, axis_weights, feature_axes)
 
 As one example, we look up the concept "pig" and ask for the predicted values
-of two features it can take on the right side: "has legs" and "can fly".
+of two features it can take on the right side:
+
+Does a pig have legs?
 
 >>> predictions.entry_named('pig', ('right', 'HasA', 'leg'))
 0.15071150848740383
+
+Can a pig fly?
+
 >>> predictions.entry_named('pig', ('right', 'CapableOf', 'fly'))
 -0.26456066802309008
 
