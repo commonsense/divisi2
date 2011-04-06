@@ -396,6 +396,33 @@ class PrioritySet(OrderedSet):
             return newindex
     append = add
 
+    def load_items(self, items):
+        """
+        Fill an empty PrioritySet with a list of (key, priority) tuples.
+        """
+        assert len(self.items) == 0
+        assert len(items) <= self.maxsize
+        for index in xrange(len(items)):
+            key, priority = items[index]
+            self.items.append(key)
+            if key is not None:
+                self.indices[key] = index
+            self.items[index] = key
+            self.update(key, priority)
+        return self
+
+    def to_items(self):
+        """
+        Get the set as a list of (key, priority) tuples.
+        """
+        itemlist = []
+        for item in self.items:
+            if item is None:
+                itemlist.append((None, 0))
+            else:
+                itemlist.append((item, self.priority[item]))
+        return itemlist
+
     def __delitem__(self, n):
         """
         Deletes an item from the RecyclingSet.
