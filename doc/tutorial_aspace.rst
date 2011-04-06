@@ -34,7 +34,7 @@ The graph file is packaged with Divisi and stored in the csc/divisi2/data
 directory, so we can use a special path beginning with `data:` to get at it.
 You could give a normal path as well to load a different file.
 
->>> from csc import divisi2
+>>> import divisi2
 >>> conceptnet = divisi2.load('data:graphs/conceptnet_en.graph')
 
 Now we build a Divisi sparse matrix out of this data. The rows should be the
@@ -141,10 +141,15 @@ matrices when you look at its entries.
 >>> predictions = divisi2.reconstruct(concept_axes, axis_weights, feature_axes)
 
 As one example, we look up the concept "pig" and ask for the predicted values
-of two features it can take on the right side: "has legs" and "can fly".
+of two features it can take on the right side:
+
+Does a pig have legs?
 
 >>> predictions.entry_named('pig', ('right', 'HasA', 'leg'))
 0.15071150848740383
+
+Can a pig fly?
+
 >>> predictions.entry_named('pig', ('right', 'CapableOf', 'fly'))
 -0.26456066802309008
 
