@@ -1,10 +1,8 @@
 import logging
 import numpy as np
+from divisi2.operators import projection
 logger = logging.getLogger(__name__)
-
-from csc.divisi2.ordered_set import OrderedSet, RecyclingSet
-from csc.divisi2.dense import DenseMatrix, DenseVector
-from csc.divisi2.operators import projection, dot
+EPSILON = 1e-12
 
 # The algorithm is based on:
 #   Book Series - Lecture Notes in Computer Science
@@ -18,12 +16,16 @@ from csc.divisi2.operators import projection, dot
 #   Author  - Wey-Shiuan Hwang
 #   DOI  - 
 #   Link  - http://www.springerlink.com/content/cd8br967h808bw7h
+#
+# This is a purely dense, unlabeled version of ccipca.py, with the intent that
+# it can be much faster as a result.
 
 class CCIPCA(object):
     """A Candid Covariance-free Incremental Principal Component Analysis
     implementation"""
 
-    def __init__(self, matrix, iteration=0, bootstrap=20, amnesia=3.0, remembrance=100000, auto_baseline=True):
+    def __init__(self, matrix, iteration=0, bootstrap=20, amnesia=3.0,
+                 remembrance=100000, auto_baseline=True):
         """
         Construct an object that incrementally computes a CCIPCA, given a
         matrix that should hold the eigenvectors. If you want to make
@@ -33,15 +35,14 @@ class CCIPCA(object):
 
         - *matrix*: The matrix of eigenvectors to start with. (It can be all
           zeroes at the start.) Each column is an eigenvector, and rows
-          represent the different entries an eigenvector can have. Rows may
-          have labels on them.
+          represent the different entries an eigenvector can have.
         - *iteration*: the current time step.
         - *bootstrap*: The actual CCIPCA computation will begin after this time
           step. If you are starting from a zero matrix, this should be larger
           than the number of eigenvectors, so that the eigenvectors can be
           initialized properly.
         - amnesia: A parameter that weights the present more strongly than the
-          past.
+          past. amnesia=1 makes the present count the same as anything else.
         - remembrance: inputs that are more than this many steps old will begin
           to decay.
         - auto_baseline: if true, the CCIPCA will calculate and subtract out a
@@ -61,38 +62,16 @@ class CCIPCA(object):
         self.remembrance = remembrance
         self.auto_baseline = auto_baseline
 
-        if isinstance(self.matrix.row_labels, RecyclingSet):
-            self.matrix.row_labels.listen_for_drops(self.forget_row)
-    
-    @staticmethod
-    def make(k, labels, amnesia=3.0, remembrance=100000):
-        """
-        Makes a k-dimensional CCIPCA for a set of labels (or a set of m
-        unlabeled indices, if an integer m is given instead).
-
-        Some of CCIPCA's fiddlier options are given reasonable defaults.
-        """
-        if isinstance(labels, int):
-            # no actual labels, just standard indices
-            m = labels
-            labels = None
-        else:
-            if not isinstance(labels, OrderedSet):
-                labels = OrderedSet(labels)
-            m = len(labels)
-        matrix = DenseMatrix(np.zeros((m, k)), labels)
-        return CCIPCA(matrix, 0, k*2, amnesia, remembrance, True)
-
     @property
     def shape(self):
         return self.matrix.shape
 
     def zero_column(self):
         """
-        Get a vector labeled like a column of the CCIPCA matrix, all of whose
+        Get a vector shaped like a column of the CCIPCA matrix, all of whose
         entries are zero.
         """
-        return DenseVector(np.zeros((self.shape[0],)), self.matrix.row_labels)
+        return np.zeros((self.shape[0],), self.matrix.dtype)
 
     def get_weighted_eigenvector(self, index):
         """
@@ -102,7 +81,7 @@ class CCIPCA(object):
         Real eigenvectors start counting at 1. The 0th eigenvector represents
         the moving average of the input data.
         """
-        return self.matrix.get_col(index)
+        return self.matrix[:,index]
 
     def get_unit_eigenvector(self, index):
         """
@@ -111,7 +90,8 @@ class CCIPCA(object):
         Real eigenvectors start counting at 1. The 0th eigenvector represents
         the moving average of the input data.
         """
-        return self.get_weighted_eigenvector(index).hat()
+        eig = self.get_weighted_eigenvector(index)
+        return eig / (np.linalg.norm(eig) + EPSILON)
 
     def set_eigenvector(self, index, vec):
         """
@@ -120,13 +100,13 @@ class CCIPCA(object):
         self.matrix[:,index] = vec
 
     def eigenvectors(self):
-        return self.matrix.normalize_cols()
+        return self.matrix / self.eigenvalues()
 
     def get_eigenvalue(self, index):
         return np.linalg.norm(self.get_weighted_eigenvector(index))
     
     def eigenvalues(self):
-        return self.matrix.col_norms()
+        return np.sqrt(np.sum(self.matrix * self.matrix, axis=0))
 
     def compute_attractor(self, index, vec):
         """
@@ -146,11 +126,11 @@ class CCIPCA(object):
         the eigenvector with index `index`. If `vec` forms an obtuse angle
         with the eigenvector, the loading will be negative.
         """
-        if index == 0:
-            # handle the mean vector case
-            return self.get_eigenvalue(0)
-        else:
-            return dot(self.get_unit_eigenvector(index), vec)
+        #if index == 0:
+        #    # handle the mean vector case
+        #    return self.get_eigenvalue(0)
+        #else:
+        return np.dot(self.get_unit_eigenvector(index).conj(), vec)
     
     def eigenvector_projection(self, index, vec):
         # Do we actually need this?
@@ -163,7 +143,10 @@ class CCIPCA(object):
         component that is orthogonal to the eigenvector.
         """
         loading = self.eigenvector_loading(index, vec)
-        return loading, vec - (loading * self.get_unit_eigenvector(index))
+        orth = vec - (loading * self.get_unit_eigenvector(index))
+        if index > 0:
+            assert np.abs(np.dot(orth.conj(), self.get_unit_eigenvector(index))) < 0.001
+        return loading, orth
 
     def update_eigenvector(self, index, vec):
         """
@@ -208,42 +191,25 @@ class CCIPCA(object):
         eigs[0] = np.inf
         sort_order = np.asarray(np.argsort(-eigs))
 
-        #self.matrix[:] = self.matrix[:,sort_order]
-        self.matrix = DenseMatrix(np.asarray(self.matrix)[:,sort_order], self.matrix.row_labels, None)
+        self.matrix[:] = self.matrix[:,sort_order]
         return sort_order
-    
-    def match_labels(self, vec, touch=False):
-        """
-        Returns a new vector with the data of `vec` but aligned to the
-        current labels.
-        """
-        result = self.zero_column()
-        for key, value in vec.named_items():
-            if touch:
-                index = result.labels.add(key)
-            else:
-                index = result.labels.index(key, touch=False)
-            result[index] = value
-        return result
 
     def learn_vector(self, vec):
         """
-        Updates the eigenvectors to account for a new vector. Returns
-        the magnitudes of each eigenvector that would (approximately)
-        reconstruct the given vector.
+        Updates the eigenvectors to account for a new vector. Returns the
+        amount of error (the magnitude of the vector outside the space of the
+        eigenvectors).
         """
-        if vec.labels is not self.matrix.row_labels:
-            current_vec = self.match_labels(vec, touch=True)
-        else:
-            current_vec = vec
+        current_vec = vec.copy()
 
         self.iteration += 1
-        magnitudes = np.zeros((self.shape[1],))
+        magnitudes = np.zeros((self.shape[1],), self.matrix.dtype)
         for index in xrange(min(self.shape[1], self.iteration+1)):
             mag, new_vec = self.update_eigenvector(index, current_vec)
             current_vec = new_vec
             magnitudes[index] = mag
 
+        return np.linalg.norm(new_vec)
         sort_order = self.sort_vectors()
         magnitudes = magnitudes[sort_order]
         return magnitudes
@@ -251,14 +217,10 @@ class CCIPCA(object):
     def project_vector(self, vec):
         """
         Projects `vec` onto each eigenvector in succession. Returns
-        the magnitude of each eigenvector.  (Like learn_vector, but
-        doesn't change the state.)
+        the magnitude of each eigenvector.
         """
-        if vec.labels is not self.matrix.row_labels:
-            current_vec = self.match_labels(vec, touch=False)
-        else:
-            current_vec = vec
-        magnitudes = np.zeros((self.shape[1],))
+        current_vec = vec.copy()
+        magnitudes = np.zeros((self.shape[1],), self.matrix.dtype)
         for index in xrange(min(self.shape[1], self.iteration+1)):
             mag, new_vec = self.eigenvector_residue(index, current_vec)
             current_vec = new_vec
@@ -276,72 +238,11 @@ class CCIPCA(object):
         mags = self.project_vector(vec)
         if k_max is not None:
             mags = mags[:k_max]
+        
         return self.reconstruct(mags)
     
-    def forget_row(self, slot, label):
-        """
-        Called by RecyclingSet when an index gets reused. Clears the
-        old data out of the eigenvector table.
-        """
-        logger.debug("forgetting row %d" % slot)
-        self.matrix[slot,:] = 0
-
     def train_matrix(self, matrix):
         for col in xrange(matrix.shape[1]):
             print col, '/', matrix.shape[1]
             self.learn_vector(matrix[:,col])
 
-def for_profiling(A, n):
-    c = CCIPCA.make(100, A.row_labels, amnesia=1.0)
-    for col in xrange(n):
-        c.learn_vector(A[:,col])
-
-
-def evaluate_assertions(input_data, test_filename):
-    """
-    Evaluate the predictions that this matrix makes against a matrix of
-    test data.
-    """
-    
-    def order_compare(s1, s2):
-        assert len(s1) == len(s2)
-        score = 0.0
-        total = 0
-        for i in xrange(len(s1)):
-            for j in xrange(i+1, len(s1)):
-                if s1[i] < s1[j]:
-                    if s2[i] < s2[j]: score += 1
-                    elif s2[i] > s2[j]: score -= 1
-                    total += 1
-                elif s1[i] > s1[j]:
-                    if s2[i] < s2[j]: score -= 1
-                    elif s2[i] > s2[j]: score += 1
-                    total += 1
-        # move onto 0-1 scale
-        score += (total-score)/2.0
-        return (float(score) / total, score, total)
-    
-    from csc import divisi2
-    import time
-    testdata = divisi2.load(test_filename)
-    values1 = []
-    values2 = []
-    row_labels = input_data.row_labels
-    col_labels = input_data.col_labels
-    c = CCIPCA.make(100, row_labels, amnesia=1.0)
-    c.train_matrix(input_data)
-    start_time = time.time()
-    c.train_matrix(input_data)
-    duration = time.time() - start_time
-    print "Elapsed time:", duration
-    print "Per entry:", duration/input_data.shape[1]
-
-    for value, label1, label2 in testdata.named_entries():
-        if label1 in row_labels and label2 in col_labels:
-            smooth = c.smooth(input_data.column_named(label2))
-            entry = smooth.entry_named(label1)
-            values1.append(value)
-            values2.append(entry)
-    s1, s1s, s1t = order_compare(values1, values2)
-    s2, s2s, s2t = order_compare(values1, values1)
-    return s1s, s2s, s1/s2
