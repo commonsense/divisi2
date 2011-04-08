@@ -376,6 +376,7 @@ class PrioritySet(OrderedSet):
     def __setstate__(self, state):
         items, self.priority, self.maxsize, self.count = state
         OrderedSet.__setstate__(self, items)
+        self.drop_listeners = []
 
     def add(self, key, priority=None):
         """
@@ -480,6 +481,8 @@ class PrioritySet(OrderedSet):
             self.priority[self.index(key, False)] = priority
     touch = update
 
+    def get_priority(self, key):
+        return self.priority[self.index(key, False)]
 
     def index(self, key, update=False, update_priority=None):
         if update:
