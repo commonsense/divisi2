@@ -32,6 +32,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         '''
         self.left = left
         self.right = right
+        self.symmetric = False
         self._i_own_my_matrices = False
         if self.left.shape[1] != self.right.shape[0]:
             raise DimensionMismatch("Inner dimensions do not match.")
@@ -54,6 +55,38 @@ class ReconstructedMatrix(LabeledMatrixMixin):
 
         self.learning_rate = learning_rate
     
+    def get_row_labels(self):
+        return self.left.row_labels
+    
+    def get_col_labels(self):
+        return self.right.col_labels
+    
+    def set_row_labels(self, labels):
+        self.left.row_labels = labels
+    
+    def set_col_labels(self, labels):
+        self.right.col_labels = labels
+
+    def set_symmetric_labels(self, labels):
+        """
+        Set the same object as both the row and column labels. This is valid
+        only on a symmetric ReconstructedMatrix, and it will check to see if
+        it is in fact symmetric.
+        """
+        assert self.symmetric
+        self.left.row_labels = self.right.col_labels = labels
+    
+    row_labels = property(get_row_labels, set_row_labels)
+    col_labels = property(get_col_labels, set_col_labels)
+        
+    def make_symmetric(self):
+        """
+        Ensure that the ReconstructedMatrix is updated symmetrically, with
+        self.right being a view on self.left.
+        """
+        self.symmetric = True
+        self.right = self.left.T
+
     @staticmethod
     def make_random(rows, cols, k, learning_rate=0.001):
         """
@@ -163,7 +196,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
                 self.right = self.right.copy()
             self._i_own_my_matrices = True
 
-        hebbian_step(self.left, self.right, row, col, target, lrate)
+        mse = hebbian_step(self.left, self.right, row, col, target, lrate)
         if normalize:
             nleft = np.linalg.norm(self.left[row])
             nright = np.linalg.norm(self.right[:,col])
@@ -171,6 +204,27 @@ class ReconstructedMatrix(LabeledMatrixMixin):
                 self.left[row] /= nleft
             if nright > 1.0:
                 self.right[:,col] /= nright
+        return mse
+
+    def left_inner_norms(self):
+        return np.sqrt(np.sum(self.left * self.left, axis=0))
+
+    def right_inner_norms(self):
+        return np.sqrt(np.sum(self.right * self.right, axis=0))
+    
+    def sort_vectors(self):
+        """
+        Reorders the vectors in self.left and self.right (only once if they
+        are the same) according to the column norms of the left matrix.
+        """
+        eigs = self.left_inner_norms()
+        sort_order = np.asarray(np.argsort(-eigs))
+        self.left[:] = self.left[:,sort_order]
+        if not self.symmetric:
+            self.right[:] = self.right[sort_order]
+
+        return sort_order
+
 
     def evaluate_ranking(self, testdata):
         def order_compare(s1, s2):
@@ -257,7 +311,9 @@ def reconstruct_symmetric(u):
     """
     Reconstruct the symmetrical matrix U * U^T.
     """
-    return ReconstructedMatrix(u, u.T)
+    rec = ReconstructedMatrix(u, u.T)
+    rec.symmetric = True
+    return rec
 
 def reconstruct_similarity(u, s, post_normalize=True, offset=0.0, cutoff=0.0):
     """
