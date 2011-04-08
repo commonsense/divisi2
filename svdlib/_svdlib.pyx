@@ -230,3 +230,4 @@ def hebbian_step(u_, vt_, int row, int col, double value, double lrate):
         vt[axis, col] += lrate * err * u_value
 
         predicted += u[row, axis] * vt[axis, col]
+    return (value - predicted) * (value - predicted)
