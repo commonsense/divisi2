@@ -20,7 +20,7 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     """
     ndim = 2
 
-    def __init__(self, left, right, shifts=None, learning_rate=0.001):
+    def __init__(self, left, right, shifts=None, learning_rate=0.01):
         '''
         Create a ReconstructedMatrix.
 
@@ -183,28 +183,31 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         if lrate is None:
             lrate = self.learning_rate
         if not self._i_own_my_matrices:
-            if (self.left.shape == self.right.T.shape and
-                np.all(self.left == self.right.T)):
-                symmetric = True
-            else:
-                symmetric = False
-                
             self.left = self.left.copy()
-            if symmetric:
+            if self.symmetric:
                 self.right = self.left.T
             else:
                 self.right = self.right.copy()
             self._i_own_my_matrices = True
-
-        mse = hebbian_step(self.left, self.right, row, col, target, lrate)
+        left_view = np.ndarray.view(self.left, np.ndarray)
+        right_view = np.ndarray.view(self.right, np.ndarray)
+        mse = hebbian_step(left_view, right_view, row, col, target, lrate)
         if normalize:
-            nleft = np.linalg.norm(self.left[row])
-            nright = np.linalg.norm(self.right[:,col])
+            nleft = np.linalg.norm(left_view[row])
+            nright = np.linalg.norm(right_view[:,col])
             if nleft > 1.0:
-                self.left[row] /= nleft
+                left_view[row] /= nleft
             if nright > 1.0:
-                self.right[:,col] /= nright
+                right_view[:,col] /= nright
         return mse
+    
+    def hebbian_increment(self, row, col, delta, normalize=True, lrate=None):
+        """
+        Perform a single Hebbian update on this matrix, adjusting left and right
+        to aim to increase the value at (row, col) by `delta`.
+        """
+        return self.hebbian_step(row, col, self[row, col] + delta, 
+                                 normalize, lrate)
 
     def left_inner_norms(self):
         return np.sqrt(np.sum(self.left * self.left, axis=0))
