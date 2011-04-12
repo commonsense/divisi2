@@ -88,6 +88,8 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         """
         self.symmetric = True
         self.right = self.left.T
+        self.left_view = np.ndarray.view(self.left, np.ndarray)
+        self.right_view = np.ndarray.view(self.right, np.ndarray)
 
     @staticmethod
     def make_random(rows, cols, k, learning_rate=0.001):
@@ -184,13 +186,9 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         """
         if lrate is None:
             lrate = self.learning_rate
-        if not self._i_own_my_matrices:
-            self.left = self.left.copy()
-            if self.symmetric:
-                self.right = self.left.T
-            else:
-                self.right = self.right.copy()
-            self._i_own_my_matrices = True
+        # I don't remember why we have self._i_own_my_matrices. But I really
+        # want to change these values without making new copies and breaking
+        # the views, so I'm taking it out.
         mse = hebbian_step(self.left_view, self.right_view, row, col, target,
                            lrate)
         if normalize:
