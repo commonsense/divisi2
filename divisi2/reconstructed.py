@@ -32,6 +32,8 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         '''
         self.left = left
         self.right = right
+        self.left_view = np.ndarray.view(self.left, np.ndarray)
+        self.right_view = np.ndarray.view(self.right, np.ndarray)
         self.symmetric = False
         self._i_own_my_matrices = False
         if self.left.shape[1] != self.right.shape[0]:
@@ -189,16 +191,15 @@ class ReconstructedMatrix(LabeledMatrixMixin):
             else:
                 self.right = self.right.copy()
             self._i_own_my_matrices = True
-        left_view = np.ndarray.view(self.left, np.ndarray)
-        right_view = np.ndarray.view(self.right, np.ndarray)
-        mse = hebbian_step(left_view, right_view, row, col, target, lrate)
+        mse = hebbian_step(self.left_view, self.right_view, row, col, target,
+                           lrate)
         if normalize:
-            nleft = np.linalg.norm(left_view[row])
-            nright = np.linalg.norm(right_view[:,col])
+            nleft = np.linalg.norm(self.left_view[row])
+            nright = np.linalg.norm(self.right_view[:,col])
             if nleft > 1.0:
-                left_view[row] /= nleft
+                self.left_view[row] /= nleft
             if nright > 1.0:
-                right_view[:,col] /= nright
+                self.right_view[:,col] /= nright
         return mse
     
     def hebbian_increment(self, row, col, delta, normalize=True, lrate=None):
@@ -206,7 +207,8 @@ class ReconstructedMatrix(LabeledMatrixMixin):
         Perform a single Hebbian update on this matrix, adjusting left and right
         to aim to increase the value at (row, col) by `delta`.
         """
-        return self.hebbian_step(row, col, self[row, col] + delta, 
+        current = np.dot(self.left_view[row], self.right_view[:,col])
+        return self.hebbian_step(row, col, current + delta, 
                                  normalize, lrate)
 
     def left_inner_norms(self):
