@@ -461,7 +461,7 @@ class PrioritySet(OrderedSet):
         """
         Tell all registered listeners that we dropped a key.
         """
-        print "dropping key:", key
+        print "dropping key: %r" % key
         for listener in self.drop_listeners:
             listener(index, key)
 
@@ -494,6 +494,8 @@ class PrioritySet(OrderedSet):
         return key in self.indices
 
     def __getitem__(self, key):
+        if key == ALL:
+            return self
         if key < self.maxsize and key >= len(self.items):
             return None
         return self.items[key]
