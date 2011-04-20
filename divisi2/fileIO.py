@@ -2,24 +2,49 @@ from __future__ import with_statement
 from pkg_resources import resource_filename
 import cPickle as pickle
 import codecs
+import gzip
 """
 Easy functions for loading and saving Divisi matrices and semantic networks.
 
 New in Divisi2.
 """
 
-def _meta_open(filename, mode='rb', encoding=None):
+# Note: gzip.GzipFile is super-slow for things that read a few bytes at a time,
+# but quite fast to read the whole file at once. So we do the latter.
+#
+# If you run out of memory reading a gzip'ed file, un-gzip it first.
+
+def data_filename(filename):
     if filename.startswith('data:'):
         filename = resource_filename(__name__, 'data/'+filename[5:])
-    
-    if filename.endswith('.gz'):
-        import gzip
-        opener = gzip.open
-        return opener(filename, mode)
-    elif encoding is None:
-        return open(filename, mode)
-    else:
-        return codecs.open(filename, mode, encoding=encoding)
+    return filename
+
+def _meta_read(filename, encoding=None):
+    filename = data_filename(filename)
+    opener = gzip.open if filename.endswith('.gz') else open
+    f = opener(filename, 'rb')
+    data = f.read()
+    f.close()
+    if encoding is not None:
+        data = data.decode(encoding)
+    return data
+
+def _meta_write(filename, content, encoding=None):
+    filename = data_filename(filename)
+    if encoding is not None:
+        data = data.encode(encoding)
+    opener = gzip.open if filename.endswith('.gz') else open
+    f = opener(filename, 'wb')
+    f.write(data)
+    f.close()
+
+# def _meta_open(filename, mode='rb', encoding=None):
+#     if filename.endswith('.gz'):
+#         raise RuntimeError('Opening gzip files is no longer supported.')
+#     if encoding is None:
+#         return open(filename, mode)
+#     else:
+#         return codecs.open(filename, mode, encoding=encoding)
 
 def load(filename):
     """
@@ -33,12 +58,12 @@ def load(filename):
         return load_pickle(filename)
 
 def load_pickle(filename):
-    file = _meta_open(filename)
-    return pickle.load(file)
+    file = _meta_read(filename)
+    return pickle.loads(file)
 
-def load_graph(filename, encoding=None):
+def load_graph(filename, encoding='utf-8'):
     import networkx as nx
-    return nx.read_edgelist(_meta_open(filename, encoding=encoding),
+    return nx.read_edgelist(data_filename(filename), encoding=encoding,
                             data=True, delimiter='\t',
                             create_using=nx.MultiDiGraph())
 
@@ -58,14 +83,12 @@ def save(obj, filename):
     else:
         save_pickle(obj, filename)
 
-def save_graph(network, filename):
+def save_graph(network, filename, encoding='utf-8'):
     import networkx as nx
-    assert isinstance(network, nx.Graph)
-    file = _meta_open(filename, 'wb')
-    file_encoder = codecs.getwriter("utf-8")(file)
-    return nx.write_edgelist(network, file_encoder, data=True, delimiter='\t')
+    return nx.write_edgelist(network, data_filename(filename), data=True, delimiter='\t')
 
 def save_pickle(matrix, filename):
-    file = _meta_open(filename, 'wb')
-    pickle.dump(matrix, file, -1)
-
+    if isinstance(matrix, basestring) and not isinstance(filename, basestring):
+        # Catch accidentally reversing argument order.
+        return save_pickle(filename, matrix)
+    _meta_write(filename, pickle.dumps(matrix, -1))
