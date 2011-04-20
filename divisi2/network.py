@@ -161,23 +161,23 @@ def conceptnet_matrix(lang):
     # load from the included pickle file
     import divisi2
     try:
-        matrix = divisi2.load('data:matrices/conceptnet_%s' % lang)
+        matrix = divisi2.load('data:matrices/conceptnet_%s.gz' % lang)
         return matrix
     except IOError:
-        graph = divisi2.load('data:graphs/conceptnet_%s.graph' % lang)
+        graph = divisi2.load('data:graphs/conceptnet_%s.graph.gz' % lang)
         matrix = sparse_matrix(graph, 'concepts', 'features', 3)
-        divisi2.save(matrix, 'data:matrices/conceptnet_%s' % lang)
+        divisi2.save(matrix, 'data:matrices/conceptnet_%s.gz' % lang)
         return matrix
 
 def conceptnet_assoc(lang):
     import divisi2
     try:
-        matrix = divisi2.load('data:matrices/conceptnet_assoc_%s' % lang)
+        matrix = divisi2.load('data:matrices/conceptnet_assoc_%s.gz' % lang)
         return matrix
     except IOError:
-        graph = divisi2.load('data:graphs/conceptnet_%s.graph' % lang)
+        graph = divisi2.load('data:graphs/conceptnet_%s.graph.gz' % lang)
         matrix = sparse_matrix(graph, 'concepts', 'concepts', 3)
-        divisi2.save(matrix, 'data:matrices/conceptnet_assoc_%s' % lang)
+        divisi2.save(matrix, 'data:matrices/conceptnet_assoc_%s.gz' % lang)
         return matrix
 
 analogyspace_matrix = conceptnet_matrix   # synonym
