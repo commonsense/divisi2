@@ -29,7 +29,7 @@ def _meta_read(filename, encoding=None):
         data = data.decode(encoding)
     return data
 
-def _meta_write(filename, content, encoding=None):
+def _meta_write(filename, data, encoding=None):
     filename = data_filename(filename)
     if encoding is not None:
         data = data.encode(encoding)
