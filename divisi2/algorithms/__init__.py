@@ -1,6 +1,6 @@
 import sys
 
-def delayed_plugin(module, fname, package='csc.divisi2.algorithms'):
+def delayed_plugin(module, fname, package='divisi2.algorithms'):
     modname = package+'.'+module
     def plugin_method(*args, **kw):
         """
