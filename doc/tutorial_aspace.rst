@@ -181,7 +181,7 @@ But if we do this alone, the results we get are on no meaningful numerical
 scale. Consider this example where we look up the similarity between "horse"
 and "cow":
 
->>> sim = divisi2.reconstruct_similarity(U, S, post_normalize=False)
+>>> sim = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=False)
 >>> sim.entry_named('horse', 'cow')
 36.693964805281276
 
@@ -198,7 +198,7 @@ scale that ranges from 1.0 (exactly similar) to -1.0 (exactly dissimilar).
 It would be somewhat difficult and verbose to ask Divisi to normalize the rows
 at this particular step, so Divisi has a shorthand for this:
 
->>> sim_n = divisi2.reconstruct_similarity(U, S, post_normalize=True)
+>>> sim_n = divisi2.reconstruct_similarity(concept_axes, axis_weights, post_normalize=True)
 >>> sim_n.entry_named('horse', 'cow')
 0.82669084520494984
 >>> sim_n.entry_named('horse', 'stapler')
