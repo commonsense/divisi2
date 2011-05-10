@@ -136,7 +136,13 @@ def svd_llmat(llmat, int k):
     packed = llmat_to_smat(<LLMatObject *> llmat)
     svdrec = svdLAS2A(packed, k)
     svdFreeSMat(packed)
-    return wrapSVDrec(svdrec, 1)
+    ut, svals, vt = wrapSVDrec(svdrec, 1)
+    
+    # in cases where there aren't enough nonzero singular values, make sure
+    # to output the zeros too
+    s = np.zeros(ut.shape[0])
+    s[:len(svals)] = svals
+    return ut, s, vt
 
 def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
     cdef smat *packed
