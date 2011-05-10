@@ -1,3 +1,5 @@
+__test__ = False # Disable.
+
 from divisi2.sparse import SparseMatrix
 from divisi2.reconstructed import ReconstructedMatrix
 from divisi2.operators import dot
