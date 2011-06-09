@@ -5,7 +5,6 @@ from divisi2.labels import LabeledMatrixMixin
 from divisi2.ordered_set import apply_indices
 from divisi2.sparse import SparseMatrix
 from divisi2.dense import DenseMatrix
-from divisi2._svdlib import hebbian_step
 
 SLICE_ALL = slice(None, None, None)
 
@@ -28,14 +27,12 @@ class ReconstructedMatrix(LabeledMatrixMixin):
          shifts: a tuple of (row_shift, col_shift, total_shift):
            row_shift, col_shift: vectors of shifts (offsets) for each row and column
            total_shift: scalar to add to everything
-         learning_rate: the learning rate for the Hebbian update step used when setting an item.
         '''
         self.left = left
         self.right = right
         self.left_view = np.ndarray.view(self.left, np.ndarray)
         self.right_view = np.ndarray.view(self.right, np.ndarray)
         self.symmetric = False
-        self._i_own_my_matrices = False
         if self.left.shape[1] != self.right.shape[0]:
             raise DimensionMismatch("Inner dimensions do not match.")
         if self.left.col_labels != self.right.row_labels:
@@ -169,45 +166,6 @@ class ReconstructedMatrix(LabeledMatrixMixin):
     def right_category(self, vec):
         return dot(self.left, aligned_matrix_multiply(self.right, vec))
     right_adhoc_category = right_category
-
-    def __setitem__(self, indices, target):
-        '''
-        Performs a Hebbian step with the default learning rate, to make the
-        given matrix entry closer to `target`.
-        '''
-        # FIXME: we're assuming single indices
-        row, col = indices
-        self.hebbian_step(row, col, target)
-    
-    def hebbian_step(self, row, col, target, normalize=True, lrate=None):
-        """
-        Perform a single Hebbian update on this matrix, adjusting left and right
-        to make the value at (row, col) closer to `target`.
-        """
-        if lrate is None:
-            lrate = self.learning_rate
-        # I don't remember why we have self._i_own_my_matrices. But I really
-        # want to change these values without making new copies and breaking
-        # the views, so I'm taking it out.
-        mse = hebbian_step(self.left_view, self.right_view, row, col, target,
-                           lrate)
-        if normalize:
-            nleft = np.linalg.norm(self.left_view[row])
-            nright = np.linalg.norm(self.right_view[:,col])
-            if nleft > 1.0:
-                self.left_view[row] /= nleft
-            if nright > 1.0:
-                self.right_view[:,col] /= nright
-        return mse
-    
-    def hebbian_increment(self, row, col, delta, normalize=True, lrate=None):
-        """
-        Perform a single Hebbian update on this matrix, adjusting left and right
-        to aim to increase the value at (row, col) by `delta`.
-        """
-        current = np.dot(self.left_view[row], self.right_view[:,col])
-        return self.hebbian_step(row, col, current + delta, 
-                                 normalize, lrate)
 
     def left_inner_norms(self):
         return np.sqrt(np.sum(self.left * self.left, axis=0))
