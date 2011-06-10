@@ -41,7 +41,7 @@ Now we build a Divisi sparse matrix out of this data. The rows should be the
 nodes of the graph (which are the concepts in ConceptNet), and the columns
 should represent their *features*, or connections to other nodes.
 
-The :func:`csc.divisi2.network.sparse_matrix`
+The :func:`divisi2.network.sparse_matrix`
 function can automate this for us -- we just need to ask for the `'nodes'` and
 `'features'`. `cutoff=5` means to keep only nodes and features with a degree of
 5 or more.
