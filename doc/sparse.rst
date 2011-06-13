@@ -1,11 +1,11 @@
-.. module:: csc.divisi2.sparse
+.. module:: divisi2.sparse
 
 Sparse Matrices and Vectors
 ===========================
 
 .. testsetup::
 
-    from csc import divisi2
+    import divisi2
     mat1 = divisi2.make_sparse([
         (2, "apple", "red"),
         (2, "orange", "orange"),
@@ -44,7 +44,7 @@ which contains a value, a row name, and a column name.
 
 .. doctest::
 
-    >>> from csc import divisi2
+    >>> import divisi2
     >>> mat1 = divisi2.make_sparse([
     ...     (2, "apple", "red"),
     ...     (2, "orange", "orange"),

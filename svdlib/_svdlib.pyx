@@ -128,6 +128,26 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
         output.pointr[i+1] = r
     return output
 
+cdef smat *llmat_to_smat_shifted(LLMatObject *llmat, row_mapping_, col_mapping_):
+    """
+    Transform a Pysparse ll_mat object into an svdlib SMat by packing 
+    its rows into the compressed sparse columns. This has the effect of
+    transposing the matrix at the same time.
+
+    Also, set a shift on each row and each column of the SMat, to allow mean
+    centering.
+    """
+    cdef smat *output 
+    cdef np.ndarray[double, ndim=1] row_mapping = row_mapping_
+    cdef np.ndarray[double, ndim=1] col_mapping = col_mapping_
+    cdef double *row_array = <double *> row_mapping.data
+    cdef double *col_array = <double *> col_mapping.data
+
+    output = llmat_to_smat(llmat)
+    output.offset_for_row = col_array    # remember, it's transposed
+    output.offset_for_col = row_array
+    return output
+
 cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping_, col_mapping_, double weight) except? NULL:
     """
     Transform a Pysparse ll_mat object into an svdlib SMat by packing 
@@ -210,6 +230,21 @@ def svd_llmat(llmat, int k):
     packed = llmat_to_smat(<LLMatObject *> llmat)
     svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeSMat(packed)
+    ut, svals, vt = wrapSVDrec(svdrec, 1)
+    
+    # in cases where there aren't enough nonzero singular values, make sure
+    # to output the zeros too
+    s = np.zeros(ut.shape[0])
+    s[:len(svals)] = svals
+    return ut, s, vt
+
+def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
+    cdef smat *packed
+    cdef svdrec *svdrec
+    llmat.compress()
+    packed = llmat_to_smat_shifted(<LLMatObject *> llmat, row_shift, col_shift)
+    svdrec = svdLAS2A(packed, k)
+    svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
 
 def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
@@ -237,3 +272,74 @@ def svd_sum(mats, int k, weights, row_mappings, col_mappings):
     svdrec = svdLAS2A(<matrix *>sum_mat, k)
     summing_mat_free(sum_mat)
     return wrapSVDrec(svdrec, 1) # transposed.
+
+# Incremental SVD    
+@cython.boundscheck(False) 
+cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
+    print "COMPUTING INCREMENTAL SVD"
+    print "ROWS: %d, COLUMNS: %d, VALS: %d" % (A.rows, A.cols, A.vals)
+    print "K: %d, LEARNING_RATE: %r, ITERATIONS: %d" % (k, lrate, niter)
+
+    cdef np.ndarray[DTYPE_t, ndim=2] u = np.add(np.zeros((A.rows, k), dtype=DTYPE), .001)
+    cdef np.ndarray[DTYPE_t, ndim=2] v = np.add(np.zeros((A.cols, k), dtype=DTYPE), .001)
+
+    # Maintain a cache of dot-products up to the current axis
+    cdef smat* predicted = svdNewSMat(A.rows, A.cols, A.vals)
+
+    # Type all loop vars
+    cdef unsigned int axis, i, cur_row,cur_col, col_index, next_col_index, value_index
+    cdef double err, u_value
+
+    # Initialize dot-product cache
+    # (This should be done with memcpy, but i'm not certain
+    # how to do that here)
+    for i in range(A.cols + 1):
+        predicted.pointr[i] = A.pointr[i]
+    
+    for i in range(A.vals):
+        predicted.rowind[i] = A.rowind[i]
+        predicted.value[i] = 0
+
+    for axis in range(k):
+        for i in range(niter):
+            # Iterate over all values of the sparse matrix
+            for cur_col in range(A.cols):
+                col_index = A.pointr[cur_col]
+                next_col_index = A.pointr[cur_col + 1]
+                for value_index in range(col_index, next_col_index):
+                    cur_row = A.rowind[value_index]
+                    err = A.value[value_index] - (predicted.value[value_index] + 
+                                                  u[cur_row, axis] * v[cur_col, axis])
+
+                    u_value = u[cur_row, axis]
+                    u[cur_row, axis] += lrate * err * v[cur_col, axis]
+                    v[cur_col, axis] += lrate * err * u_value
+
+        # Update cached dot-products
+        for cur_col in range(predicted.cols):
+            col_index = predicted.pointr[cur_col]
+            next_col_index = predicted.pointr[cur_col + 1]
+            for value_index in range(col_index, next_col_index):
+                cur_row = predicted.rowind[value_index]
+                predicted.value[value_index] += u[cur_row, axis] * v[cur_col, axis]
+
+    # Factor out the svals from u and v
+    u_sigma = np.sqrt(np.add.reduce(np.multiply(u, u)))
+    v_sigma = np.sqrt(np.add.reduce(np.multiply(v, v)))
+
+    np.divide(u, u_sigma, u)
+    np.divide(v, v_sigma, v)
+    sigma = np.multiply(u_sigma, v_sigma)
+
+    svdFreeSMat(predicted)
+
+    return u, v, sigma
+
+def isvd_llmat(llmat, int k, int niter=100, double lrate=.001):
+    cdef smat *packed
+    cdef svdrec *svdrec
+    llmat.compress()
+    packed = llmat_to_smat(<LLMatObject *> llmat) # transposes the matrix.
+    v, s, u = isvd(packed, k, niter, lrate)
+    svdFreeSMat(packed)
+    return u, s, v

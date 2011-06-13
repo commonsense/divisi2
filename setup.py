@@ -11,7 +11,7 @@ the results can include relationships not expressed in the original
 data but related by common sense. See http://divisi.media.mit.edu/ for
 more info."""
 
-VERSION = "2.0.0"
+VERSION = "2.2.5"
 
 try:
     from setuptools import setup, Extension
@@ -76,7 +76,7 @@ except OSError:
     print >>sys.stderr, 'Warning: Skipped building the Cython file.'
 
 svdlibc = Extension(
-    name='csc.divisi2._svdlib',
+    name='divisi2._svdlib',
     sources=[
         CYTHON_OUT,
         'svdlib/svdwrapper.c',
@@ -103,8 +103,7 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     ext_modules = [svdlibc],
-    packages=['csc', 'csc.divisi2'],
-    package_data = {'csc.divisi2': ['data/graphs/*.graph', 'data/eval/*.pickle']},
-    namespace_packages = ['csc'],
-    install_requires=['csc-utils >= 0.4.1', 'networkx', 'csc-pysparse'],
+    packages=['divisi2', 'divisi2.algorithms'],
+    package_data = {'divisi2': ['data/graphs/*', 'data/eval/*', 'data/matrices/*']},
+    install_requires=['csc-utils >= 0.6.1', 'networkx', 'csc-pysparse'],
 )

@@ -6,14 +6,22 @@
 Divisi2 documentation
 =====================
 
-Contents:
+Divisi is a sparse SVD toolkit for Python that is particularly designed
+for working with semantic networks.
+
+In addition to the documentation below, you can get an introduction to Divisi
+from our `SciPy 2010 slides`_.
+
+.. _`SciPy 2010 slides`: ../_static/divisi_slides.pdf
 
 .. toctree::
    :maxdepth: 2
 
+   install
    intro
    tutorial_aspace
    tutorial_category
    labels
    sparse
+   dense
 

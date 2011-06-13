@@ -41,3 +41,13 @@ Is a hammer a pet?
 
 >>> predict_matrix.entry_named('hammer', ('right', 'IsA', 'pet'))
 
+.. note::
+
+   The concepts are represented by their *normalized form*, which is how
+   they are represented internally in ConceptNet.
+   
+   If you look up a value for "scissors", for example, you won't find anything.
+   It's under "scissor".
+   The reason for this is so that phrases like "eat a
+   sandwich" and "eating sandwiches" correspond to the same
+   concept. See :ref:`nl` for details on how this works.
