@@ -243,7 +243,7 @@ def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
     cdef svdrec *svdrec
     llmat.compress()
     packed = llmat_to_smat_shifted(<LLMatObject *> llmat, row_shift, col_shift)
-    svdrec = svdLAS2A(packed, k)
+    svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
 
@@ -277,14 +277,14 @@ def svd_sum(mats, int k, weights, row_mappings, col_mappings):
 @cython.boundscheck(False) 
 cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
     print "COMPUTING INCREMENTAL SVD"
-    print "ROWS: %d, COLUMNS: %d, VALS: %d" % (A.rows, A.cols, A.vals)
+    print "ROWS: %d, COLUMNS: %d, VALS: %d" % (A.h.rows, A.h.cols, A.h.vals)
     print "K: %d, LEARNING_RATE: %r, ITERATIONS: %d" % (k, lrate, niter)
 
-    cdef np.ndarray[DTYPE_t, ndim=2] u = np.add(np.zeros((A.rows, k), dtype=DTYPE), .001)
-    cdef np.ndarray[DTYPE_t, ndim=2] v = np.add(np.zeros((A.cols, k), dtype=DTYPE), .001)
+    cdef np.ndarray[DTYPE_t, ndim=2] u = np.add(np.zeros((A.h.rows, k), dtype=DTYPE), .001)
+    cdef np.ndarray[DTYPE_t, ndim=2] v = np.add(np.zeros((A.h.cols, k), dtype=DTYPE), .001)
 
     # Maintain a cache of dot-products up to the current axis
-    cdef smat* predicted = svdNewSMat(A.rows, A.cols, A.vals)
+    cdef smat* predicted = svdNewSMat(A.h.rows, A.h.cols, A.h.vals)
 
     # Type all loop vars
     cdef unsigned int axis, i, cur_row,cur_col, col_index, next_col_index, value_index
@@ -293,17 +293,17 @@ cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
     # Initialize dot-product cache
     # (This should be done with memcpy, but i'm not certain
     # how to do that here)
-    for i in range(A.cols + 1):
+    for i in range(A.h.cols + 1):
         predicted.pointr[i] = A.pointr[i]
     
-    for i in range(A.vals):
+    for i in range(A.h.vals):
         predicted.rowind[i] = A.rowind[i]
         predicted.value[i] = 0
 
     for axis in range(k):
         for i in range(niter):
             # Iterate over all values of the sparse matrix
-            for cur_col in range(A.cols):
+            for cur_col in range(A.h.cols):
                 col_index = A.pointr[cur_col]
                 next_col_index = A.pointr[cur_col + 1]
                 for value_index in range(col_index, next_col_index):
@@ -316,7 +316,7 @@ cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
                     v[cur_col, axis] += lrate * err * u_value
 
         # Update cached dot-products
-        for cur_col in range(predicted.cols):
+        for cur_col in range(predicted.h.cols):
             col_index = predicted.pointr[cur_col]
             next_col_index = predicted.pointr[cur_col + 1]
             for value_index in range(col_index, next_col_index):

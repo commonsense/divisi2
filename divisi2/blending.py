@@ -1,4 +1,5 @@
 from divisi2.sparse import SparseMatrix
+import numpy as np
 
 def blend_factor(mat):
     """
