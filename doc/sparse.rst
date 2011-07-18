@@ -37,10 +37,11 @@ sparse matrix operations particularly fast, at the expense of making it
 inefficient to update cells one at a time. So we suggest that you build a
 SparseMatrix all at once, from an existing list of data.
 
-This is easy to do with the :meth:`from_named_entries` factory method,
-which we also give the name `divisi2.make_sparse` because it's often
-the most convenient way to create a sparse matrix [#lists]_.  It takes
-in a list of tuples, each of which contains a value, a row name, and a
+This is easy to do with the
+:py:meth:`~SparseMatrix.from_named_entries` factory method, which we
+also give the name :py:func:`divisi2.make_sparse` because it's often the most
+convenient way to create a sparse matrix [#lists]_.  It takes in a
+list of tuples, each of which contains a value, a row name, and a
 column name.
 
 .. doctest::
