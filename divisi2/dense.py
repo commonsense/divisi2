@@ -102,7 +102,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         else:
             obj.labels = OrderedSet(labels)
         if labels is not None:
-            assert len(labels) == len(ndarray)
+            assert len(labels) == len(ndarray), '%r != %r' % (len(labels), len(ndarray))
 	return obj
     
     def __array_finalize__(self, obj):
@@ -183,7 +183,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
             print "converting rows to orderedset"
             obj.row_labels = OrderedSet(row_labels)
         if obj.row_labels is not None:
-            assert len(obj.row_labels) == obj.shape[0]
+            assert len(obj.row_labels) == obj.shape[0], '%r != %r' % (len(obj.row_labels), obj.shape[0])
 	if col_labels is None:
             obj.col_labels = None
         elif isinstance(col_labels, OrderedSet):
