@@ -1,5 +1,5 @@
-from csc import divisi2
-from csc.divisi2.dense import *
+import divisi2
+from divisi2.dense import *
 import numpy as np
 mat1 = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], ['C', 'D'])
 mat2 = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], None)
