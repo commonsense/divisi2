@@ -4,14 +4,15 @@ from divisi2.sparse import *
 from divisi2.dense import *
 from nose.tools import *
 
-mat_4x3 = SparseMatrix.from_named_entries([
+entries = [
     (2, "apple", "red"),
     (2, "orange", "orange"),
     (1, "apple", "green"),
     (1, "celery", "green"),
     (-1, "apple", "orange"),
     (-1, "banana", "orange")
-])
+]
+mat_4x3 = SparseMatrix.from_named_entries(entries)
 
 def test_full_svd():
     U_sparse, S_sparse, V_sparse = mat_4x3.svd(3)
