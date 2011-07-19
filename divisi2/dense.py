@@ -133,12 +133,15 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         """
         if n > len(self): n = len(self)
         order = np.argsort(self)
+        if filter is None:
+            indices = order[-1:-n-1:-1]
+            return [(self.label(idx), self[idx]) for idx in indices]
         idx = -1
         results = []
         while len(results) != n and idx >= -len(order):
             where = order[idx]
             label = self.label(where)
-            if filter is None or filter(label):
+            if filter(label):
                 results.append((label, self[where]))
             idx -= 1
         return results
