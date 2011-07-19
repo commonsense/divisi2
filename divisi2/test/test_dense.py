@@ -1,6 +1,7 @@
 import divisi2
 from divisi2.dense import *
 import numpy as np
+from nose.tools import eq_
 mat1 = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], ['C', 'D'])
 mat2 = DenseMatrix([[0, 1], [2, 3]], ['A', 'B'], None)
 mat3 = DenseMatrix([[0, 1], [2, 5], [0, 1], [2, 5]], ['A', 'B', 'C', 'D'], None)
@@ -62,3 +63,7 @@ def test_sparse_by_dense():
     mul2 = divisi2.matrixmultiply(mat1.T, vec)
     assert mul.equals(mul2)
     assert np.allclose(mul, np.array([2, 2]))
+
+def test_top_items():
+    vec = DenseVector([0, 1, 2, 3], ['A', 'B', 'a', 'b'])
+    eq_(vec.top_items(2), [('b', 3.0), ('a', 2.0)])
