@@ -67,3 +67,6 @@ def test_sparse_by_dense():
 def test_top_items():
     vec = DenseVector([0, 1, 2, 3], ['A', 'B', 'a', 'b'])
     eq_(vec.top_items(2), [('b', 3.0), ('a', 2.0)])
+    eq_(vec.top_items(2, lambda label: label == label.upper()),
+        [('B', 1.0), ('A', 0.0)])
+    eq_(vec.top_items(2, lambda label: False), [])

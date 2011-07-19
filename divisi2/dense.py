@@ -124,16 +124,23 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
             return DenseVector(result, other.col_labels)
         else: raise TypeError
 
-    def top_items(self, n=10):
+    def top_items(self, n=10, filter=None):
         """
         Get the `n` highest-magnitude items from this vector.
+
+        filter, if specified, is a function that takes a label; that
+        label is only included if the function returns a true value.
         """
         if n > len(self): n = len(self)
         order = np.argsort(self)
+        idx = -1
         results = []
-        for i in range(1, n+1):
-            where = order[-i]
-            results.append((self.label(where), self[where]))
+        while len(results) != n and idx >= -len(order):
+            where = order[idx]
+            label = self.label(where)
+            if filter is None or filter(label):
+                results.append((label, self[where]))
+            idx -= 1
         return results
     
     def normalize(self):
