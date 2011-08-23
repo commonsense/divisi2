@@ -5,14 +5,15 @@ from divisi2.dense import *
 from nose.tools import *
 from nose.plugins.attrib import attr
 
-mat_4x3 = SparseMatrix.from_named_entries([
+entries = [
     (2, "apple", "red"),
     (2, "orange", "orange"),
     (1, "apple", "green"),
     (1, "celery", "green"),
     (-1, "apple", "orange"),
     (-1, "banana", "orange")
-])
+]
+mat_4x3 = SparseMatrix.from_named_entries(entries)
 
 # A second matrix, differing only in features, to test blending.
 second_mat_4x3 = SparseMatrix.from_named_entries([

@@ -102,7 +102,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         else:
             obj.labels = OrderedSet(labels)
         if labels is not None:
-            assert len(labels) == len(ndarray)
+            assert len(labels) == len(ndarray), '%r != %r' % (len(labels), len(ndarray))
 	return obj
     
     def __array_finalize__(self, obj):
@@ -124,16 +124,26 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
             return DenseVector(result, other.col_labels)
         else: raise TypeError
 
-    def top_items(self, n=10):
+    def top_items(self, n=10, filter=None):
         """
         Get the `n` highest-magnitude items from this vector.
+
+        filter, if specified, is a function that takes a label; that
+        label is only included if the function returns a true value.
         """
         if n > len(self): n = len(self)
         order = np.argsort(self)
+        if filter is None:
+            indices = order[-1:-n-1:-1]
+            return [(self.label(idx), self[idx]) for idx in indices]
+        idx = -1
         results = []
-        for i in range(1, n+1):
-            where = order[-i]
-            results.append((self.label(where), self[where]))
+        while len(results) != n and idx >= -len(order):
+            where = order[idx]
+            label = self.label(where)
+            if filter(label):
+                results.append((label, self[where]))
+            idx -= 1
         return results
     
     def normalize(self):
@@ -183,7 +193,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
             print "converting rows to orderedset"
             obj.row_labels = OrderedSet(row_labels)
         if obj.row_labels is not None:
-            assert len(obj.row_labels) == obj.shape[0]
+            assert len(obj.row_labels) == obj.shape[0], '%r != %r' % (len(obj.row_labels), obj.shape[0])
 	if col_labels is None:
             obj.col_labels = None
         elif isinstance(col_labels, OrderedSet):
