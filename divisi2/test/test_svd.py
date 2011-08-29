@@ -43,22 +43,23 @@ def assert_singular_triple(mat, u, s, v):
         v.multiply(s),
         mat.T.dot(u))
 
-def test_full_svd():
-    U_sparse, S_sparse, V_sparse = mat_4x3.svd(3)
-    rec = dot(U_sparse * S_sparse, V_sparse.T)
+def test_sparse_svd():
+    U, S, V = mat_4x3.svd(3)
+    rec = dot(U * S, V.T)
     assert rec.same_labels_as(mat_4x3)
     assert np.allclose(mat_4x3.to_dense(), rec)
     for i in range(3):
-        assert_singular_triple(mat_4x3, U_sparse[:,i], S_sparse[i], V_sparse[:,i])
+        assert_singular_triple(mat_4x3, U[:,i], S[i], V[:,i])
 
-def test_truncated_svd():
-    # FIXME: this doesn't actually test against NumPy's SVD now that
-    # dense SVDs use svdlibc too.
-    U_sparse, S_sparse, V_sparse = mat_4x3.svd(2)
-    U_dense, S_dense, V_dense = mat_4x3.to_dense().svd(2)
-    rec_sparse = dot(U_sparse * S_sparse, V_sparse.T)
-    rec_dense = dot(U_dense * S_dense, V_dense.T)
-    assert np.allclose(rec_sparse, rec_dense)
+def test_dense_svd():
+    """Check the SVDLIBC result against numpy.linalg"""
+    dense_mat = mat_4x3.to_dense()
+    U, S, V = dense_mat.svd(3)
+    U_np, S_np, Vt_np = np.linalg.svd(dense_mat, full_matrices=False)
+    assert np.allclose(S, S_np)
+    rec = dot(U * S, V.T)
+    rec_np = dot(U_np * S_np, Vt_np)
+    assert np.allclose(rec, rec_np)
 
 def test_zero_row():
     matcopy = mat_4x3.copy()
