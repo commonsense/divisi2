@@ -35,11 +35,21 @@ third_mat_4x3 = SparseMatrix.from_named_entries([
     (-1, "Banana", "orange")
 ])
 
+def assert_singular_triple(mat, u, s, v):
+    assert np.allclose(
+        u.multiply(s),
+        mat.dot(v))
+    assert np.allclose(
+        v.multiply(s),
+        mat.T.dot(u))
+
 def test_full_svd():
     U_sparse, S_sparse, V_sparse = mat_4x3.svd(3)
     rec = dot(U_sparse * S_sparse, V_sparse.T)
     assert rec.same_labels_as(mat_4x3)
     assert np.allclose(mat_4x3.to_dense(), rec)
+    for i in range(3):
+        assert_singular_triple(mat_4x3, U_sparse[:,i], S_sparse[i], V_sparse[:,i])
 
 def test_truncated_svd():
     # FIXME: this doesn't actually test against NumPy's SVD now that
