@@ -259,15 +259,11 @@ def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
 @cython.boundscheck(False)
 cdef void ndarray_mat_by_vec(matrix *mat, double *vec, double *out):
     cdef py_mat *pymat = <py_mat*>mat
-    ndarr = <object> pymat.py_object
+    cdef np.ndarray[DTYPE_t, ndim=2] ndarr = <object> pymat.py_object
     for row in range(mat.rows):
         out[row] = 0.0
         for col in range(mat.cols):
             out[row] += ndarr[row, col] * vec[col]
-
-    #vec_arr = wrap_double_array(vec, mat.cols)
-    #out_arr = wrap_double_array(out, mat.rows)
-    #np.dot(ndarr, vec_arr, out_arr)
 
 @cython.boundscheck(False)
 cdef void ndarray_mat_transposed_by_vec(matrix *mat, double *vec, double *out):
