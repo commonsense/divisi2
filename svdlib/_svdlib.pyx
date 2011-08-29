@@ -7,6 +7,8 @@ cimport numpy as np
 DTYPE=np.float64
 ctypedef np.float64_t DTYPE_t
 
+np.import_array()
+
 cdef extern from "svdlib.h":
     ###
     ### Structures
@@ -18,6 +20,9 @@ cdef extern from "svdlib.h":
         long rows
         long cols
         long vals # Total specified entries.
+        matrix* (*transposed)(matrix *A)
+        void (*mat_by_vec)(matrix *A, double *vec, double *out)
+        void (*mat_transposed_by_vec)(matrix *A, double *vec, double *out)
 
     # Harwell-Boeing sparse matrix.
     cdef struct smat:
@@ -100,6 +105,10 @@ cdef extern from "ll_mat.h":
         int *col           # pointer to array of indices
         int *link          # pointer to array of indices
         int *root          # pointer to array of indices
+
+cdef struct py_mat:
+    matrix h
+    void *py_object
 
 # val -> value
 # col -> rowind
@@ -247,17 +256,40 @@ def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
     svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
 
-def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] mat, int k):
-    cdef dmat *packed
+@cython.boundscheck(False)
+cdef void ndarray_mat_by_vec(matrix *mat, double *vec, double *out):
+    cdef py_mat *pymat = <py_mat*>mat
+    ndarr = <object> pymat.py_object
+    for row in range(mat.rows):
+        out[row] = 0.0
+        for col in range(mat.cols):
+            out[row] += ndarr[row, col] * vec[col]
+
+    #vec_arr = wrap_double_array(vec, mat.cols)
+    #out_arr = wrap_double_array(out, mat.rows)
+    #np.dot(ndarr, vec_arr, out_arr)
+
+@cython.boundscheck(False)
+cdef void ndarray_mat_transposed_by_vec(matrix *mat, double *vec, double *out):
+    cdef py_mat *pymat = <py_mat*>mat
+    cdef np.ndarray[DTYPE_t, ndim=2] ndarr = <object> pymat.py_object
+    for col in range(mat.cols):
+        out[col] = 0.0
+    for row in range(mat.rows):
+        for col in range(mat.cols):
+            out[col] += ndarr[row, col] * vec[row]
+
+def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] arr, int k):
+    cdef py_mat pmat
     cdef svdrec *svdrec
-    cdef int rows = mat.shape[0]
-    cdef int cols = mat.shape[1]
-    packed = svdNewDMat(rows, cols)
-    for row from 0 <= row < rows:
-        for col from 0 <= col < cols:
-            packed.value[row][col] = mat[row, col]
-    svdrec = svdLAS2A(<matrix *>packed, k)
-    svdFreeDMat(packed)
+    pmat.h.rows = arr.shape[0]
+    pmat.h.cols = arr.shape[1]
+    pmat.h.vals = pmat.h.rows * pmat.h.cols
+    pmat.h.transposed = NULL
+    pmat.h.mat_by_vec = ndarray_mat_by_vec
+    pmat.h.mat_transposed_by_vec = ndarray_mat_transposed_by_vec
+    pmat.py_object = <void*> arr
+    svdrec = svdLAS2A(<matrix*> &pmat, k)
     return wrapSVDrec(svdrec, 0)
 
 def svd_sum(mats, int k, weights, row_mappings, col_mappings):
@@ -274,7 +306,7 @@ def svd_sum(mats, int k, weights, row_mappings, col_mappings):
     return wrapSVDrec(svdrec, 1) # transposed.
 
 # Incremental SVD    
-@cython.boundscheck(False) 
+@cython.boundscheck(False)
 cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
     print "COMPUTING INCREMENTAL SVD"
     print "ROWS: %d, COLUMNS: %d, VALS: %d" % (A.h.rows, A.h.cols, A.h.vals)

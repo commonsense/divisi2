@@ -349,7 +349,7 @@ SVDRec svdLAS2(Matrix A, long dimensions, long iterations, double end[2],
     return NULL;
 
   /* If A is wide, the SVD is computed on its transpose for speed. */
-  if (A->cols >= A->rows * 1.2) {
+  if (A->transposed != NULL && A->cols >= A->rows * 1.2) {
     if (SVDVerbosity > 0) printf("TRANSPOSING THE MATRIX FOR SPEED\n");
     transpose = TRUE;
     A = A->transposed(A);
