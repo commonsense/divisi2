@@ -11,7 +11,7 @@ the results can include relationships not expressed in the original
 data but related by common sense. See http://divisi.media.mit.edu/ for
 more info."""
 
-VERSION = "2.2.5"
+VERSION = "2.3"
 
 try:
     from setuptools import setup, Extension
@@ -105,5 +105,5 @@ setup(
     ext_modules = [svdlibc],
     packages=['divisi2', 'divisi2.algorithms'],
     package_data = {'divisi2': ['data/graphs/*', 'data/eval/*', 'data/matrices/*']},
-    install_requires=['csc-utils >= 0.6.1', 'networkx', 'csc-pysparse'],
+    install_requires=['csc-utils >= 0.6.1', 'networkx', 'pysparse'],
 )
