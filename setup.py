@@ -105,5 +105,5 @@ setup(
     ext_modules = [svdlibc],
     packages=['divisi2', 'divisi2.algorithms'],
     package_data = {'divisi2': ['data/graphs/*', 'data/eval/*', 'data/matrices/*']},
-    install_requires=['csc-utils >= 0.6.1', 'networkx', 'pysparse'],
+    install_requires=['csc-utils >= 0.6.1', 'networkx', 'csc-pysparse'],
 )
