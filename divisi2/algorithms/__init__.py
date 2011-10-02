@@ -33,6 +33,7 @@ class LearningMixin(object):
     svd = delayed_plugin('svd', 'svd')
     lmds = delayed_plugin('mds', 'lmds')
     nmf = delayed_plugin('nmf', 'fnmai')
+    rsvd = delayed_plugin('randomized_svd', 'randomized_svd')
 
     @classmethod
     def available_methods(cls):

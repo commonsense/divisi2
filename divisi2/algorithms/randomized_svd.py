@@ -8,11 +8,13 @@ from divisi2.dense import DenseMatrix
 from divisi2._svdlib import svd_ndarray
 
 
-def randomized_svd(matrix, k, p=10, q=5, random_state=0):
-    # Convert matrix to SciPy sparse format. This is yucky.
+def divisi_sparse_to_scipy_sparse(matrix):
     values, rows, cols = matrix.find()
     coo_mat = scipy.sparse.coo_matrix((values, (rows, cols)))
-    M = coo_mat.tocsc()
+    return coo_mat.tocsc()
+
+def randomized_svd(matrix, k, p=10, q=5, random_state=0):
+    M = divisi_sparse_to_scipy_sparse(matrix)
     U, S, V = _randomized_svd(M, k, p, q, random_state)
 
     U = DenseMatrix(U, matrix.row_labels, None)
