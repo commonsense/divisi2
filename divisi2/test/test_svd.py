@@ -61,6 +61,14 @@ def test_dense_svd():
     rec_np = dot(U_np * S_np, Vt_np)
     assert np.allclose(rec, rec_np)
 
+def test_randomized_svd():
+    U, S, V = mat_4x3.rsvd(3)
+    rec = dot(U * S, V.T)
+    assert rec.same_labels_as(mat_4x3)
+    assert np.allclose(mat_4x3.to_dense(), rec)
+    for i in range(3):
+        assert_singular_triple(mat_4x3, U[:,i], S[i], V[:,i])
+
 def test_zero_row():
     matcopy = mat_4x3.copy()
     matcopy[2,2] = 0
