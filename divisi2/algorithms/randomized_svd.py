@@ -1,8 +1,8 @@
 import scipy.sparse
 import numpy as np
 
-from sklearn.util import check_random_state
-from sklearn.util.extmath import randomized_range_finder, safe_sparse_dot
+from sklearn.utils import check_random_state
+from sklearn.utils.extmath import randomized_range_finder, safe_sparse_dot
 
 from divisi2.dense import DenseMatrix
 from divisi2._svdlib import svd_ndarray
