@@ -190,7 +190,6 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         elif isinstance(row_labels, OrderedSet):
             obj.row_labels = row_labels
         else:
-            print "converting rows to orderedset"
             obj.row_labels = OrderedSet(row_labels)
         if obj.row_labels is not None:
             assert len(obj.row_labels) == obj.shape[0], '%r != %r' % (len(obj.row_labels), obj.shape[0])
@@ -199,7 +198,6 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         elif isinstance(col_labels, OrderedSet):
             obj.col_labels = col_labels
         else:
-            print "converting cols to orderedset"
             obj.col_labels = OrderedSet(col_labels)
         if row_labels is None and col_labels is None:
             obj.__getitem__ = super(DenseMatrix, obj).__getitem__
