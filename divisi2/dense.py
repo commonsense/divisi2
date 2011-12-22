@@ -78,6 +78,13 @@ class AbstractDenseArray(np.ndarray):
     def to_dense(self):
         return self
 
+    def tostring(self, fill_value=None, order='C'):
+        raise NotImplementedError("Use pickle to save labeled dense arrays.")
+
+    def tofile(self, fid, sep="", format="%s"):
+        raise NotImplementedError("Use pickle to save labeled dense arrays.")
+
+
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
@@ -351,7 +358,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
 
     def __reduce__(self):
         return DenseMatrix, (np.asarray(self), self.row_labels, self.col_labels)
-    
+
     def __repr__(self):
         return "<DenseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
     
