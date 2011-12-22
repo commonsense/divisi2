@@ -103,7 +103,7 @@ setup(
     classifiers = classifiers,
     long_description = "\n".join(doclines[2:]),
     ext_modules = [svdlibc],
-    packages=['divisi2', 'divisi2.algorithms'],
+    packages=['divisi2', 'divisi2.algorithms', 'divisi2.test', 'divisi2.test.eval'],
     package_data = {'divisi2': ['data/graphs/*', 'data/eval/*', 'data/matrices/*']},
     install_requires=['csc-utils >= 0.6.1', 'networkx', 'csc-pysparse'],
 )
