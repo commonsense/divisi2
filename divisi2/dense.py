@@ -121,6 +121,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         if isinstance(other, DenseVector):
             return result
         elif isinstance(other, DenseMatrix):
+            assert result.ndim == 1
             return DenseVector(result, other.col_labels)
         else: raise TypeError
 
@@ -241,8 +242,10 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
     def _dot(self, other):
         result = np.dot(self, other)
         if isinstance(other, DenseVector):
+            assert result.ndim == 1
             return DenseVector(result, self.row_labels)
         elif isinstance(other, DenseMatrix):
+            assert result.ndim == 2
             return DenseMatrix(result, self.row_labels, other.col_labels)
         else: raise TypeError
     
