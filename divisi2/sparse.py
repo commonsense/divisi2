@@ -297,9 +297,9 @@ class SparseMatrix(AbstractSparseArray, LabeledMatrixMixin, LearningMixin):
         assert isinstance(psmatrix, PysparseMatrix)
         self.psmatrix = psmatrix
         if row_labels is None: self.row_labels = None
-        else: self.row_labels = OrderedSet(row_labels)
+        else: self.row_labels = indexable_set(row_labels)
         if col_labels is None: self.col_labels = None
-        else: self.col_labels = OrderedSet(col_labels)
+        else: self.col_labels = indexable_set(col_labels)
         self._setup_wrapped_methods()
     
     ### numpy-like properties
@@ -1145,7 +1145,7 @@ class SparseVector(AbstractSparseArray, LabeledVectorMixin):
         assert isinstance(psmatrix, PysparseMatrix)
         assert psmatrix.shape[0] == 1
         self.psmatrix = psmatrix
-        self.labels = OrderedSet(labels)
+        self.labels = indexable_set(labels or [])
         self._setup_wrapped_methods()
     
     ### numpy-like properties

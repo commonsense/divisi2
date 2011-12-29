@@ -1,4 +1,5 @@
 from divisi2.sparse import SparseMatrix
+import numpy as np
 
 def blend_factor(mat):
     """
@@ -48,4 +49,39 @@ def blend(mats, factors=None, symmetric=False, post_weights=None):
         return SparseMatrix.square_from_named_lists(b_values, b_row_labels, b_col_labels)
     else:
         return SparseMatrix.from_named_lists(b_values, b_row_labels, b_col_labels)
+
+def blend_svd(mats, factors=None, k=50):
+    '''
+    Special optimized version of blend for doing just an SVD.
+
+    Like matrix.svd, returns a triple of:
+
+    - U as a dense labeled matrix
+    - S, a dense vector representing the diagonal of Sigma
+    - V as a dense labeled matrix
+
+    '''
+    
+    if factors is None:
+        factors = [blend_factor(mat) for mat in mats]
+
+    # Align matrices.
+    # FIXME: only works for fully labeleed matrices right now.
+    # TODO: could micro-optimize by using the first ordered set's indices.
+    from csc_utils.ordered_set import OrderedSet
+    row_labels, row_mappings = OrderedSet(), []
+    for mat in mats:
+        row_mappings.append(np.array([row_labels.add(item) for item in mat.row_labels], dtype=np.uint64))
+    col_labels, col_mappings = OrderedSet(), []
+    for mat in mats:
+        col_mappings.append(np.array([col_labels.add(item) for item in mat.col_labels], dtype=np.uint64))
+
+    # Elide zero row tests, etc.
+
+    from divisi2._svdlib import svd_sum
+    from divisi2 import DenseMatrix
+    Ut, S, Vt = svd_sum(mats, k, factors, row_mappings, col_mappings)
+    U = DenseMatrix(Ut.T, row_labels, None)
+    V = DenseMatrix(Vt.T, col_labels, None)
+    return U, S, V
 

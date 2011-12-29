@@ -1,4 +1,4 @@
-.. module:: csc.divisi2.dense
+.. module:: divisi2.dense
 
 Dense Matrices and Vectors
 ==========================

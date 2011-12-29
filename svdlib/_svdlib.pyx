@@ -7,16 +7,26 @@ cimport numpy as np
 DTYPE=np.float64
 ctypedef np.float64_t DTYPE_t
 
+np.import_array()
+
 cdef extern from "svdlib.h":
     ###
     ### Structures
     ###
    
-    # Harwell-Boeing sparse matrix.
-    cdef struct smat:
+    # Abstract matrix class
+    cdef struct matrix:
+        # we don't have to tell Cython about the ops pointers.
         long rows
         long cols
-        long vals      # /* Total non-zero entries. */
+        long vals # Total specified entries.
+        matrix* (*transposed)(matrix *A)
+        void (*mat_by_vec)(matrix *A, double *vec, double *out)
+        void (*mat_transposed_by_vec)(matrix *A, double *vec, double *out)
+
+    # Harwell-Boeing sparse matrix.
+    cdef struct smat:
+        matrix h
         long *pointr   # /* For each col (plus 1), index of first non-zero entry. */
         long *rowind   # /* For each nz entry, the row index. */
         double *value  # /* For each nz entry, the value. */
@@ -25,9 +35,12 @@ cdef extern from "svdlib.h":
     
     # Row-major dense matrix.  Rows are consecutive vectors.
     cdef struct dmat:
-        long rows
-        long cols
+        matrix h
         double **value # /* Accessed by [row][col]. Free value[0] and value to free.*/
+
+    cdef struct summing_mat:
+        matrix h
+        # Cython doesn't need to know anything beyond that.
 
     cdef struct svdrec:
         int d       #  /* Dimensionality (rank) */
@@ -42,6 +55,16 @@ cdef extern from "svdlib.h":
     
     #/* Frees a sparse matrix. */
     cdef extern void svdFreeSMat(smat *S)
+
+    # Creates an empty dense matrix. */
+    cdef extern dmat *svdNewDMat(int rows, int cols)
+    # Frees a dense matrix.
+    cdef extern void svdFreeDMat(dmat *D)
+
+    cdef extern summing_mat *summing_mat_new(int n)
+    cdef extern void summing_mat_set(summing_mat *m, int i, matrix *m)
+    cdef extern void summing_mat_free(summing_mat *m)
+
     
     #/* Creates an empty SVD record. */
     cdef extern svdrec *svdNewSVDRec()
@@ -53,7 +76,7 @@ cdef extern from "svdlib.h":
     #cdef extern svdrec *svdLAS2(smat *A, long dimensions, long iterations, double end[2], double kappa)
     
     #/* Chooses default parameter values.  Set dimensions to 0 for all dimensions: */
-    cdef extern svdrec *svdLAS2A(smat *A, long dimensions)
+    cdef extern svdrec *svdLAS2A(matrix *A, long dimensions)
     
     #cdef extern void freeVector(double *v)
     #cdef extern double *mulDMatSlice(DMat *D1, DMat *D2, int index, double *weight)
@@ -83,6 +106,10 @@ cdef extern from "ll_mat.h":
         int *link          # pointer to array of indices
         int *root          # pointer to array of indices
 
+cdef struct py_mat:
+    matrix h
+    void *py_object
+
 # val -> value
 # col -> rowind
 # ind -> pointr
@@ -92,6 +119,7 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
     Transform a Pysparse ll_mat object into an svdlib SMat by packing 
     its rows into the compressed sparse columns. This has the effect of
     transposing the matrix at the same time.
+
     """
     cdef smat *output 
     cdef int i, j, k, r
@@ -107,7 +135,7 @@ cdef smat *llmat_to_smat(LLMatObject *llmat):
             r += 1
             k = llmat.link[k]
         output.pointr[i+1] = r
-    return output;
+    return output
 
 cdef smat *llmat_to_smat_shifted(LLMatObject *llmat, row_mapping_, col_mapping_):
     """
@@ -129,12 +157,87 @@ cdef smat *llmat_to_smat_shifted(LLMatObject *llmat, row_mapping_, col_mapping_)
     output.offset_for_col = row_array
     return output
 
+cdef smat *llmat_to_smat_remapped(LLMatObject *llmat, row_mapping_, col_mapping_, double weight) except? NULL:
+    """
+    Transform a Pysparse ll_mat object into an svdlib SMat by packing 
+    its rows into the compressed sparse columns. This has the effect of
+    transposing the matrix at the same time.
+
+    row_mapping and col_mapping specify the output indices for each
+    input row and column (before transposing).
+    
+    Implementation notes: we need to build the output in order of
+    columns, so we iterate through source rows in sorted order, given
+    by np.argsort(row_mapping). We then need to build each output row
+    in sorted order, which requires a bit more care.
+    """
+    cdef smat *output
+    cdef int prev_out_column, cur_input_row, cur_out_column, i, k, col_len, output_index, start_of_column, row_index
+    cdef np.ndarray[unsigned long, ndim=1] row_mapping = row_mapping_
+    cdef np.ndarray[unsigned long, ndim=1] col_mapping = col_mapping_
+    cdef np.ndarray[long, ndim=1] row_order, col_order, column_indices
+
+    # Create the (transposed) output matrix.
+    output = svdNewSMat(np.max(col_mapping)+1, np.max(row_mapping)+1, llmat.nnz)
+    output.pointr[0] = 0
+
+    # Iterate through rows in the order they appear as output columns.
+    # Note importantly that this may yield empty output columns.
+    row_order = np.argsort(row_mapping)
+    prev_out_column = 0
+    for row_index from 0 <= row_index < len(row_order):
+        cur_input_row = row_order[row_index]
+        cur_out_column = row_mapping[cur_input_row]
+
+        # Find where the column starts
+        start_of_column = output.pointr[prev_out_column + 1]
+        # Fill in start pointers for skipped columns.
+        for i from prev_out_column + 1 <= i <= cur_out_column:
+            output.pointr[i] = start_of_column
+        prev_out_column = cur_out_column
+
+        # Iterate through columns in the source row, placing them in
+        # the proper places in the output column.
+
+        # First, determine the length of the column
+        col_len = 0
+        k = llmat.root[cur_input_row]
+        while k != -1: # signifies end of the source row
+            col_len += 1
+            k = llmat.link[k]
+
+        # Now get the column of each entry as an array.
+        column_indices = np.zeros(col_len, dtype=np.int64)
+        i = 0
+        k = llmat.root[cur_input_row]
+        while k != -1:
+            column_indices[i] = llmat.col[k]
+            i += 1
+            k = llmat.link[k]
+
+        # Find the index each column goes in.
+        col_order = np.argsort(column_indices)
+
+        # Put each value in the appropriate column.
+        i = 0
+        k = llmat.root[cur_input_row]
+        while k != -1:
+            output_index = start_of_column + col_order[i]
+            output.value[output_index] = llmat.val[k] * weight
+            output.rowind[output_index] = col_mapping[llmat.col[k]]
+            i += 1
+            k = llmat.link[k]
+        
+        output.pointr[cur_out_column+1] = output.pointr[cur_out_column] + col_len
+    return output
+
+
 def svd_llmat(llmat, int k):
     cdef smat *packed
     cdef svdrec *svdrec
     llmat.compress()
     packed = llmat_to_smat(<LLMatObject *> llmat)
-    svdrec = svdLAS2A(packed, k)
+    svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeSMat(packed)
     ut, svals, vt = wrapSVDrec(svdrec, 1)
     
@@ -149,22 +252,67 @@ def svd_llmat_shifted(llmat, int k, row_shift, col_shift):
     cdef svdrec *svdrec
     llmat.compress()
     packed = llmat_to_smat_shifted(<LLMatObject *> llmat, row_shift, col_shift)
-    svdrec = svdLAS2A(packed, k)
+    svdrec = svdLAS2A(<matrix *>packed, k)
     svdFreeSMat(packed)
     return wrapSVDrec(svdrec, 1)
 
+@cython.boundscheck(False)
+cdef void ndarray_mat_by_vec(matrix *mat, double *vec, double *out):
+    cdef py_mat *pymat = <py_mat*>mat
+    cdef np.ndarray[DTYPE_t, ndim=2] ndarr = <object> pymat.py_object
+    for row in range(mat.rows):
+        out[row] = 0.0
+        for col in range(mat.cols):
+            out[row] += ndarr[row, col] * vec[col]
+
+@cython.boundscheck(False)
+cdef void ndarray_mat_transposed_by_vec(matrix *mat, double *vec, double *out):
+    cdef py_mat *pymat = <py_mat*>mat
+    cdef np.ndarray[DTYPE_t, ndim=2] ndarr = <object> pymat.py_object
+    for col in range(mat.cols):
+        out[col] = 0.0
+    for row in range(mat.rows):
+        for col in range(mat.cols):
+            out[col] += ndarr[row, col] * vec[row]
+
+def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] arr, int k):
+    cdef py_mat pmat
+    cdef svdrec *svdrec
+    pmat.h.rows = arr.shape[0]
+    pmat.h.cols = arr.shape[1]
+    pmat.h.vals = pmat.h.rows * pmat.h.cols
+    pmat.h.transposed = NULL
+    pmat.h.mat_by_vec = ndarray_mat_by_vec
+    pmat.h.mat_transposed_by_vec = ndarray_mat_transposed_by_vec
+    pmat.py_object = <void*> arr
+    svdrec = svdLAS2A(<matrix*> &pmat, k)
+    return wrapSVDrec(svdrec, 0)
+
+def svd_sum(mats, int k, weights, row_mappings, col_mappings):
+    cdef summing_mat *sum_mat = summing_mat_new(len(mats))
+    cdef svdrec *svdrec
+    cdef smat *tmp
+    for i in range(len(mats)):
+        # Go ahead and let it transpose.
+        mat = mats[i].llmatrix
+        mat.compress()
+        summing_mat_set(sum_mat, i, <matrix *>llmat_to_smat_remapped(<LLMatObject *>mat, row_mappings[i], col_mappings[i], weights[i]))
+    svdrec = svdLAS2A(<matrix *>sum_mat, k)
+    summing_mat_free(sum_mat)
+    return wrapSVDrec(svdrec, 1) # transposed.
+
 # Incremental SVD    
-@cython.boundscheck(False) 
+@cython.boundscheck(False)
 cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
     print "COMPUTING INCREMENTAL SVD"
-    print "ROWS: %d, COLUMNS: %d, VALS: %d" % (A.rows, A.cols, A.vals)
+    print "ROWS: %d, COLUMNS: %d, VALS: %d" % (A.h.rows, A.h.cols, A.h.vals)
     print "K: %d, LEARNING_RATE: %r, ITERATIONS: %d" % (k, lrate, niter)
 
-    cdef np.ndarray[DTYPE_t, ndim=2] u = np.add(np.zeros((A.rows, k), dtype=DTYPE), .001)
-    cdef np.ndarray[DTYPE_t, ndim=2] v = np.add(np.zeros((A.cols, k), dtype=DTYPE), .001)
+    cdef np.ndarray[DTYPE_t, ndim=2] u = np.add(np.zeros((A.h.rows, k), dtype=DTYPE), .001)
+    cdef np.ndarray[DTYPE_t, ndim=2] v = np.add(np.zeros((A.h.cols, k), dtype=DTYPE), .001)
 
     # Maintain a cache of dot-products up to the current axis
-    cdef smat* predicted = svdNewSMat(A.rows, A.cols, A.vals)
+    cdef smat* predicted = svdNewSMat(A.h.rows, A.h.cols, A.h.vals)
 
     # Type all loop vars
     cdef unsigned int axis, i, cur_row,cur_col, col_index, next_col_index, value_index
@@ -173,17 +321,17 @@ cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
     # Initialize dot-product cache
     # (This should be done with memcpy, but i'm not certain
     # how to do that here)
-    for i in range(A.cols + 1):
+    for i in range(A.h.cols + 1):
         predicted.pointr[i] = A.pointr[i]
     
-    for i in range(A.vals):
+    for i in range(A.h.vals):
         predicted.rowind[i] = A.rowind[i]
         predicted.value[i] = 0
 
     for axis in range(k):
         for i in range(niter):
             # Iterate over all values of the sparse matrix
-            for cur_col in range(A.cols):
+            for cur_col in range(A.h.cols):
                 col_index = A.pointr[cur_col]
                 next_col_index = A.pointr[cur_col + 1]
                 for value_index in range(col_index, next_col_index):
@@ -196,7 +344,7 @@ cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
                     v[cur_col, axis] += lrate * err * u_value
 
         # Update cached dot-products
-        for cur_col in range(predicted.cols):
+        for cur_col in range(predicted.h.cols):
             col_index = predicted.pointr[cur_col]
             next_col_index = predicted.pointr[cur_col + 1]
             for value_index in range(col_index, next_col_index):
@@ -223,17 +371,3 @@ def isvd_llmat(llmat, int k, int niter=100, double lrate=.001):
     v, s, u = isvd(packed, k, niter, lrate)
     svdFreeSMat(packed)
     return u, s, v
-
-def hebbian_step(u_, vt_, int row, int col, double value, double lrate):
-    cdef np.ndarray[double, ndim=2] u = u_
-    cdef np.ndarray[double, ndim=2] vt = vt_
-    cdef double predicted = 0
-    for axis in range(u.shape[1]):
-        err = value - (predicted + u[row, axis] * vt[axis, col])
-
-        u_value = u[row, axis]
-        u[row, axis] += lrate * err * vt[axis, col]
-        vt[axis, col] += lrate * err * u_value
-
-        predicted += u[row, axis] * vt[axis, col]
-    return (value - predicted) * (value - predicted)

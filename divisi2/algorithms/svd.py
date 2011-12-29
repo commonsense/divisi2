@@ -1,6 +1,7 @@
 from divisi2.dense import DenseMatrix
+from divisi2.sparse import SparseMatrix
 from divisi2.reconstructed import ReconstructedMatrix
-from divisi2._svdlib import svd_llmat
+from divisi2._svdlib import svd_llmat, svd_ndarray
 from divisi2 import operators
 
 def svd(matrix, k=50):
@@ -19,17 +20,19 @@ def svd(matrix, k=50):
     """
     assert matrix.ndim == 2
     if isinstance(matrix, DenseMatrix):
-        # FIXME: we can probably feed this into SVDLIBC directly.
-        matrix = matrix.to_sparse()
-    if matrix.shape[1] >= matrix.shape[0] * 1.2:
-        # transpose the matrix for speed
-        V, S, U = matrix.T.svd(k)
-        return U, S, V
+        Ut, S, Vt = svd_ndarray(matrix, k)
+    elif isinstance(matrix, SparseMatrix):
+        if matrix.shape[1] >= matrix.shape[0] * 1.2:
+            # transpose the matrix for speed
+            V, S, U = matrix.T.svd(k)
+            return U, S, V
+        Ut, S, Vt = svd_llmat(matrix.llmatrix, k)
+    else:
+        raise TypeError("Don't know how to SVD a %r", type(matrix))
 
-    Ut, S, Vt = svd_llmat(matrix.llmatrix, k)
     U = DenseMatrix(Ut.T, matrix.row_labels, None)
     V = DenseMatrix(Vt.T, matrix.col_labels, None)
 
-    return (U, S, V)
+    return U, S, V
 
 
