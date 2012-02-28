@@ -51,6 +51,14 @@ def test_sparse_svd():
     for i in range(3):
         assert_singular_triple(mat_4x3, U[:,i], S[i], V[:,i])
 
+def test_sparse_empty_svd():
+    """Taking the SVD of a large but empty matrix shouldn't explode."""
+    big_empty = SparseMatrix.from_lists([], [], [], nrows=22144, ncols=22144)
+    U, S, V = big_empty.svd(101)
+    assert S.sum() == 0
+    test_sparse_svd()
+    test_dense_svd()
+
 def test_dense_svd():
     """Check the SVDLIBC result against numpy.linalg"""
     dense_mat = mat_4x3.to_dense()
