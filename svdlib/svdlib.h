@@ -11,13 +11,24 @@
 /******************************** Structures *********************************/
 typedef struct smat *SMat;
 typedef struct dmat *DMat;
+typedef struct matrix *Matrix;
+typedef struct summing_mat *SummingMat;
 typedef struct svdrec *SVDRec;
+
+/* Abstract matrix class */
+struct matrix {
+  Matrix (*transposed)(Matrix A);
+  void (*free)(Matrix A);
+  void (*mat_by_vec)(Matrix A, double *vec, double *out);
+  void (*mat_transposed_by_vec)(Matrix A, double *vec, double *out);
+  long rows;
+  long cols;
+  long vals;     /* Total specified entries. */
+};
 
 /* Harwell-Boeing sparse matrix. */
 struct smat {
-  long rows;
-  long cols;
-  long vals;     /* Total non-zero entries. */
+  struct matrix h;
   long *pointr;  /* For each col (plus 1), index of first non-zero entry. */
   long *rowind;  /* For each nz entry, the row index. */
   double *value; /* For each nz entry, the value. */
@@ -27,9 +38,15 @@ struct smat {
 
 /* Row-major dense matrix.  Rows are consecutive vectors. */
 struct dmat {
-  long rows;
-  long cols;
+  struct matrix h;
   double **value; /* Accessed by [row][col]. Free value[0] and value to free.*/
+};
+
+/* summing matrix */
+struct summing_mat {
+  struct matrix h;
+  int n;
+  Matrix *mats;
 };
 
 struct svdrec {
@@ -81,6 +98,13 @@ SMat svdNewSMat(int rows, int cols, int vals);
 /* Frees a sparse matrix. */
 void svdFreeSMat(SMat S);
 
+/* Summing matrix operations */
+SummingMat summing_mat_new(int n);
+void summing_mat_set(SummingMat mat, int i, Matrix m);
+void summing_mat_free(SummingMat m);
+SummingMat summing_mat_transposed(SummingMat m);
+
+
 /* Creates an empty SVD record. */
 SVDRec svdNewSVDRec(void);
 /* Frees an svd rec and all its contents. */
@@ -100,10 +124,10 @@ double *copyVector(double* vec, int n, const char* name);
 
 
 /* Performs the las2 SVD algorithm and returns the resulting Ut, S, and Vt. */
-extern SVDRec svdLAS2(SMat A, long dimensions, long iterations, double end[2], 
+extern SVDRec svdLAS2(Matrix A, long dimensions, long iterations, double end[2], 
                       double kappa);
 /* Chooses default parameter values.  Set dimensions to 0 for all dimensions: */
-extern SVDRec svdLAS2A(SMat A, long dimensions);
+extern SVDRec svdLAS2A(Matrix A, long dimensions);
 
 void freeVector(double *v);
 double *mulDMatSlice(DMat D1, DMat D2, int index, double *weight);

@@ -71,8 +71,8 @@ void init_numpy(void) {
 PyObject * wrapDMat(DMat d) {
   init_numpy();
   PyArray_Descr *type = PyArray_DescrFromType(NPY_DOUBLE);
-  npy_intp dim[2] = {d->rows, d->cols};
-  npy_intp strides[2] = {d->cols*sizeof(double), sizeof(double)};
+  npy_intp dim[2] = {d->h.rows, d->h.cols};
+  npy_intp strides[2] = {d->h.cols*sizeof(double), sizeof(double)};
   PyObject* arr = PyArray_NewFromDescr( &PyArray_Type, type,
 					2, dim, strides,
 					d->value[0],

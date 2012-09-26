@@ -78,6 +78,13 @@ class AbstractDenseArray(np.ndarray):
     def to_dense(self):
         return self
 
+    def tostring(self, fill_value=None, order='C'):
+        raise NotImplementedError("Use pickle to save labeled dense arrays.")
+
+    def tofile(self, fid, sep="", format="%s"):
+        raise NotImplementedError("Use pickle to save labeled dense arrays.")
+
+
 class DenseVector(AbstractDenseArray, LabeledVectorMixin):
     __array_priority__ = 2.0
     def __new__(cls, input_array, labels=None):
@@ -121,6 +128,7 @@ class DenseVector(AbstractDenseArray, LabeledVectorMixin):
         if isinstance(other, DenseVector):
             return result
         elif isinstance(other, DenseMatrix):
+            assert result.ndim == 1
             return DenseVector(result, other.col_labels)
         else: raise TypeError
 
@@ -190,7 +198,6 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         elif isinstance(row_labels, OrderedSet):
             obj.row_labels = row_labels
         else:
-            print "converting rows to orderedset"
             obj.row_labels = OrderedSet(row_labels)
         if obj.row_labels is not None:
             assert len(obj.row_labels) == obj.shape[0], '%r != %r' % (len(obj.row_labels), obj.shape[0])
@@ -199,7 +206,6 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
         elif isinstance(col_labels, OrderedSet):
             obj.col_labels = col_labels
         else:
-            print "converting cols to orderedset"
             obj.col_labels = OrderedSet(col_labels)
         if row_labels is None and col_labels is None:
             obj.__getitem__ = super(DenseMatrix, obj).__getitem__
@@ -251,8 +257,10 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
     def _dot(self, other):
         result = np.dot(self, other)
         if isinstance(other, DenseVector):
+            assert result.ndim == 1
             return DenseVector(result, self.row_labels)
         elif isinstance(other, DenseMatrix):
+            assert result.ndim == 2
             return DenseMatrix(result, self.row_labels, other.col_labels)
         else: raise TypeError
     
@@ -353,7 +361,7 @@ class DenseMatrix(AbstractDenseArray, LabeledMatrixMixin, LearningMixin):
 
     def __reduce__(self):
         return DenseMatrix, (np.asarray(self), self.row_labels, self.col_labels)
-    
+
     def __repr__(self):
         return "<DenseMatrix (%d by %d)>" % (self.shape[0], self.shape[1])
     

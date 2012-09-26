@@ -297,32 +297,42 @@ long svd_idamax(long n, double *dx, long incx) {
 }
 
 /**************************************************************
- * multiplication of matrix B by vector x, where B = A'A,     *
+ * multiplication of matrix B by vector vec, where B = A'A,     *
  * and A is nrow by ncol (nrow >> ncol). Hence, B is of order *
- * n = ncol (y stores product vector).		              *
+ * n = ncol (out stores product vector).		              *
  **************************************************************/
-void svd_opb(SMat A, double *x, double *y, double *temp) {
-  svd_opa(A, x, temp);
-  mat_transposed_by_vec(A, temp, y);
+void ATransposeA_by_vec(Matrix A, double *vec, double *out, double *temp) {
+  memset(out, 0, A->cols * sizeof(double));
+  memset(temp, 0, A->rows * sizeof(double));
+
+  A->mat_by_vec(A, vec, temp);
+  A->mat_transposed_by_vec(A, temp, out);
 }
+
+void mat_by_vec(Matrix A, double *vec, double *out) {
+  memset(out, 0, A->rows * sizeof(double));
+  A->mat_by_vec(A, vec, out);
+}
+
 
 /***********************************************************
  * multiplication of matrix A by vector x, where A is 	   *
- * nrow by ncol (nrow >> ncol).  y stores product vector.  *
+ * nrow by ncol (nrow >> ncol).  out stores product vector.  *
  ***********************************************************/
-void svd_opa(SMat A, double *x, double *y) {
+/* NOTE: now accumulates into out. */
+void sparse_mat_by_vec(Matrix A_, double *x, double *out) {
+  SMat A = (SMat) A_;
   long end, i, j;
   long *pointr = A->pointr, *rowind = A->rowind;
   double *value = A->value;
-  long rows = A->rows, cols = A->cols;
-   
+  long rows = A->h.rows, cols = A->h.cols;
+  
   SVDCount[SVD_MXV]++;
-  memset(y, 0, rows * sizeof(double));
   
   for (i = 0; i < cols; i++) {
     end = pointr[i+1];
     for (j = pointr[i]; j < end; j++)
-      y[rowind[j]] += value[j] * x[i]; 
+      out[rowind[j]] += value[j] * x[i]; 
   }
 
   if (A->offset_for_row) {
@@ -331,7 +341,7 @@ void svd_opa(SMat A, double *x, double *y) {
     double sum_x = 0;
     for (k = 0; k < cols; k++) sum_x += x[k];
     for (i = 0; i < rows; i++)
-      y[i] += A->offset_for_row[i] * sum_x;
+      out[i] += A->offset_for_row[i] * sum_x;
   }
 
   if (A->offset_for_col) {
@@ -341,19 +351,49 @@ void svd_opa(SMat A, double *x, double *y) {
     for (k = 0; k < cols; k++)
       offset += A->offset_for_col[k] * x[k];
     for (i = 0; i < rows; i++)
-      y[i] += offset;
+      out[i] += offset;
   }
 }
 
-void mat_transposed_by_vec(SMat A, double *x, double *out) {
+/* accumulates into out! */
+void dense_mat_by_vec(Matrix A_, double *x, double *out) {
+  DMat A = (DMat) A_;
+  long row, col;
+  double **value = A->value;
+  long rows = A->h.rows, cols = A->h.cols;
+   
+  SVDCount[SVD_MXV]++;
+  
+  for (row = 0; row < rows; row++) 
+    for (col = 0; col < cols; col++)
+      out[row] += value[row][col] * x[col];
+}
+
+/* accumulates into out! */
+void dense_mat_transposed_by_vec(Matrix A_, double *vec, double *out) {
+  DMat A = (DMat) A_;
+  long row, col;
+  double ** value = A->value;
+  long rows = A->h.rows, cols = A->h.cols;
+  /* vec in rows; out in columns */
+  
+  SVDCount[SVD_MXV]++;
+
+  for (row = 0; row < rows; row++) 
+    for (col = 0; col < cols; col++)
+      out[col] += value[row][col] * vec[row];
+}
+
+/* accumulates to out! */
+void sparse_mat_transposed_by_vec(Matrix A_, double *x, double *out) {
+  SMat A = (SMat) A_;
   long i, j, end;
   long *pointr = A->pointr, *rowind = A->rowind;
   double *value = A->value;
-  long rows = A->rows, cols = A->cols;
+  long rows = A->h.rows, cols = A->h.cols;
   /* x in rows, out in columns */
 
   SVDCount[SVD_MXV]++;
-  memset(out, 0, cols * sizeof(double));  
 
   for (i = 0; i < cols; i++) {
     end = pointr[i+1];
@@ -380,6 +420,29 @@ void mat_transposed_by_vec(SMat A, double *x, double *out) {
       out[i] += A->offset_for_col[i] * sum_x;
   }
 }
+
+void summing_mat_by_vec(Matrix A_, double *vec, double *out) {
+  SummingMat A = (SummingMat) A_;
+  memset(out, 0, A->h.rows * sizeof(double));
+  int i;
+  
+  for (i=0; i<A->n; i++) {
+    Matrix m = A->mats[i];
+    m->mat_by_vec(m, vec, out);
+  }
+}
+
+void summing_mat_transposed_by_vec(Matrix A_, double *vec, double *out) {
+  SummingMat A = (SummingMat) A_;
+  memset(out, 0, A->h.cols * sizeof(double));
+  int i;
+  
+  for (i=0; i<A->n; i++) {
+    Matrix m = A->mats[i];
+    m->mat_transposed_by_vec(m, vec, out);
+  }
+}
+
 
 /***********************************************************************
  *                                                                     *
