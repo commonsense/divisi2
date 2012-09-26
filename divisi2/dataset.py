@@ -1,5 +1,6 @@
 from __future__ import with_statement
 from divisi2.sparse import SparseMatrix
+import codecs
 
 def movielens_titles(filebase):
     d = {}
@@ -27,3 +28,16 @@ def movielens_ratings(filebase):
                     seen.add((movie_title, user_id))
                     yield (rating, movie_title, user_id)
 
+def conceptnet5_links(filename):
+    def ambiguate_concept(concept):
+        parts = concept.split('/')
+        return '/'.join(parts[:4])
+    for line in codecs.open(filename, encoding='utf-8'):
+        weight, source, target = line.split('\t')
+        if weight == 'Source' or weight == 'Weight':
+            continue
+        weight = float(weight)
+        source = ambiguate_concept(source)
+        target = ambiguate_concept(target)
+        yield (weight, source, target)
+        yield (weight, target, source)

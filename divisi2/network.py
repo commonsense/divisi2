@@ -180,4 +180,16 @@ def conceptnet_assoc(lang):
         divisi2.save(matrix, 'data:matrices/conceptnet_assoc_%s.gz' % lang)
         return matrix
 
+def conceptnet5_assoc():
+    import divisi2
+    try:
+        matrix = divisi2.load('data:matrices/conceptnet_assoc_5.1.1.gz')
+        return matrix
+    except IOError:
+        filename = divisi2.fileIO.data_filename('data:graphs/conceptnet-5.1.1-sparse-links.csv')
+        triples = divisi2.dataset.conceptnet5_links(filename)
+        matrix = divisi2.SparseMatrix.from_named_entries(triples)
+        divisi2.save(matrix, 'data:matrices/conceptnet_assoc_5.1.1.gz')
+    return matrix
+
 analogyspace_matrix = conceptnet_matrix   # synonym
