@@ -1,3 +1,5 @@
+from cython.view cimport array as cvarray
+
 import warnings
 import numpy as np
 cimport cython
@@ -93,64 +95,9 @@ cdef extern from "math.h":
 cdef extern from "svdutil.h":
     cdef extern double *svd_doubleArray(long size, char empty, char *name)
 
-# Understand Pysparse's ll_mat format
-cdef extern from "ll_mat.h":
-    ctypedef struct LLMatObject:
-        int *dim         # array dimension
-        int issym          # non-zero, if obj represents a symmetric matrix
-        int nnz            # number of stored items
-        int nalloc         # allocated size of value and index arrays
-        int free           # index to first element in free chain
-        double *val        # pointer to array of values
-        int *col           # pointer to array of indices
-        int *link          # pointer to array of indices
-        int *root          # pointer to array of indices
-
 cdef struct py_mat:
     matrix h
     void *py_object
-
-# val -> value
-# col -> rowind
-# ind -> pointr
-
-cdef smat *llmat_to_smat(LLMatObject *llmat):
-    """
-    Transform a Pysparse ll_mat object into an svdlib SMat by packing 
-    its rows into the compressed sparse columns. This has the effect of
-    transposing the matrix at the same time.
-
-    """
-    cdef smat *output 
-    cdef int i, j, k, r
-
-    r = 0
-    output = svdNewSMat(llmat.dim[1], llmat.dim[0], llmat.nnz)
-    output.pointr[0] = 0
-    for i from 0 <= i < llmat.dim[0]:
-        k = llmat.root[i]
-        while (k != -1):
-            output.value[r] = llmat.val[k]
-            output.rowind[r] = llmat.col[k]
-            r += 1
-            k = llmat.link[k]
-        output.pointr[i+1] = r
-    return output
-
-def svd_llmat(llmat, int k):
-    cdef smat *packed
-    cdef svdrec *svdrec
-    llmat.compress()
-    packed = llmat_to_smat(<LLMatObject *> llmat)
-    svdrec = svdLAS2A(<matrix *>packed, k)
-    svdFreeSMat(packed)
-    ut, svals, vt = wrapSVDrec(svdrec, 1)
-    
-    # in cases where there aren't enough nonzero singular values, make sure
-    # to output the zeros too
-    s = np.zeros(ut.shape[0])
-    s[:len(svals)] = svals
-    return ut, s, vt
 
 @cython.boundscheck(False)
 cdef void ndarray_mat_by_vec(matrix *mat, double *vec, double *out):
@@ -183,6 +130,53 @@ def svd_ndarray(np.ndarray[DTYPE_t, ndim=2] arr, int k):
     pmat.py_object = <void*> arr
     svdrec = svdLAS2A(<matrix*> &pmat, k)
     return wrapSVDrec(svdrec, 0)
+
+###
+### Run SVDs on Python objects
+###
+
+cdef void pmat_matvec(matrix *mat, double *vec, double *out):
+    cdef py_mat *pymat = <py_mat*>mat
+    out_ = np.asarray(<np.float64_t[:mat.rows]> out)
+    out_.fill(0)
+    (<object>pymat.py_object).mat_by_vec(
+        np.asarray(<np.float64_t[:mat.cols]> vec),
+        out_)
+
+cdef void pmat_transposed_matvec(matrix *mat, double *vec, double *out):
+    cdef py_mat *pymat = <py_mat*>mat
+    out_ = np.asarray(<np.float64_t[:mat.cols]> out)
+    out_.fill(0)
+    (<object>pymat.py_object).mat_transposed_by_vec(
+        np.asarray(<np.float64_t[:mat.rows]> vec),
+        out_)
+
+def svd_pyobj(obj, int rows, int cols, int num_vals, int k):
+    """Run an SVD on a Python object that provides mat_by_vec and mat_transposed_by_vec methods.
+
+    The method signatures should be:
+    - mat_by_vec(vec, out)
+    - mat_transposed_by_vec(vec, out)
+    where both vec and out will be NumPy arrays.
+    """
+    cdef py_mat pmat
+    cdef svdrec *svdrec
+    pmat.h.rows = rows
+    pmat.h.cols = cols
+    pmat.h.vals = num_vals
+    pmat.h.transposed = NULL
+    pmat.h.mat_by_vec = pmat_matvec
+    pmat.h.mat_transposed_by_vec = pmat_transposed_matvec
+    pmat.py_object = <void*> obj
+    svdrec = svdLAS2A(<matrix*> &pmat, k)
+    ut, svals, vt = wrapSVDrec(svdrec, 0)
+    
+    # in cases where there aren't enough nonzero singular values, make sure
+    # to output the zeros too
+    s = np.zeros(ut.shape[0])
+    s[:len(svals)] = svals
+    return ut, s, vt
+
 
 # Incremental SVD    
 @cython.boundscheck(False)
@@ -245,12 +239,3 @@ cdef isvd(smat* A, int k=50, int niter=100, double lrate=.001):
     svdFreeSMat(predicted)
 
     return u, v, sigma
-
-def isvd_llmat(llmat, int k, int niter=100, double lrate=.001):
-    cdef smat *packed
-    cdef svdrec *svdrec
-    llmat.compress()
-    packed = llmat_to_smat(<LLMatObject *> llmat) # transposes the matrix.
-    v, s, u = isvd(packed, k, niter, lrate)
-    svdFreeSMat(packed)
-    return u, s, v

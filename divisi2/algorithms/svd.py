@@ -1,7 +1,7 @@
 from divisi2.dense import DenseMatrix
 from divisi2.sparse import SparseMatrix
 from divisi2.reconstructed import ReconstructedMatrix
-from divisi2._svdlib import svd_llmat, svd_ndarray
+from divisi2._svdlib import svd_pyobj, svd_ndarray
 from divisi2 import operators
 import numpy as np
 
@@ -34,7 +34,8 @@ def svd(matrix, k=50):
             # transpose the matrix for speed
             V, S, U = matrix.T.svd(k)
             return U, S, V
-        Ut, S, Vt = svd_llmat(matrix.llmatrix, k)
+        csr_mat = matrix.llmatrix.to_csr()
+        Ut, S, Vt = svd_pyobj(CallbackObj(csr_mat), matrix.shape[0], matrix.shape[1], matrix.nnz, k)
     else:
         raise TypeError("Don't know how to SVD a %r", type(matrix))
 
@@ -43,4 +44,9 @@ def svd(matrix, k=50):
 
     return U, S, V
 
-
+import sys
+class CallbackObj(object):
+    def __init__(self, matrix):
+        self.matrix = matrix
+        self.mat_by_vec = self.matrix.matvec
+        self.mat_transposed_by_vec = self.matrix.matvec_transp

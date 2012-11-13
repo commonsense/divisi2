@@ -51,26 +51,4 @@ def blend(mats, factors=None, symmetric=False, post_weights=None):
         return SparseMatrix.from_named_lists(b_values, b_row_labels, b_col_labels)
 
 def blend_svd(mats, factors=None, k=50):
-    '''
-    Special optimized version of blend for doing just an SVD.
-
-    Like matrix.svd, returns a triple of:
-
-    - U as a dense labeled matrix
-    - S, a dense vector representing the diagonal of Sigma
-    - V as a dense labeled matrix
-
-    '''
-    
-    if factors is None:
-        factors = [blend_factor(mat) for mat in mats]
-
-    summed = None
-    for mat in mats:
-        if summed is None:
-            summed = mat
-        else:
-            summed += mat
-
-    return summed.svd(k=k)
-
+    return blend(mats, factors=factors).svd(k=k)
