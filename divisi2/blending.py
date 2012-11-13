@@ -65,23 +65,12 @@ def blend_svd(mats, factors=None, k=50):
     if factors is None:
         factors = [blend_factor(mat) for mat in mats]
 
-    # Align matrices.
-    # FIXME: only works for fully labeleed matrices right now.
-    # TODO: could micro-optimize by using the first ordered set's indices.
-    from csc_utils.ordered_set import OrderedSet
-    row_labels, row_mappings = OrderedSet(), []
+    summed = None
     for mat in mats:
-        row_mappings.append(np.array([row_labels.add(item) for item in mat.row_labels], dtype=np.uint64))
-    col_labels, col_mappings = OrderedSet(), []
-    for mat in mats:
-        col_mappings.append(np.array([col_labels.add(item) for item in mat.col_labels], dtype=np.uint64))
+        if summed is None:
+            summed = mat
+        else:
+            summed += mat
 
-    # Elide zero row tests, etc.
-
-    from divisi2._svdlib import svd_sum
-    from divisi2 import DenseMatrix
-    Ut, S, Vt = svd_sum(mats, k, factors, row_mappings, col_mappings)
-    U = DenseMatrix(Ut.T, row_labels, None)
-    V = DenseMatrix(Vt.T, col_labels, None)
-    return U, S, V
+    return summed.svd(k=k)
 
