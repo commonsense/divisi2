@@ -1,14 +1,16 @@
-Divisi2 is a library for reasoning by analogy over semantic networks
-using the sparse singular-value decomposition.
+This project is no longer maintained
+====================================
 
-*Documentation* for this library is in development in the `doc/`
-directory.  Documentation for the previous version of Divisi is available at
-http://csc.media.mit.edu/docs/.
+Divisi2 was a library for reasoning by analogy over semantic networks using the sparse singular-value decomposition, originating in a time when the sparse SVD was (a) the most effective source of word vectors and (b) difficult to perform in Python. Both of these situations have changed.
 
-The main website for the project is located at
-http://csc.media.mit.edu/divisi/.
+**[conceptnet5](https://github.com/commonsense/conceptnet5)** contains code for building multilingual word vectors based on distributional semantics and the knowledge graph ConceptNet. These word vectors can reason about words by similarity and analogy, with state-of-the-art performance as of 2017.
 
-Authors
+Other libraries that can help to accomplish the lower-level operations of Divisi2:
+
+* [SciPy](https://www.scipy.org/) now has built-in sparse matrices, and `scipy.sparse.linalg` can perform a sparse SVD.
+* [pandas](http://pandas.pydata.org/) is an excellent library for working with matrices of labeled data.
+
+  Authors
 =======
 Divisi2 belongs to two projects with many of the same people involved:
 
