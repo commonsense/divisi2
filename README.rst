@@ -3,7 +3,7 @@ This project is no longer maintained
 
 Divisi2 was a library for reasoning by analogy over semantic networks using the sparse singular-value decomposition, originating in a time when the sparse SVD was (a) the most effective source of word vectors and (b) difficult to perform in Python. Both of these situations have changed.
 
-**conceptnet5_** contains code for building multilingual word vectors based on distributional semantics and the knowledge graph ConceptNet. These word vectors can reason about words by similarity and analogy, with state-of-the-art performance as of 2017.
+conceptnet5_ contains code for building multilingual word vectors based on distributional semantics and the knowledge graph ConceptNet. These word vectors can reason about words by similarity and analogy, with state-of-the-art performance as of 2017.
 
 Other libraries that can help to accomplish the lower-level operations of Divisi2:
 
